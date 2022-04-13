@@ -1,5 +1,6 @@
 from src.GUI.Menu import Menu
 
+
 class OptionsMenu(Menu):
     def __init__(self, game):
         Menu.__init__(self, game)
@@ -13,25 +14,26 @@ class OptionsMenu(Menu):
         while self.run_display:
             self.game.check_events()
             self.check_input()
-            self.game.display.fill((0, 0, 0))
-            self.game.draw_text('Options', self.title_font_size, self.game.DISPLAY_W / 2, self.game.DISPLAY_H / 2 - self.title_font_size)
+            self.game.get_display().fill((0, 0, 0))
+            self.game.draw_text('Options', self.title_font_size, self.game.get_window_width() / 2,
+                                self.game.get_window_height() / 2 - self.title_font_size)
             self.game.draw_text("Volume", self.text_font_size, self.volx, self.voly)
             self.game.draw_text("Controls", self.text_font_size, self.controlsx, self.controlsy)
             self.draw_cursor()
             self.blit_screen()
 
     def check_input(self):
-        if self.game.BACK_KEY:
+        if self.game.get_key_back():
             self.game.curr_menu = self.game.main_menu
             self.run_display = False
             self.game.curr_menu.display_menu()
-        elif self.game.UP_KEY or self.game.DOWN_KEY:
+        elif self.game.get_key_up() or self.game.get_key_down():
             if self.state == 'Volume':
                 self.state = 'Controls'
                 self.cursor_rect.midtop = (self.controlsx + self.offset, self.controlsy)
             elif self.state == 'Controls':
                 self.state = 'Volume'
                 self.cursor_rect.midtop = (self.volx + self.offset, self.voly)
-        elif self.game.ENTER_KEY:
-            # TO-DO: Create a Volume Menu and a Controls Menu
+        elif self.game.get_key_enter():
+            # TODO: Create a Volume Menu and a Controls Menu
             pass
