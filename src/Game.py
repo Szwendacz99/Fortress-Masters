@@ -1,45 +1,56 @@
 import pygame
-from pygame.locals import *
+
+from src.GUI.CreditsMenu import CreditsMenu
+from src.GUI.MainMenu import MainMenu
+from src.GUI.OptionsMenu import OptionsMenu
 
 
-class Game:
-
+class Game():
     def __init__(self):
         pygame.init()
+        self.running, self.playing = True, False
+        self.readyToPlay = False
+        self.UP_KEY, self.DOWN_KEY, self.ENTER_KEY, self.BACK_KEY = False, False, False, False
+        self.DISPLAY_W, self.DISPLAY_H = pygame.display.Info().current_w, pygame.display.Info().current_h
+        self.display = pygame.Surface((self.DISPLAY_W, self.DISPLAY_H))
+        self.window = pygame.display.set_mode(((self.DISPLAY_W, self.DISPLAY_H)))
+        self.font_name = '../resources/fonts/8-BIT WONDER.TTF'
 
-        flags = DOUBLEBUF
-        self.display_surface = display_surface = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        self.BLACK, self.WHITE = (0, 0, 0), (255, 255, 255)
 
-        pygame.display.set_caption('Fortress Masters')
+        pygame.mouse.set_visible(False)
 
-        self.clock = pygame.time.Clock()
+        self.main_menu = MainMenu(self)
+        self.options = OptionsMenu(self)
+        self.credits = CreditsMenu(self)
+        self.curr_menu = self.main_menu
 
-        # TODO: create resource manager class
-        self.image1: pygame.image = pygame.image.load(r'../resources/img/background.png')
-        self.image2: pygame.image = pygame.image.load(r'../resources/img/obj.png')
-        self.angle1 = 1
-        self.angle2 = 1
+    def game_loop(self):
+        #TODO: Implement game window
+        pygame.mouse.set_visible(True)
+        pass
 
-    def loop(self):
-        while True:
-            self.clock.tick(60)
-            self.handleEvents()
-
-            # Draws the surface object to the screen.
-            white: tuple = (255, 255, 255)
-            self.display_surface.fill(white)
-            self.display_surface.blit(pygame.transform.rotate(self.image1, self.angle1), (0, 0))
-            self.display_surface.blit(pygame.transform.rotate(self.image2, self.angle2), (0, 0))
-            self.angle1 = (self.angle1 + 1) % 360
-            self.angle2 = (self.angle2 + 2) % 360
-
-            pygame.display.flip()
-
-    def handleEvents(self):
+    def check_events(self):
         for event in pygame.event.get():
-            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                self.quit()
+            if event.type == pygame.QUIT:
+                self.running, self.playing = False, False
+                self.curr_menu.run_display = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    self.ENTER_KEY = True
+                if event.key == pygame.K_ESCAPE:
+                    self.BACK_KEY = True
+                if event.key == pygame.K_DOWN:
+                    self.DOWN_KEY = True
+                if event.key == pygame.K_UP:
+                    self.UP_KEY = True
 
-    def quit(self):
-        pygame.quit()
-        quit()
+    def reset_keys(self):
+        self.UP_KEY, self.DOWN_KEY, self.ENTER_KEY, self.BACK_KEY = False, False, False, False
+
+    def draw_text(self, text, size, x, y):
+        font = pygame.font.Font(self.font_name, size)
+        text_surface = font.render(text, True, self.WHITE)
+        text_rect = text_surface.get_rect()
+        text_rect.center = (x, y)
+        self.display.blit(text_surface, text_rect)
