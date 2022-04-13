@@ -15,8 +15,8 @@ class Game:
         self.clock = pygame.time.Clock()
 
         # TODO: create resource manager class
-        self.image1 = pygame.image.load(r'../resources/img/background.png')
-        self.image2 = pygame.image.load(r'../resources/img/obj.png')
+        self.image1: pygame.image = pygame.image.load(r'../resources/img/background.png')
+        self.image2: pygame.image = pygame.image.load(r'../resources/img/obj.png')
         self.angle1 = 1
         self.angle2 = 1
 
@@ -26,7 +26,7 @@ class Game:
             self.handleEvents()
 
             # Draws the surface object to the screen.
-            white = (255, 255, 255)
+            white: tuple = (255, 255, 255)
             self.display_surface.fill(white)
             self.display_surface.blit(pygame.transform.rotate(self.image1, self.angle1), (0, 0))
             self.display_surface.blit(pygame.transform.rotate(self.image2, self.angle2), (0, 0))

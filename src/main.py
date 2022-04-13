@@ -1,5 +1,5 @@
-from Game import Game
+from Menu import Menu
+
 
 if __name__ == "__main__":
-    game = Game()
-    game.loop()
+    menu = Menu()
