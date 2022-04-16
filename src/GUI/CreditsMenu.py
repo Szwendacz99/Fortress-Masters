@@ -1,4 +1,7 @@
+import pygame
+
 import src.GUI.Menu as libMenu
+import src.GUI.Widgets.Button as libButton
 
 
 class CreditsMenu(libMenu.Menu):
@@ -12,23 +15,38 @@ class CreditsMenu(libMenu.Menu):
         self.__c3x: float = self.mid_w
         self.__c3y: float = self.mid_h + self.text_font_size * 3
 
+        self.back_button = libButton.Button(image=None, pos=(self.game.get_window_width() / 2,
+                                self.game.get_window_height() / 2 - self.title_font_size),
+                         label_text="GO BACK", font=self.game.get_font(self.text_font_size),
+                         base_color="Red", hovering_color="Green")
+
     def display_menu(self):
         self.run_display = True
         while self.run_display:
-            self.game.check_events()
-            self.check_input()
-            self.game.get_display().fill((0, 0, 0))
+            self.mouse_pos = pygame.mouse.get_pos()
+            self.game.get_display().fill(self.game.BLACK)
 
             self.game.draw_text('CREDITS', self.title_font_size, self.game.get_window_width() / 2,
-                                self.game.get_window_height() / 2 - self.title_font_size)
+                                self.game.get_window_height() / 2 - self.title_font_size * 2)
+            self.back_button.changeColor(self.mouse_pos)
+            self.back_button.update(self.game.get_display())
             self.game.draw_text('Szymon Mazur', self.text_font_size, self.__c1x, self.__c1y)
             self.game.draw_text('Maciej Lebiest', self.text_font_size, self.__c2x, self.__c2y)
             self.game.draw_text('Przemyslaw Marek', self.text_font_size, self.__c3x, self.__c3y)
-            self.draw_cursor()
+
+            self.check_input()
+            self.game.check_events()
             self.blit_screen()
 
     def check_input(self):
-        if self.game.get_key_back():
-            self.game.curr_menu = self.game.main_menu
-            self.run_display = False
-            self.game.curr_menu.display_menu()
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.game.curr_menu = self.game.main_menu
+                    self.game.curr_menu.display_menu()
+                    self.run_display = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if self.back_button.checkForInput(self.mouse_pos):
+                    self.run_display = False
+                    self.game.curr_menu = self.game.main_menu
+                    self.game.curr_menu.display_menu()

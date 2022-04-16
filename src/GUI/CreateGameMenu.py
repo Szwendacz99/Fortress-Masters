@@ -14,9 +14,8 @@ class NewGameMenu(libMenu.Menu):
                                             label_text="GO BACK", font=self.game.get_font(self.text_font_size),
                                             base_color="Red", hovering_color="Green")
 
-        self.test_input = libTextInput.TextInput(background_color="WHITE", pos=(self.mid_w, self.mid_h + self.text_font_size ),
-                                              font=self.game.get_font(self.text_font_size), font_color="BLACK")
-
+        self.test_input = libTextInput.TextInput(pos=(self.mid_w, self.mid_h + self.text_font_size * 2),
+                                                 font=self.game.get_font(self.text_font_size), font_color="BLACK")
 
     def display_menu(self):
         self.run_display = True
@@ -30,7 +29,6 @@ class NewGameMenu(libMenu.Menu):
             self.back_button.changeColor(self.mouse_pos)
             self.back_button.update(self.game.get_display())
 
-
             self.test_input.update(self.game.get_display())
 
             self.check_input()
@@ -40,6 +38,7 @@ class NewGameMenu(libMenu.Menu):
     def check_input(self):
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
+                # TODO: check if TextInput is clicked, and if it is replace its' append its' text or delete last letter if clicked button is backspace
                 if event.key == pygame.K_ESCAPE:
                     self.game.curr_menu = self.game.main_menu
                     self.game.curr_menu.display_menu()
@@ -49,4 +48,5 @@ class NewGameMenu(libMenu.Menu):
                     self.run_display = False
                     self.game.curr_menu = self.game.main_menu
                     self.game.curr_menu.display_menu()
-
+                if self.test_input.cursor_hovers(self.mouse_pos):
+                    self.test_input.set_clicked(True)
