@@ -1,13 +1,15 @@
 import pygame
 
 import src.Game as libGame
+from src.Utils.FontManager import FontManager
 
 
 class Menu:
     def __init__(self, game):
 
-        self.title_font_size: int = int(game.get_window_width()/20)
-        self.text_font_size: int = int(game.get_window_width()/30)
+        font_manager: FontManager = FontManager()
+        self.title_font_size: int = font_manager.get_title_font_size()
+        self.text_font_size: int = font_manager.get_regular_font_size()
 
         self.mouse_pos: tuple = None
 

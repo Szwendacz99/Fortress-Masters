@@ -5,6 +5,7 @@ from src.GUI.CreditsMenu import CreditsMenu
 from src.GUI.CreateGameMenu import NewGameMenu
 from src.GUI.MainMenu import MainMenu
 from src.GUI.Menu import Menu
+from src.Utils.FontManager import FontManager
 
 
 class Game:
@@ -17,7 +18,10 @@ class Game:
         self.__window_height: int = pygame.display.Info().current_h
 
         self.__display: Surface = pygame.display.set_mode((self.__window_width, self.__window_height))
-        self.__font_name: str = '../resources/fonts/8-BIT WONDER.TTF'
+        # self.__font_name: str = '../resources/fonts/8-BIT WONDER.TTF'
+
+        # TODO: Refactor fonts
+        self.font_manager: FontManager = FontManager(font_path='../resources/fonts/JUNGLE_ADVENTURER/JungleAdventurer.ttf')
 
         self.BLACK = (0, 0, 0)
         self.WHITE = (255, 255, 255)
@@ -43,14 +47,14 @@ class Game:
                 self.curr_menu.run_display = False
 
     def draw_text(self, text, size, x, y):
-        font = pygame.font.Font(self.__font_name, size)
+        font = pygame.font.Font(self.font_manager.font_path, size)
         text_surface = font.render(text, True, self.WHITE)
         text_rect = text_surface.get_rect()
         text_rect.center = (x, y)
         self.__display.blit(text_surface, text_rect)
 
     def get_font(self, size) -> pygame.font.Font:
-        return pygame.font.Font(self.__font_name, size)
+        return pygame.font.Font(self.font_manager.font_path, size)
 
     def get_window_width(self) -> int:
         return self.__window_width

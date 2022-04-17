@@ -20,18 +20,18 @@ class MainMenu(libMenu.Menu):
         self.__quit_x: float = self.mid_w
         self.__quit_y: float = self.mid_h + self.text_font_size * 4
 
-        self.button_array = [libButton.Button(image=None, pos=(self.__create_game_x, self.__create_game_y),
+        self.button_array = [libButton.Button(pos=(self.__create_game_x, self.__create_game_y),
                                               label_text="CREATE GAME", font=self.game.get_font(self.text_font_size),
-                                              base_color="White", hovering_color="Green"),
-                             libButton.Button(image=None, pos=(self.__join_game_x, self.__join_game_y),
+                                              color="White", hovering_color="Green"),
+                             libButton.Button(pos=(self.__join_game_x, self.__join_game_y),
                                               label_text="JOIN GAME", font=self.game.get_font(self.text_font_size),
-                                              base_color="White", hovering_color="Green"),
-                             libButton.Button(image=None, pos=(self.__credits_x, self.__credits_y),
-                                    label_text="CREDITS", font=self.game.get_font(self.text_font_size),
-                                    base_color="White", hovering_color="Green"),
-                             libButton.Button(image=None, pos=(self.__quit_x, self.__quit_y),
-                                    label_text="QUIT", font=self.game.get_font(self.text_font_size),
-                                    base_color="White", hovering_color="Green")]
+                                              color="White", hovering_color="Green"),
+                             libButton.Button(pos=(self.__credits_x, self.__credits_y),
+                                              label_text="CREDITS", font=self.game.get_font(self.text_font_size),
+                                              color="White", hovering_color="Green"),
+                             libButton.Button(pos=(self.__quit_x, self.__quit_y),
+                                              label_text="QUIT", font=self.game.get_font(self.text_font_size),
+                                              color="White", hovering_color="Green")]
 
     def display_menu(self):
         self.run_display = True
@@ -40,11 +40,10 @@ class MainMenu(libMenu.Menu):
             self.game.get_display().fill(self.game.BLACK)
 
             self.game.draw_text('Fortress Masters', self.title_font_size, self.game.get_window_width() / 2,
-                                self.game.get_window_height() / 2 - self.title_font_size)
+                                self.title_font_size * 3)
 
             for button in self.button_array:
-                button.changeColor(self.mouse_pos)
-                button.update(self.game.get_display())
+                button.update(self.game.get_display(), mouse_position=self.mouse_pos)
 
             self.check_input()
             self.game.check_events()
@@ -53,17 +52,17 @@ class MainMenu(libMenu.Menu):
     def check_input(self):
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.button_array[0].checkForInput(self.mouse_pos):
+                if self.button_array[0].cursor_hovers(self.mouse_pos):
                     # TODO: Implement Create Game Menu
                     self.game.curr_menu = self.game.new_game
                     self.run_display = False
                     self.game.curr_menu.display_menu()
-                elif self.button_array[0].checkForInput(self.mouse_pos):
+                elif self.button_array[0].cursor_hovers(self.mouse_pos):
                     # TODO: Implement Join Game Menu
                     pass
-                elif self.button_array[2].checkForInput(self.mouse_pos):
+                elif self.button_array[2].cursor_hovers(self.mouse_pos):
                     self.game.curr_menu = self.game.credits
                     self.run_display = False
                     self.game.curr_menu.display_menu()
-                elif self.button_array[3].checkForInput(self.mouse_pos):
+                elif self.button_array[3].cursor_hovers(self.mouse_pos):
                     pygame.quit()
