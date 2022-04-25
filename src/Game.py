@@ -2,9 +2,10 @@ import pygame
 from pygame.surface import Surface
 
 from src.GUI.CreditsMenu import CreditsMenu
+from src.GUI.PlayMenu import NewGameMenu
 from src.GUI.MainMenu import MainMenu
 from src.GUI.Menu import Menu
-from src.GUI.OptionsMenu import OptionsMenu
+from src.Utils.FontManager import FontManager
 
 
 class Game:
@@ -12,31 +13,31 @@ class Game:
         pygame.init()
         self.__running: bool = True
         self.__playing: bool = False
-        self.__ready: bool = False
-        self.__key_up: bool = False
-        self.__key_down: bool = False
-        self.__key_enter: bool = False
-        self.__key_back: bool = False
+
         self.__window_width: int = pygame.display.Info().current_w
         self.__window_height: int = pygame.display.Info().current_h
-        self.__display: Surface = pygame.Surface((self.__window_width, self.__window_height))
-        self.__window: Surface = pygame.display.set_mode((self.__window_width, self.__window_height))
-        self.__font_name: str = '../resources/fonts/8-BIT WONDER.TTF'
+
+        self.__display: Surface = pygame.display.set_mode((self.__window_width, self.__window_height))
+        # self.__font_name: str = '../resources/fonts/8-BIT WONDER.TTF'
+
+        # TODO: Refactor fonts
+        self.font_manager: FontManager = FontManager(font_path='../resources/fonts/JUNGLE_ADVENTURER/JungleAdventurer.ttf')
 
         self.BLACK = (0, 0, 0)
         self.WHITE = (255, 255, 255)
 
-        pygame.mouse.set_visible(False)
+        pygame.mouse.set_visible(True)
 
         self.main_menu: MainMenu = MainMenu(self)
-        self.options: OptionsMenu = OptionsMenu(self)
         self.credits: CreditsMenu = CreditsMenu(self)
+        self.new_game: NewGameMenu = NewGameMenu(self)
         self.curr_menu: Menu = self.main_menu
 
     def game_loop(self):
         # TODO: Implement game window
-        pygame.mouse.set_visible(True)
-        pass
+        while self.__running:
+            while self.__playing:
+                pass
 
     def check_events(self):
         for event in pygame.event.get():
@@ -44,28 +45,16 @@ class Game:
                 self.__running = False
                 self.__playing = False
                 self.curr_menu.run_display = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    self.__key_enter = True
-                if event.key == pygame.K_ESCAPE:
-                    self.__key_back = True
-                if event.key == pygame.K_DOWN:
-                    self.__key_down = True
-                if event.key == pygame.K_UP:
-                    self.__key_up = True
-
-    def reset_keys(self):
-        self.__key_up = False
-        self.__key_down = False
-        self.__key_enter = False
-        self.__key_back = False
 
     def draw_text(self, text, size, x, y):
-        font = pygame.font.Font(self.__font_name, size)
+        font = pygame.font.Font(self.font_manager.font_path, size)
         text_surface = font.render(text, True, self.WHITE)
         text_rect = text_surface.get_rect()
         text_rect.center = (x, y)
         self.__display.blit(text_surface, text_rect)
+
+    def get_font(self, size) -> pygame.font.Font:
+        return pygame.font.Font(self.font_manager.font_path, size)
 
     def get_window_width(self) -> int:
         return self.__window_width
@@ -76,17 +65,8 @@ class Game:
     def get_display(self) -> Surface:
         return self.__display
 
-    def get_window(self) -> Surface:
-        return self.__window
+    def set_running(self, __running):
+        self.__running = __running
 
-    def get_key_back(self) -> bool:
-        return self.__key_back
-
-    def get_key_down(self) -> bool:
-        return self.__key_down
-
-    def get_key_up(self) -> bool:
-        return self.__key_up
-
-    def get_key_enter(self) -> bool:
-        return self.__key_enter
+    def set_playing(self, __playing):
+        self.__playing == __playing
