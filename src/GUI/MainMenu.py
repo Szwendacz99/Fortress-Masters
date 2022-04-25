@@ -11,20 +11,14 @@ class MainMenu(libMenu.Menu):
         self.__create_game_x: float = self.mid_w
         self.__create_game_y: float = self.mid_h + self.text_font_size
 
-        self.__join_game_x: float = self.mid_w
-        self.__join_game_y: float = self.mid_h + self.text_font_size * 2
-
         self.__credits_x: float = self.mid_w
-        self.__credits_y: float = self.mid_h + self.text_font_size * 3
+        self.__credits_y: float = self.mid_h + self.text_font_size * 2
 
         self.__quit_x: float = self.mid_w
-        self.__quit_y: float = self.mid_h + self.text_font_size * 4
+        self.__quit_y: float = self.mid_h + self.text_font_size * 3
 
         self.button_array = [libButton.Button(pos=(self.__create_game_x, self.__create_game_y),
-                                              label_text="CREATE GAME", font=self.game.get_font(self.text_font_size),
-                                              color="White", hovering_color="Green"),
-                             libButton.Button(pos=(self.__join_game_x, self.__join_game_y),
-                                              label_text="JOIN GAME", font=self.game.get_font(self.text_font_size),
+                                              label_text="PLAY", font=self.game.get_font(self.text_font_size),
                                               color="White", hovering_color="Green"),
                              libButton.Button(pos=(self.__credits_x, self.__credits_y),
                                               label_text="CREDITS", font=self.game.get_font(self.text_font_size),
@@ -53,16 +47,12 @@ class MainMenu(libMenu.Menu):
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.button_array[0].cursor_hovers(self.mouse_pos):
-                    # TODO: Implement Create Game Menu
                     self.game.curr_menu = self.game.new_game
                     self.run_display = False
                     self.game.curr_menu.display_menu()
-                elif self.button_array[0].cursor_hovers(self.mouse_pos):
-                    # TODO: Implement Join Game Menu
-                    pass
-                elif self.button_array[2].cursor_hovers(self.mouse_pos):
+                elif self.button_array[1].cursor_hovers(self.mouse_pos):
                     self.game.curr_menu = self.game.credits
                     self.run_display = False
                     self.game.curr_menu.display_menu()
-                elif self.button_array[3].cursor_hovers(self.mouse_pos):
+                elif self.button_array[2].cursor_hovers(self.mouse_pos):
                     pygame.quit()

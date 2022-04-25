@@ -4,12 +4,12 @@ import src.GUI.Widgets.Widget as libWidget
 
 
 class TextInput(libWidget.Widget):
-    def __init__(self, pos, font, color, background_color, clicked_color, input_label, input_label_color):
+    def __init__(self, pos, font, color, background_color, clicked_color, input_text, input_label, input_label_color):
         super().__init__(pos=pos, font=font, color=color)
         self.clicked: bool = False
         self.background_color: tuple = background_color
         self.clicked_color: str = clicked_color
-        self.input_text: str = "test"
+        self.input_text: str = input_text
         self.input_label: str = input_label
         self.input_label_color: str = input_label_color
 
@@ -52,6 +52,13 @@ class TextInput(libWidget.Widget):
 
     def delete_last_input_letter(self):
         self.input_text = self.input_text[:-1]
+        if self.input_text == "":
+            self.input_text = " "
 
     def append_input(self, letter: str):
         self.input_text += letter
+
+    def get_input_text(self):
+        if self.input_text[0] == " ":
+            return self.input_text[1:]
+        return self.input_text

@@ -2,7 +2,7 @@ import pygame
 from pygame.surface import Surface
 
 from src.GUI.CreditsMenu import CreditsMenu
-from src.GUI.CreateGameMenu import NewGameMenu
+from src.GUI.PlayMenu import NewGameMenu
 from src.GUI.MainMenu import MainMenu
 from src.GUI.Menu import Menu
 from src.Utils.FontManager import FontManager
