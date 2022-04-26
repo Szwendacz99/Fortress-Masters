@@ -5,6 +5,7 @@ from src.GUI.CreditsMenu import CreditsMenu
 from src.GUI.PlayMenu import NewGameMenu
 from src.GUI.MainMenu import MainMenu
 from src.GUI.Menu import Menu
+from src.GUI.GamePlaying import GamePlaying
 from src.Utils.FontManager import FontManager
 
 
@@ -21,7 +22,8 @@ class Game:
         # self.__font_name: str = '../resources/fonts/8-BIT WONDER.TTF'
 
         # TODO: Refactor fonts
-        self.font_manager: FontManager = FontManager(font_path='../resources/fonts/JUNGLE_ADVENTURER/JungleAdventurer.ttf')
+        self.font_manager: FontManager = FontManager(
+            font_path='../resources/fonts/JUNGLE_ADVENTURER/JungleAdventurer.ttf')
 
         self.BLACK = (0, 0, 0)
         self.WHITE = (255, 255, 255)
@@ -31,13 +33,8 @@ class Game:
         self.main_menu: MainMenu = MainMenu(self)
         self.credits: CreditsMenu = CreditsMenu(self)
         self.new_game: NewGameMenu = NewGameMenu(self)
+        self.game_playing: GamePlaying = GamePlaying(self)
         self.curr_menu: Menu = self.main_menu
-
-    def game_loop(self):
-        # TODO: Implement game window
-        while self.__running:
-            while self.__playing:
-                pass
 
     def check_events(self):
         for event in pygame.event.get():

@@ -92,7 +92,10 @@ class NewGameMenu(libMenu.Menu):
                     pass
                 elif self.buttons[2].cursor_hovers(self.mouse_pos):
                     # TODO: Join Lobby
-                    pass
+                    # Temporarily it will start the game
+                    self.run_display = False
+                    self.game.curr_menu = self.game.game_playing
+                    self.game.curr_menu.display_menu()
                 for text_input in self.text_input_array:
                     if text_input.cursor_hovers(self.mouse_pos):
                         text_input.set_clicked(True)

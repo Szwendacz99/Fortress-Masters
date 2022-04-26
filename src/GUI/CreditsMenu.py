@@ -29,9 +29,9 @@ class CreditsMenu(libMenu.Menu):
             self.game.draw_text('CREDITS', self.title_font_size, self.game.get_window_width() / 2,
                                 self.game.get_window_height() / 2 - self.title_font_size * 2)
             self.back_button.update(self.game.get_display(), self.mouse_pos)
-            self.game.draw_text('Szymon Mazur', self.text_font_size, self.__c1x, self.__c1y)
+            self.game.draw_text('Przemyslaw Marek', self.text_font_size, self.__c1x, self.__c1y)
             self.game.draw_text('Maciej Lebiest', self.text_font_size, self.__c2x, self.__c2y)
-            self.game.draw_text('Przemyslaw Marek', self.text_font_size, self.__c3x, self.__c3y)
+            self.game.draw_text('Szymon Mazur', self.text_font_size, self.__c3x, self.__c3y)
 
             self.check_input()
             self.game.check_events()
