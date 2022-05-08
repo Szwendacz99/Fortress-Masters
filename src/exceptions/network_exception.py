@@ -9,4 +9,5 @@ class NetworkException(GeneralException):
         self.__socket_reference = socket_reference
 
     def __str__(self):
-        return f"Network error occurred: {self._message}"
+        return f"Network error occurred when communicating with" \
+               f"{self.__socket_reference.getpeername()}: {self._message}"

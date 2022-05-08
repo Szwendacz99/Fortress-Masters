@@ -1,8 +1,16 @@
+from logging import debug
+
 import pygame.mouse
 
 from GUI.Menu import Menu
 from GUI.Widgets.Button import Button
 from GUI.Widgets.TextInput import TextInput
+from Player import Player
+from core.identity import Identity
+from network.connection import Connection
+from network.messages.join_ack_message import JoinAckMessage
+from network.messages.join_message import JoinMessage
+from network.server import Server
 
 
 class NewGameMenu(Menu):
@@ -15,36 +23,36 @@ class NewGameMenu(Menu):
 
         self.INPUT_KEYS = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'}
 
-        self.buttons = [Button(pos=(self.game.get_window_width() / 2,
-                                              self.title_font_size * 4),
-                                         label_text="GO BACK", font=self.game.get_font(self.text_font_size),
-                                         color="Red", hovering_color="Green"),
-                        Button(pos=(self.game.get_window_width() / 2,
-                                              self.title_font_size * 9),
-                                         label_text="Create lobby", font=self.game.get_font(self.text_font_size),
-                                         color="WHITE", hovering_color="Green"),
-                        Button(pos=(self.game.get_window_width() / 2,
-                                              self.title_font_size * 10),
-                                         label_text="Join lobby", font=self.game.get_font(self.text_font_size),
-                                         color="WHITE", hovering_color="Green")
-                        ]
+        self.buttons: list[Button] = [Button(pos=(self.game.get_window_width() / 2,
+                                                  self.title_font_size * 4),
+                                             label_text="GO BACK", font=self.game.get_font(self.text_font_size),
+                                             color="Red", hovering_color="Green"),
+                                      Button(pos=(self.game.get_window_width() / 2,
+                                                  self.title_font_size * 9),
+                                             label_text="Create lobby", font=self.game.get_font(self.text_font_size),
+                                             color="WHITE", hovering_color="Green"),
+                                      Button(pos=(self.game.get_window_width() / 2,
+                                                  self.title_font_size * 10),
+                                             label_text="Join lobby", font=self.game.get_font(self.text_font_size),
+                                             color="WHITE", hovering_color="Green")
+                                      ]
 
-        self.text_input_array = [TextInput(pos=(self.mid_w, self.title_font_size * 6),
-                                           font=self.game.get_font(self.text_font_size), color="BLACK",
-                                           background_color="WHITE",
-                                           clicked_color="BLUE",
-                                           input_text="1234",
-                                           input_label="PORT: ",
-                                           input_label_color="WHITE"),
+        self.text_input_array: list[TextInput] = [TextInput(pos=(self.mid_w, self.title_font_size * 6),
+                                                            font=self.game.get_font(self.text_font_size), color="BLACK",
+                                                            background_color="WHITE",
+                                                            clicked_color="BLUE",
+                                                            input_text="1234",
+                                                            input_label="PORT: ",
+                                                            input_label_color="WHITE"),
 
-                                 TextInput(pos=(self.mid_w, self.title_font_size * 7),
-                                           font=self.game.get_font(self.text_font_size), color="BLACK",
-                                           background_color="WHITE",
-                                           clicked_color="BLUE",
-                                           input_text="NICK",
-                                           input_label="NICK: ",
-                                           input_label_color="WHITE")
-                                 ]
+                                                  TextInput(pos=(self.mid_w, self.title_font_size * 7),
+                                                            font=self.game.get_font(self.text_font_size), color="BLACK",
+                                                            background_color="WHITE",
+                                                            clicked_color="BLUE",
+                                                            input_text="NICK",
+                                                            input_label="NICK: ",
+                                                            input_label_color="WHITE")
+                                                  ]
 
     def display_menu(self):
         self.run_display = True
@@ -89,9 +97,17 @@ class NewGameMenu(Menu):
                     self.game.curr_menu.display_menu()
                 elif self.buttons[1].cursor_hovers(self.mouse_pos):
                     # TODO: Create lobby
-                    pass
+                    srv = Server(port=int(self.text_input_array[0].input_text))
+                    srv.start()
                 elif self.buttons[2].cursor_hovers(self.mouse_pos):
                     # TODO: Join Lobby
+                    player = Player(identity=Identity(name=self.text_input_array[1].input_text))
+                    conn: Connection = Connection(address="127.0.0.1",
+                                                  port=int(self.text_input_array[0].input_text),
+                                                  timeout=5)
+                    conn.send_data(JoinMessage(player.get_identity()))
+                    response: JoinAckMessage = conn.receive_data()
+                    debug(f"Client received lobby list: {[p.get_name() for p in response.get_players()]}")
                     # Temporarily it will start the game
                     self.run_display = False
                     self.game.curr_menu = self.game.game_playing
