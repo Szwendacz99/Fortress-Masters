@@ -1,6 +1,6 @@
 import pygame
 
-import src.Utils.Singleton as libSingleton
+import Utils.Singleton as libSingleton
 
 
 class FontManager(metaclass=libSingleton.SingletonMeta):

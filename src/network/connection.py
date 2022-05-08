@@ -3,8 +3,8 @@ from logging import debug
 from socket import socket, AF_INET, SOCK_STREAM
 from threading import Lock
 
-from src.exceptions.network_exception import NetworkException
-from src.network.messages.basic_message import BasicMessage
+from exceptions.network_exception import NetworkException
+from network.messages.basic_message import BasicMessage
 
 MSG_SIZE_FIELD_LENGTH = 64
 BYTEORDER = 'little'

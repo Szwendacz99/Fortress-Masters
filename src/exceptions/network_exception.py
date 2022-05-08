@@ -1,6 +1,6 @@
 from socket import socket
 
-from src.exceptions.general_exception import GeneralException
+from exceptions.general_exception import GeneralException
 
 
 class NetworkException(GeneralException):

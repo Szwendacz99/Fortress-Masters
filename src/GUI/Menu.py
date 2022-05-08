@@ -1,7 +1,7 @@
 import pygame
 
-import src.Game as libGame
-from src.Utils.FontManager import FontManager
+import GameWindow as libGame
+from Utils.FontManager import FontManager
 
 
 class Menu:
@@ -13,8 +13,9 @@ class Menu:
 
         self.mouse_pos: tuple = None
 
-        self.game: libGame.Game = game
-        self.mid_w, self.mid_h = self.game.get_window_width() / 2, self.game.get_window_height() / 2
+        self.game: libGame.GameWindow = game
+        self.mid_w: float = self.game.get_window_width() / 2
+        self.mid_h: float = self.game.get_window_height() / 2
         self.run_display: bool = True
 
     def blit_screen(self):

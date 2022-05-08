@@ -1,7 +1,7 @@
 from abc import ABC
 
-from src.core.identity import Identity
-from src.network.messages.message_type import MessageType
+from core.identity import Identity
+from network.messages.message_type import MessageType
 
 
 class BasicMessage(ABC, Identity):

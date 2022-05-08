@@ -1,6 +1,6 @@
 import pygame
 
-import src.GUI.Widgets.Widget as libWidget
+import GUI.Widgets.Widget as libWidget
 
 
 class Button(libWidget.Widget):

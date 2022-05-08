@@ -5,26 +5,25 @@ import os
 from pygame.rect import Rect
 from pygame.surface import Surface
 
-import src.GUI.Menu as libMenu
-import src.GUI.Widgets.Button as libButton
+from GUI.Menu import Menu
 
 
-class GamePlaying(libMenu.Menu):
+class GamePlaying(Menu):
     def __init__(self, game):
-        libMenu.Menu.__init__(self, game)
+        Menu.__init__(self, game)
         self.__fps: int = 60
         self.__background_img: Surface = pygame.transform.scale(pygame.image.load(
-            os.path.normpath('../resources/img/map_bg.png')), (564, self.game.get_window_height()))
+            os.path.normpath('resources/img/map_bg.png')), (564, self.game.get_window_height()))
         self.__x0: int = self.mid_w - self.__background_img.get_width()//2
 
         self.__red_turret: Surface = pygame.transform.rotate(pygame.transform.scale(pygame.image.load(
-            os.path.normpath('../resources/img/red_turret.png')), (120, 120)), 180)
+            os.path.normpath('resources/img/red_turret.png')), (120, 120)), 180)
         self.__blue_turret: Surface = pygame.transform.scale(pygame.image.load(
-            os.path.normpath('../resources/img/blue_turret.png')), (120, 120))
+            os.path.normpath('resources/img/blue_turret.png')), (120, 120))
         self.__small_red_turret: Surface = pygame.transform.rotate(pygame.transform.scale(pygame.image.load(
-            os.path.normpath('../resources/img/red_turret.png')), (100, 100)), 180)
+            os.path.normpath('resources/img/red_turret.png')), (100, 100)), 180)
         self.__small_blue_turret: Surface = pygame.transform.scale(pygame.image.load(
-            os.path.normpath('../resources/img/blue_turret.png')), (100, 100))
+            os.path.normpath('resources/img/blue_turret.png')), (100, 100))
 
         self.__blue_turret_left: Rect = pygame.Rect(
             self.__x0 + 220 - self.__blue_turret.get_width()//2,
