@@ -1,12 +1,12 @@
 import pygame
 
-import src.GUI.Menu as libMenu
-import src.GUI.Widgets.Button as libButton
+from GUI.Menu import Menu
+from GUI.Widgets.Button import Button
 
 
-class CreditsMenu(libMenu.Menu):
+class CreditsMenu(Menu):
     def __init__(self, game):
-        libMenu.Menu.__init__(self, game)
+        Menu.__init__(self, game)
 
         self.__c1x: float = self.mid_w
         self.__c1y: float = self.mid_h + self.text_font_size
@@ -15,7 +15,7 @@ class CreditsMenu(libMenu.Menu):
         self.__c3x: float = self.mid_w
         self.__c3y: float = self.mid_h + self.text_font_size * 3
 
-        self.back_button = libButton.Button(pos=(self.game.get_window_width() / 2,
+        self.back_button = Button(pos=(self.game.get_window_width() / 2,
                                 self.game.get_window_height() / 2 - self.title_font_size),
                          label_text="GO BACK", font=self.game.get_font(self.text_font_size),
                          color="Red", hovering_color="Green")

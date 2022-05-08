@@ -1,13 +1,13 @@
 import pygame.mouse
 
-import src.GUI.Menu as libMenu
-import src.GUI.Widgets.Button as libButton
-import src.GUI.Widgets.TextInput as libTextInput
+from GUI.Menu import Menu
+from GUI.Widgets.Button import Button
+from GUI.Widgets.TextInput import TextInput
 
 
-class NewGameMenu(libMenu.Menu):
+class NewGameMenu(Menu):
     def __init__(self, game):
-        libMenu.Menu.__init__(self, game)
+        Menu.__init__(self, game)
 
         # TODO: ?Make input manager class
         self.INPUT_LETTERS = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
@@ -15,35 +15,35 @@ class NewGameMenu(libMenu.Menu):
 
         self.INPUT_KEYS = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'}
 
-        self.buttons = [libButton.Button(pos=(self.game.get_window_width() / 2,
-                                                 self.title_font_size * 4),
-                                            label_text="GO BACK", font=self.game.get_font(self.text_font_size),
-                                            color="Red", hovering_color="Green"),
-                        libButton.Button(pos=(self.game.get_window_width() / 2,
+        self.buttons = [Button(pos=(self.game.get_window_width() / 2,
+                                              self.title_font_size * 4),
+                                         label_text="GO BACK", font=self.game.get_font(self.text_font_size),
+                                         color="Red", hovering_color="Green"),
+                        Button(pos=(self.game.get_window_width() / 2,
                                               self.title_font_size * 9),
                                          label_text="Create lobby", font=self.game.get_font(self.text_font_size),
                                          color="WHITE", hovering_color="Green"),
-                        libButton.Button(pos=(self.game.get_window_width() / 2,
+                        Button(pos=(self.game.get_window_width() / 2,
                                               self.title_font_size * 10),
                                          label_text="Join lobby", font=self.game.get_font(self.text_font_size),
                                          color="WHITE", hovering_color="Green")
                         ]
 
-        self.text_input_array = [libTextInput.TextInput(pos=(self.mid_w, self.title_font_size * 6),
-                                                        font=self.game.get_font(self.text_font_size), color="BLACK",
-                                                        background_color="WHITE",
-                                                        clicked_color="BLUE",
-                                                        input_text="1234",
-                                                        input_label="PORT: ",
-                                                        input_label_color="WHITE"),
+        self.text_input_array = [TextInput(pos=(self.mid_w, self.title_font_size * 6),
+                                           font=self.game.get_font(self.text_font_size), color="BLACK",
+                                           background_color="WHITE",
+                                           clicked_color="BLUE",
+                                           input_text="1234",
+                                           input_label="PORT: ",
+                                           input_label_color="WHITE"),
 
-                                 libTextInput.TextInput(pos=(self.mid_w, self.title_font_size * 7),
-                                                        font=self.game.get_font(self.text_font_size), color="BLACK",
-                                                        background_color="WHITE",
-                                                        clicked_color="BLUE",
-                                                        input_text="NICK",
-                                                        input_label="NICK: ",
-                                                        input_label_color="WHITE")
+                                 TextInput(pos=(self.mid_w, self.title_font_size * 7),
+                                           font=self.game.get_font(self.text_font_size), color="BLACK",
+                                           background_color="WHITE",
+                                           clicked_color="BLUE",
+                                           input_text="NICK",
+                                           input_label="NICK: ",
+                                           input_label_color="WHITE")
                                  ]
 
     def display_menu(self):

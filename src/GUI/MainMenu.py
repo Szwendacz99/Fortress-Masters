@@ -1,12 +1,12 @@
 import pygame.mouse
 
-import src.GUI.Menu as libMenu
-import src.GUI.Widgets.Button as libButton
+from GUI.Menu import Menu
+from GUI.Widgets.Button import Button
 
 
-class MainMenu(libMenu.Menu):
+class MainMenu(Menu):
     def __init__(self, game):
-        libMenu.Menu.__init__(self, game)
+        Menu.__init__(self, game)
 
         self.__create_game_x: float = self.mid_w
         self.__create_game_y: float = self.mid_h + self.text_font_size
@@ -17,13 +17,13 @@ class MainMenu(libMenu.Menu):
         self.__quit_x: float = self.mid_w
         self.__quit_y: float = self.mid_h + self.text_font_size * 3
 
-        self.button_array = [libButton.Button(pos=(self.__create_game_x, self.__create_game_y),
+        self.button_array = [Button(pos=(self.__create_game_x, self.__create_game_y),
                                               label_text="PLAY", font=self.game.get_font(self.text_font_size),
                                               color="White", hovering_color="Green"),
-                             libButton.Button(pos=(self.__credits_x, self.__credits_y),
+                             Button(pos=(self.__credits_x, self.__credits_y),
                                               label_text="CREDITS", font=self.game.get_font(self.text_font_size),
                                               color="White", hovering_color="Green"),
-                             libButton.Button(pos=(self.__quit_x, self.__quit_y),
+                             Button(pos=(self.__quit_x, self.__quit_y),
                                               label_text="QUIT", font=self.game.get_font(self.text_font_size),
                                               color="White", hovering_color="Green")]
 

@@ -1,15 +1,15 @@
 import pygame
 from pygame.surface import Surface
 
-from src.GUI.CreditsMenu import CreditsMenu
-from src.GUI.PlayMenu import NewGameMenu
-from src.GUI.MainMenu import MainMenu
-from src.GUI.Menu import Menu
-from src.GUI.GamePlaying import GamePlaying
-from src.Utils.FontManager import FontManager
+from GUI.CreditsMenu import CreditsMenu
+from GUI.PlayMenu import NewGameMenu
+from GUI.MainMenu import MainMenu
+from GUI.Menu import Menu
+from GUI.GamePlaying import GamePlaying
+from Utils.FontManager import FontManager
 
 
-class Game:
+class GameWindow:
     def __init__(self):
         pygame.init()
         self.__running: bool = True
@@ -23,7 +23,7 @@ class Game:
 
         # TODO: Refactor fonts
         self.font_manager: FontManager = FontManager(
-            font_path='../resources/fonts/JUNGLE_ADVENTURER/JungleAdventurer.ttf')
+            font_path='resources/fonts/JUNGLE_ADVENTURER/JungleAdventurer.ttf')
 
         self.BLACK = (0, 0, 0)
         self.WHITE = (255, 255, 255)

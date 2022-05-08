@@ -1,5 +1,6 @@
-from src.network.server_listener import ServerListener
 from threading import Thread
+
+from network.server_listener import ServerListener
 
 
 class Server(Thread):

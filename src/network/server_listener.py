@@ -1,7 +1,7 @@
 from logging import info
 from socket import socket, AF_INET, SOCK_STREAM
 
-from src.network.connection import Connection
+from network.connection import Connection
 
 
 class ServerListener:
