@@ -50,3 +50,6 @@ class ServerListener:
         connection.settimeout(self.__timeout)
 
         return Connection(timeout=self.__timeout, sock=connection)
+
+    def get_port(self) -> int:
+        return self.__port

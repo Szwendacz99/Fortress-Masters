@@ -5,6 +5,8 @@ from threading import Lock
 
 from exceptions.network_exception import NetworkException
 from network.messages.basic_message import BasicMessage
+from network.messages.join_ack_message import JoinAckMessage
+from network.messages.join_message import JoinMessage
 
 MSG_SIZE_FIELD_LENGTH = 64
 BYTEORDER = 'little'
@@ -25,7 +27,7 @@ class Connection:
         if sock is not None:
             self.__socket: socket = sock
         else:
-            self.__socket = None
+            self.__socket: socket
             self.__connect(address, port)
 
         self.__sending_lock = Lock()
@@ -64,7 +66,7 @@ class Connection:
 
         debug(f"Sent: {sent_bytes + MSG_SIZE_FIELD_LENGTH} bytes")
 
-    def receive_data(self) -> BasicMessage:
+    def receive_data(self) -> [BasicMessage, JoinMessage, JoinAckMessage]:
         try:
             data_to_receive = int.from_bytes(self.__socket.recv(MSG_SIZE_FIELD_LENGTH), BYTEORDER)
             data = self.__socket.recv(data_to_receive)
@@ -81,6 +83,9 @@ class Connection:
 
     def get_timeout(self) -> float:
         return self.__timeout
+
+    def get_peer(self) -> str:
+        return self.__socket.getpeername()
 
     def disconnect(self):
         self.__socket.close()
