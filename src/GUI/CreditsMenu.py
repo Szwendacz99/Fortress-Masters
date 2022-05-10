@@ -16,9 +16,9 @@ class CreditsMenu(Menu):
         self.__c3y: float = self.mid_h + self.text_font_size * 3
 
         self.back_button = Button(pos=(self.game.get_window_width() / 2,
-                                self.game.get_window_height() / 2 - self.title_font_size),
-                         label_text="GO BACK", font=self.game.get_font(self.text_font_size),
-                         color="Red", hovering_color="Green")
+                                       self.game.get_window_height() / 2 - self.title_font_size),
+                                  label_text="GO BACK", font=self.game.get_font(self.text_font_size),
+                                  color="Red", hovering_color="Green")
 
     def display_menu(self):
         self.run_display = True

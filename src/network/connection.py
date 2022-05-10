@@ -5,7 +5,7 @@ from threading import Lock
 
 from exceptions.network_exception import NetworkException
 from network.messages.basic_message import BasicMessage
-from network.messages.join_ack_message import JoinAckMessage
+from network.messages.lobby_state_message import LobbyStateMessage
 from network.messages.join_message import JoinMessage
 
 MSG_SIZE_FIELD_LENGTH = 64
@@ -66,7 +66,7 @@ class Connection:
 
         debug(f"Sent: {sent_bytes + MSG_SIZE_FIELD_LENGTH} bytes")
 
-    def receive_data(self) -> [BasicMessage, JoinMessage, JoinAckMessage]:
+    def receive_data(self) -> [BasicMessage, JoinMessage, LobbyStateMessage]:
         try:
             data_to_receive = int.from_bytes(self.__socket.recv(MSG_SIZE_FIELD_LENGTH), BYTEORDER)
             data = self.__socket.recv(data_to_receive)

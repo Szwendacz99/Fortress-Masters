@@ -1,21 +1,25 @@
 from logging import debug, info
 from threading import Thread
 
-from Player import Player
+from core.lobby import Lobby
 from core.identity import Identity
+from core.message_receiver import MessageReceiver
+from core.player import Player
 from network.connection import Connection
 from network.messages.basic_message import BasicMessage
-from network.messages.join_ack_message import JoinAckMessage
+from network.messages.lobby_state_message import LobbyStateMessage
 from network.messages.join_message import JoinMessage
 from network.messages.message_type import MessageType
 from network.server_listener import ServerListener
 
 
-class Server(Thread):
+class Server(Thread, MessageReceiver):
+
     def __init__(self, port: int):
         super().__init__()
         self.__listener: ServerListener = ServerListener(port, 3)
-        self.__lobby_players: list[Player] = []
+        self.__lobby: Lobby = Lobby()
+        self.__lobby.start()
         self.__lobby_mode: bool = True
 
     def run(self):
@@ -35,8 +39,16 @@ class Server(Thread):
         :param identity: identity received from this plater
         :return:
         """
-        player = Player(identity)
+        player = Player(identity, self)
         player.set_connection(conn)
-        self.__lobby_players.append(player)
-        player.send_message(JoinAckMessage([p.get_identity() for p in self.__lobby_players]))
+        if not self.__lobby.add_player(player):
+            msg = BasicMessage(MessageType.LOBBY_FULL)
+            player.send_message(msg)
+            player.remove()
+        self.__lobby.add_player(player)
+        self.__lobby.broadcast(LobbyStateMessage(self.__lobby.get_identities()))
         info(f"Player {player.get_name()} has successfully joined the lobby!")
+
+    def receive(self, message: BasicMessage) -> bool:
+        debug("Server received mesage")
+        return True
