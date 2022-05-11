@@ -18,14 +18,14 @@ class MainMenu(Menu):
         self.__quit_y: float = self.mid_h + self.text_font_size * 3
 
         self.button_array = [Button(pos=(self.__create_game_x, self.__create_game_y),
-                                              label_text="PLAY", font=self.game.get_font(self.text_font_size),
-                                              color="White", hovering_color="Green"),
+                                    label_text="PLAY", font=self.game.get_font(self.text_font_size),
+                                    color="White", hovering_color="Green"),
                              Button(pos=(self.__credits_x, self.__credits_y),
-                                              label_text="CREDITS", font=self.game.get_font(self.text_font_size),
-                                              color="White", hovering_color="Green"),
+                                    label_text="CREDITS", font=self.game.get_font(self.text_font_size),
+                                    color="White", hovering_color="Green"),
                              Button(pos=(self.__quit_x, self.__quit_y),
-                                              label_text="QUIT", font=self.game.get_font(self.text_font_size),
-                                              color="White", hovering_color="Green")]
+                                    label_text="QUIT", font=self.game.get_font(self.text_font_size),
+                                    color="White", hovering_color="Green")]
 
     def display_menu(self):
         self.run_display = True

@@ -5,17 +5,21 @@ import pygame.mouse
 from GUI.Menu import Menu
 from GUI.Widgets.Button import Button
 from GUI.Widgets.TextInput import TextInput
-from Player import Player
+from core.client import Client
+from core.player import Player
 from core.identity import Identity
 from network.connection import Connection
-from network.messages.join_ack_message import JoinAckMessage
+from network.messages.lobby_state_message import LobbyStateMessage
 from network.messages.join_message import JoinMessage
-from network.server import Server
+from core.server import Server
 
 
 class NewGameMenu(Menu):
     def __init__(self, game):
         Menu.__init__(self, game)
+
+        self.__client: Client = None
+        self.__server: Server = None
 
         # TODO: ?Make input manager class
         self.INPUT_LETTERS = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
@@ -97,17 +101,14 @@ class NewGameMenu(Menu):
                     self.game.curr_menu.display_menu()
                 elif self.buttons[1].cursor_hovers(self.mouse_pos):
                     # TODO: Create lobby
-                    srv = Server(port=int(self.text_input_array[0].input_text))
-                    srv.start()
+                    self.__server = Server(port=int(self.text_input_array[0].input_text))
+                    self.__server.start()
                 elif self.buttons[2].cursor_hovers(self.mouse_pos):
                     # TODO: Join Lobby
-                    player = Player(identity=Identity(name=self.text_input_array[1].input_text))
-                    conn: Connection = Connection(address="127.0.0.1",
-                                                  port=int(self.text_input_array[0].input_text),
-                                                  timeout=5)
-                    conn.send_data(JoinMessage(player.get_identity()))
-                    response: JoinAckMessage = conn.receive_data()
-                    debug(f"Client received lobby list: {[p.get_name() for p in response.get_players()]}")
+                    self.__client = Client(username=self.text_input_array[1].input_text)
+                    self.__client.join_server(address="127.0.0.1",
+                                              port=int(self.text_input_array[0].input_text))
+
                     # Temporarily it will start the game
                     self.run_display = False
                     self.game.curr_menu = self.game.game_playing
