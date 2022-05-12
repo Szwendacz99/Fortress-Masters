@@ -45,7 +45,6 @@ class Server(Thread, MessageReceiver):
             msg = BasicMessage(MessageType.LOBBY_FULL)
             player.send_message(msg)
             player.remove()
-        self.__lobby.add_player(player)
         self.__lobby.broadcast(LobbyStateMessage(self.__lobby.get_identities()))
         info(f"Player {player.get_name()} has successfully joined the lobby!")
 
