@@ -42,6 +42,7 @@ class GameWindow:
                 self.__running = False
                 self.__playing = False
                 self.curr_menu.run_display = False
+                pygame.quit()
 
     def draw_text(self, text, size, x, y):
         font = pygame.font.Font(self.font_manager.font_path, size)

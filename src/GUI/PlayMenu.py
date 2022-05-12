@@ -58,6 +58,8 @@ class NewGameMenu(Menu):
                                                             input_label_color="WHITE")
                                                   ]
 
+        self.players: list[Identity] = []
+
     def display_menu(self):
         self.run_display = True
         while self.run_display:
@@ -66,6 +68,17 @@ class NewGameMenu(Menu):
 
             self.game.draw_text('Lobby', self.title_font_size, self.game.get_window_width() / 2,
                                 self.title_font_size * 3)
+
+            if len(self.players) > 0:
+                for i in range(len(self.players)):
+                    if i < 2:
+                        self.game.draw_text(self.players[i].get_username(), self.title_font_size,
+                                            self.game.get_window_width() / 4,
+                                            self.title_font_size * 5 + self.title_font_size * i)
+                    else:
+                        self.game.draw_text(self.players[i].get_username(), self.title_font_size,
+                                            3 * self.game.get_window_width() / 4,
+                                            self.title_font_size * 3 + self.title_font_size * i)
 
             for button in self.buttons:
                 button.update(self.game.get_display(), self.mouse_pos)
@@ -109,10 +122,17 @@ class NewGameMenu(Menu):
                     self.__client.join_server(address="127.0.0.1",
                                               port=int(self.text_input_array[0].input_text))
 
+                    if self.__client.get_lobby_list() is not None:
+                        players = self.__client.get_lobby_list()
+                        self.players.clear()
+                        for player in players:
+                            self.players.append(player)
+
+
                     # Temporarily it will start the game
-                    self.run_display = False
-                    self.game.curr_menu = self.game.game_playing
-                    self.game.curr_menu.display_menu()
+                    # self.run_display = False
+                    # self.game.curr_menu = self.game.game_playing
+                    # self.game.curr_menu.display_menu()
                 for text_input in self.text_input_array:
                     if text_input.cursor_hovers(self.mouse_pos):
                         text_input.set_clicked(True)
