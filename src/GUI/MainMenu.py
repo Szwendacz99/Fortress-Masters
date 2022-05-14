@@ -56,3 +56,4 @@ class MainMenu(Menu):
                     self.game.curr_menu.display_menu()
                 elif self.button_array[2].cursor_hovers(self.mouse_pos):
                     pygame.quit()
+                    quit(0)
