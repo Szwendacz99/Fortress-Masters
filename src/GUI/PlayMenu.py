@@ -32,13 +32,17 @@ class NewGameMenu(Menu):
                                              label_text="GO BACK", font=self.game.get_font(self.text_font_size),
                                              color="Red", hovering_color="Green"),
                                       Button(pos=(self.game.get_window_width() / 2,
-                                                  self.title_font_size * 9),
+                                                  self.title_font_size * 8),
                                              label_text="Create lobby", font=self.game.get_font(self.text_font_size),
                                              color="WHITE", hovering_color="Green"),
                                       Button(pos=(self.game.get_window_width() / 2,
-                                                  self.title_font_size * 10),
+                                                  self.title_font_size * 9),
                                              label_text="Join lobby", font=self.game.get_font(self.text_font_size),
-                                             color="WHITE", hovering_color="Green")
+                                             color="WHITE", hovering_color="Green"),
+                                      Button(pos=(self.game.get_window_width() / 2,
+                                                  self.title_font_size * 10),
+                                             label_text="Start game", font=self.game.get_font(self.text_font_size),
+                                             color="WHITE", hovering_color="Yellow", is_visible=False),
                                       ]
 
         self.text_input_array: list[TextInput] = [TextInput(pos=(self.mid_w, self.title_font_size * 6),
@@ -68,6 +72,13 @@ class NewGameMenu(Menu):
 
             self.game.draw_text('Lobby', self.title_font_size, self.game.get_window_width() / 2,
                                 self.title_font_size * 3)
+
+            if self.__client is not None:
+                if self.__client.get_lobby_list() is not None:
+                    players = self.__client.get_lobby_list()
+                    self.players.clear()
+                    for player in players:
+                        self.players.append(player)
 
             if len(self.players) > 0:
                 for i in range(len(self.players)):
@@ -116,23 +127,19 @@ class NewGameMenu(Menu):
                     # TODO: Create lobby
                     self.__server = Server(port=int(self.text_input_array[0].input_text))
                     self.__server.start()
+                    self.buttons[3].set_visible(True)
                 elif self.buttons[2].cursor_hovers(self.mouse_pos):
                     # TODO: Join Lobby
                     self.__client = Client(username=self.text_input_array[1].input_text)
                     self.__client.join_server(address="127.0.0.1",
                                               port=int(self.text_input_array[0].input_text))
 
-                    if self.__client.get_lobby_list() is not None:
-                        players = self.__client.get_lobby_list()
-                        self.players.clear()
-                        for player in players:
-                            self.players.append(player)
-
-
-                    # Temporarily it will start the game
-                    # self.run_display = False
-                    # self.game.curr_menu = self.game.game_playing
-                    # self.game.curr_menu.display_menu()
+                elif self.buttons[3].cursor_hovers(self.mouse_pos):
+                    # TODO: Send message to other clients, that game has started. Temporarily it will start the game.
+                    if len(self.players) == 4:
+                        self.run_display = False
+                        self.game.curr_menu = self.game.game_playing
+                        self.game.curr_menu.display_menu()
                 for text_input in self.text_input_array:
                     if text_input.cursor_hovers(self.mouse_pos):
                         text_input.set_clicked(True)
