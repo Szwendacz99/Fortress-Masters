@@ -1,4 +1,4 @@
-from logging import debug
+from logging import debug, error
 
 import pygame.mouse
 
@@ -20,6 +20,8 @@ class NewGameMenu(Menu):
 
         self.__client: Client = None
         self.__server: Server = None
+
+        self.__lobby_display_players: list[Identity] = []
 
         # TODO: ?Make input manager class
         self.INPUT_LETTERS = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
@@ -62,8 +64,6 @@ class NewGameMenu(Menu):
                                                             input_label_color="WHITE")
                                                   ]
 
-        self.players: list[Identity] = []
-
     def display_menu(self):
         self.run_display = True
         while self.run_display:
@@ -73,21 +73,19 @@ class NewGameMenu(Menu):
             self.game.draw_text('Lobby', self.title_font_size, self.game.get_window_width() / 2,
                                 self.title_font_size * 3)
 
-            if self.__client is not None:
-                if self.__client.get_lobby_list() is not None:
-                    players = self.__client.get_lobby_list()
-                    self.players.clear()
-                    for player in players:
-                        self.players.append(player)
+            if self.__server is not None and self.__server.is_alive():
+                self.__lobby_display_players = self.__server.get_lobby_list()
+            elif self.__client is not None:
+                self.__lobby_display_players = self.__client.get_lobby_list()
 
-            if len(self.players) > 0:
-                for i in range(len(self.players)):
+            if len(self.__lobby_display_players) > 0:
+                for i in range(len(self.__lobby_display_players)):
                     if i < 2:
-                        self.game.draw_text(self.players[i].get_username(), self.title_font_size,
+                        self.game.draw_text(self.__lobby_display_players[i].get_username(), self.title_font_size,
                                             self.game.get_window_width() / 4,
                                             self.title_font_size * 5 + self.title_font_size * i)
                     else:
-                        self.game.draw_text(self.players[i].get_username(), self.title_font_size,
+                        self.game.draw_text(self.__lobby_display_players[i].get_username(), self.title_font_size,
                                             3 * self.game.get_window_width() / 4,
                                             self.title_font_size * 3 + self.title_font_size * i)
 
@@ -125,18 +123,34 @@ class NewGameMenu(Menu):
                     self.game.curr_menu.display_menu()
                 elif self.buttons[1].cursor_hovers(self.mouse_pos):
                     # TODO: Create lobby
-                    self.__server = Server(port=int(self.text_input_array[0].input_text))
+                    if self.__server is not None and self.__server.is_alive():
+                        return
+                    self.__client = Client(username=self.text_input_array[1].input_text)
+                    try:
+                        self.__server = Server(port=int(self.text_input_array[0].input_text),
+                                               identity=self.__client.get_identity())
+                    except OSError as e:
+                        error(f"Cannot start server: {str(e)}")
+                        # TODO GUI inform that cannot start server because port is taken
+                        self.__server = None
                     self.__server.start()
+                    success: bool = self.__client.join_server(address="127.0.0.1",
+                                                              port=int(self.text_input_array[0].input_text))
+                    if not success:
+                        self.__client = None
                     self.buttons[3].set_visible(True)
                 elif self.buttons[2].cursor_hovers(self.mouse_pos):
                     # TODO: Join Lobby
                     self.__client = Client(username=self.text_input_array[1].input_text)
-                    self.__client.join_server(address="127.0.0.1",
-                                              port=int(self.text_input_array[0].input_text))
+                    success: bool = self.__client.join_server(address="127.0.0.1",
+                                                              port=int(self.text_input_array[0].input_text))
+                    if not success:
+                        self.__client = None
 
                 elif self.buttons[3].cursor_hovers(self.mouse_pos):
                     # TODO: Send message to other clients, that game has started. Temporarily it will start the game.
-                    if len(self.players) == 4:
+                    self.__server.start_game()
+                    if len(self.__lobby_display_players) == 4:
                         self.run_display = False
                         self.game.curr_menu = self.game.game_playing
                         self.game.curr_menu.display_menu()
