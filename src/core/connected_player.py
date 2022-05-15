@@ -1,4 +1,3 @@
-# TODO: Implement class Player
 from logging import error
 from threading import Thread
 from time import time
@@ -10,7 +9,7 @@ from network.messages.basic_message import BasicMessage
 from network.messages.lobby_state_message import LobbyStateMessage
 
 
-class Player(Thread):
+class ConnectedPlayer(Thread):
     def __init__(self, identity: Identity, msg_receiver: MessageReceiver):
         Thread.__init__(self)
         self.__identity: Identity = identity
