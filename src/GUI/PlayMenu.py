@@ -6,11 +6,7 @@ from GUI.Menu import Menu
 from GUI.Widgets.Button import Button
 from GUI.Widgets.TextInput import TextInput
 from core.client import Client
-from core.player import Player
 from core.identity import Identity
-from network.connection import Connection
-from network.messages.lobby_state_message import LobbyStateMessage
-from network.messages.join_message import JoinMessage
 from core.server import Server
 
 

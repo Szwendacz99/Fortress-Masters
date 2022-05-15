@@ -3,7 +3,7 @@ from threading import Thread, Lock
 from time import sleep, time
 
 from core.identity import Identity
-from core.player import Player
+from core.connected_player import ConnectedPlayer
 from network.messages.basic_message import BasicMessage
 from network.messages.lobby_state_message import LobbyStateMessage
 from network.messages.message_type import MessageType
@@ -12,12 +12,12 @@ from network.messages.message_type import MessageType
 class ServerGameThread(Thread):
     def __init__(self):
         Thread.__init__(self)
-        self.__team_blu: list[Player] = []
-        self.__team_red: list[Player] = []
+        self.__team_blu: list[ConnectedPlayer] = []
+        self.__team_red: list[ConnectedPlayer] = []
         self.__active = True
         self.__lock = Lock()
 
-    def add_player(self, player: Player) -> bool:
+    def add_player(self, player: ConnectedPlayer) -> bool:
         """
         Add player to lobby to first team that have place
         and return true if successful. If both teams full then
@@ -54,7 +54,7 @@ class ServerGameThread(Thread):
                 self.__disconnect(player=player)
                 continue
 
-    def __disconnect(self, player: Player):
+    def __disconnect(self, player: ConnectedPlayer):
         self.__lock.acquire()
         info(f"Disconnecting user \"{player.get_name()}\"")
         player.disconnect()

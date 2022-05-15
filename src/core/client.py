@@ -1,28 +1,33 @@
-from logging import debug, info
+from logging import debug, info, error
+from threading import Thread
+from time import time
 
-from core.message_receiver import MessageReceiver
-from core.player import Player
 from core.identity import Identity
 from network.connection import Connection
+from network.messages.basic_message import BasicMessage
 from network.messages.join_message import JoinMessage
 from network.messages.lobby_state_message import LobbyStateMessage
 from network.messages.message_type import MessageType
 
 
-class Client(MessageReceiver):
+class Client(Thread):
     def __init__(self, username: str):
-        self.__player: Player = Player(identity=Identity(username), msg_receiver=self)
+        Thread.__init__(self)
         self.lobby_list: list[Identity] = []
         self.__game_started: bool = False
+
+        self.__identity: Identity = Identity(username)
+        self.__connection: Connection = None
+        self.__last_msg_receive_time: float = time()
 
     def join_server(self, address: str, port: int) -> bool:
         try:
             conn: Connection = Connection(address=address,
                                           port=port,
                                           timeout=5)
-            conn.send_data(JoinMessage(self.__player.get_identity()))
-            self.__player.set_connection(conn)
-            self.__player.start()
+            conn.send_data(JoinMessage(self.get_identity()))
+            self.__connection = conn
+            self.start()
             return True
         except:
             return False
@@ -34,13 +39,31 @@ class Client(MessageReceiver):
             debug(f"Client received lobby list: {[p.get_username() for p in message.get_players()]}")
             self.lobby_list = message.get_players()
         elif message.get_type() == MessageType.HEARTBEAT:
-            self.__player.send_message(message)
+            self.send_message(message)
         elif message.get_type() == MessageType.GAME_START:
             info("Received info on game start!")
         return True
 
     def get_identity(self) -> Identity:
-        return self.__player.get_identity()
+        return self.__identity
 
     def get_lobby_list(self) -> list[Identity]:
         return self.lobby_list
+
+    def send_message(self, msg: [BasicMessage, LobbyStateMessage]):
+        self.__connection.send_data(msg)
+
+    def get_last_msg_receive_time(self) -> float:
+        return self.__last_msg_receive_time
+
+    def run(self) -> None:
+        while self.__connection.is_alive():
+            try:
+                self.receive(self.__connection.receive_data())
+            except:
+                error("Lost connection with server!")
+                self.__connection.disconnect()
+            self.__last_msg_receive_time = time()
+
+    def disconnect(self):
+        self.__connection.disconnect()

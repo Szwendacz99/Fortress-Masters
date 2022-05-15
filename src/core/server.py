@@ -1,10 +1,10 @@
 from logging import debug, info
 from threading import Thread
 
-from core.servergamethread import ServerGameThread
+from core.server_game_thread import ServerGameThread
 from core.identity import Identity
 from core.message_receiver import MessageReceiver
-from core.player import Player
+from core.connected_player import ConnectedPlayer
 from network.connection import Connection
 from network.messages.basic_message import BasicMessage
 from network.messages.lobby_state_message import LobbyStateMessage
@@ -21,8 +21,8 @@ class Server(Thread, MessageReceiver):
         self.__server_game_thread: ServerGameThread = ServerGameThread()
         self.__server_game_thread.start()
         self.__identity = identity
-        self.__team_blu: list[Player] = []
-        self.__team_red: list[Player] = []
+        self.__team_blu: list[ConnectedPlayer] = []
+        self.__team_red: list[ConnectedPlayer] = []
 
     def run(self):
         info(f"Started server lobby on port {self.__listener.get_port()}")
@@ -41,7 +41,7 @@ class Server(Thread, MessageReceiver):
         :param identity: identity received from this plater
         :return:
         """
-        player = Player(identity, self)
+        player = ConnectedPlayer(identity, self)
         player.set_connection(conn)
         if not self.__server_game_thread.add_player(player):
             msg = BasicMessage(MessageType.LOBBY_FULL)
