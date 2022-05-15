@@ -1,5 +1,6 @@
+from logging import info
 from threading import Thread, Lock
-from time import sleep
+from time import sleep, time
 
 from core.identity import Identity
 from core.player import Player
@@ -8,7 +9,7 @@ from network.messages.lobby_state_message import LobbyStateMessage
 from network.messages.message_type import MessageType
 
 
-class Lobby(Thread):
+class ServerGameThread(Thread):
     def __init__(self):
         Thread.__init__(self)
         self.__team_blu: list[Player] = []
@@ -24,6 +25,7 @@ class Lobby(Thread):
         :param player: new, connected player
         :return:
         """
+        player.start()
         if len(self.__team_red) < 2:
             self.__team_red.append(player)
             return True
@@ -32,26 +34,41 @@ class Lobby(Thread):
             return True
         return False
 
-    def broadcast(self, msg: LobbyStateMessage):
+    def broadcast(self, msg):
         self.__lock.acquire()
         for p in self.__team_blu+self.__team_red:
-            p.send_message(msg)
+            try:
+                p.send_message(msg)
+            except:
+                self.__lock.release()
+                self.__disconnect(p)
+                self.__lock.acquire()
         self.__lock.release()
 
     def get_identities(self) -> list[Identity]:
         return [p.get_identity() for p in self.__team_blu+self.__team_red]
 
-    def __broadcast_heartbeat(self):
+    def __check_for_disconnects(self):
+        for player in self.__team_blu + self.__team_red:
+            if (time() - player.get_last_msg_receive_time()) > 5:
+                self.__disconnect(player=player)
+                continue
+
+    def __disconnect(self, player: Player):
         self.__lock.acquire()
-
-        msg = BasicMessage(MessageType.HEARTBEAT)
-
-        for p in self.__team_blu + self.__team_red:
-            p.send_message(msg)
-
+        info(f"Disconnecting user \"{player.get_name()}\"")
+        player.disconnect()
+        if player in self.__team_blu:
+            self.__team_blu.remove(player)
+        else:
+            self.__team_red.remove(player)
         self.__lock.release()
+        self.broadcast(LobbyStateMessage(self.get_identities()))
 
     def run(self) -> None:
+        info("Starting lobby thread")
+        hb: BasicMessage = BasicMessage(MessageType.HEARTBEAT)
         while self.__active:
-            self.__broadcast_heartbeat()
+            self.__check_for_disconnects()
+            self.broadcast(hb)
             sleep(1)

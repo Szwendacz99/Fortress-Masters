@@ -1,4 +1,5 @@
 # TODO: Implement class Player
+from logging import error
 from threading import Thread
 from time import time
 
@@ -15,7 +16,7 @@ class Player(Thread):
         self.__identity: Identity = identity
         self.__connection: Connection = None
         self.__message_receiver: MessageReceiver = msg_receiver
-        self.__last_msg_receive_time = time()
+        self.__last_msg_receive_time: float = time()
 
     def get_name(self) -> str:
         return self.__identity.get_username()
@@ -29,10 +30,17 @@ class Player(Thread):
     def get_identity(self) -> Identity:
         return self.__identity
 
+    def get_last_msg_receive_time(self) -> float:
+        return self.__last_msg_receive_time
+
     def run(self) -> None:
         while self.__connection.is_alive():
-            self.__message_receiver.receive(self.__connection.receive_data())
+            try:
+                self.__message_receiver.receive(self.__connection.receive_data())
+            except:
+                error("Lost connection with server!")
+                self.__connection.disconnect()
             self.__last_msg_receive_time = time()
 
-    def remove(self):
+    def disconnect(self):
         self.__connection.disconnect()

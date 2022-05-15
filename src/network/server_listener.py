@@ -19,6 +19,7 @@ class ServerListener:
 
         self.__timeout = timeout
         self.__port = port
+        self.__active: bool = True
 
         self.__prepare_socket()
 
@@ -53,3 +54,10 @@ class ServerListener:
 
     def get_port(self) -> int:
         return self.__port
+
+    def is_active(self) -> bool:
+        return self.__active
+
+    def stop(self):
+        self.__socket.close()
+        self.__active = False

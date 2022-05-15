@@ -1,7 +1,7 @@
 from logging import debug, info
 from threading import Thread
 
-from core.lobby import Lobby
+from core.servergamethread import ServerGameThread
 from core.identity import Identity
 from core.message_receiver import MessageReceiver
 from core.player import Player
@@ -15,16 +15,18 @@ from network.server_listener import ServerListener
 
 class Server(Thread, MessageReceiver):
 
-    def __init__(self, port: int):
+    def __init__(self, port: int, identity: Identity):
         super().__init__()
         self.__listener: ServerListener = ServerListener(port, 3)
-        self.__lobby: Lobby = Lobby()
-        self.__lobby.start()
-        self.__lobby_mode: bool = True
+        self.__server_game_thread: ServerGameThread = ServerGameThread()
+        self.__server_game_thread.start()
+        self.__identity = identity
+        self.__team_blu: list[Player] = []
+        self.__team_red: list[Player] = []
 
     def run(self):
-        info(f"Started server on port {self.__listener.get_port()}")
-        while self.__lobby_mode:
+        info(f"Started server lobby on port {self.__listener.get_port()}")
+        while self.__listener.is_active():
             new_conn: Connection = self.__listener.receive_connection()
             debug(f"Received connection from {new_conn.get_peer()}")
             msg: [BasicMessage, JoinMessage] = new_conn.receive_data()
@@ -41,13 +43,22 @@ class Server(Thread, MessageReceiver):
         """
         player = Player(identity, self)
         player.set_connection(conn)
-        if not self.__lobby.add_player(player):
+        if not self.__server_game_thread.add_player(player):
             msg = BasicMessage(MessageType.LOBBY_FULL)
             player.send_message(msg)
-            player.remove()
-        self.__lobby.broadcast(LobbyStateMessage(self.__lobby.get_identities()))
+            player.disconnect()
+            return
+        self.__server_game_thread.broadcast(LobbyStateMessage(self.__server_game_thread.get_identities()))
         info(f"Player {player.get_name()} has successfully joined the lobby!")
 
     def receive(self, message: BasicMessage) -> bool:
         debug("Server received mesage")
         return True
+
+    def get_lobby_list(self) -> list[Identity]:
+        return self.__server_game_thread.get_identities()
+
+    def start_game(self):
+        self.__listener.stop()
+        msg: BasicMessage = BasicMessage(MessageType.GAME_START)
+        self.__server_game_thread.broadcast(msg)
