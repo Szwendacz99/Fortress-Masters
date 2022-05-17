@@ -52,7 +52,7 @@ class Connection:
         packed_msg = pickle.dumps(obj=data)
         msg_size = len(packed_msg)
 
-        debug(f"Sending data with size: {msg_size} bytes")
+        # debug(f"Sending data with size: {msg_size} bytes")
 
         bts = int.to_bytes(msg_size, MSG_SIZE_FIELD_LENGTH, BYTEORDER)
         sent_bytes = self.__socket.send(bts)
@@ -64,7 +64,7 @@ class Connection:
             raise NetworkException(message=f"Failed sending message size information, sent {sent_bytes}"
                                            f" out of {msg_size}", socket_reference=self.__socket)
 
-        debug(f"Sent: {sent_bytes + MSG_SIZE_FIELD_LENGTH} bytes")
+        # debug(f"Sent: {sent_bytes + MSG_SIZE_FIELD_LENGTH} bytes")
 
     def receive_data(self) -> [BasicMessage, JoinMessage, LobbyStateMessage]:
         try:
@@ -77,7 +77,7 @@ class Connection:
             raise NetworkException(message=f"Error on receiving, received only {len(data)}"
                                            f" out of {data_to_receive} bytes", socket_reference=self.__socket)
 
-        debug(f"Received {len(data)} bytes.")
+        # debug(f"Received {len(data)} bytes.")
 
         return pickle.loads(data)
 

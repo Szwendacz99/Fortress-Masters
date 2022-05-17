@@ -47,7 +47,7 @@ class NewGameMenu(Menu):
                                                             font=self.game.get_font(self.text_font_size), color="BLACK",
                                                             background_color="WHITE",
                                                             clicked_color="BLUE",
-                                                            input_text="127.",
+                                                            input_text="127.0.0.1",
                                                             input_label="ADDR: ",
                                                             input_label_color="WHITE"),
                                                   TextInput(pos=(self.mid_w, self.title_font_size * 7),
