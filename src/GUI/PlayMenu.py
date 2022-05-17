@@ -41,6 +41,10 @@ class NewGameMenu(Menu):
                                                   self.title_font_size * 11),
                                              label_text="Start game", font=self.game.get_font(self.text_font_size),
                                              color="WHITE", hovering_color="Yellow", is_visible=False),
+                                      Button(pos=(self.game.get_window_width() / 2,
+                                                  self.title_font_size * 11),
+                                             label_text="Demo", font=self.game.get_font(self.text_font_size//2),
+                                             color="WHITE", hovering_color="Yellow", is_visible=True),
                                       ]
 
         self.text_input_array: list[TextInput] = [TextInput(pos=(self.mid_w, self.title_font_size * 6),
@@ -158,6 +162,11 @@ class NewGameMenu(Menu):
                         self.run_display = False
                         self.game.curr_menu = self.game.game_playing
                         self.game.curr_menu.display_menu()
+                elif self.buttons[4].cursor_hovers(self.mouse_pos):
+                    # Demo start button
+                    self.run_display = False
+                    self.game.curr_menu = self.game.game_playing
+                    self.game.curr_menu.display_menu()
                 for text_input in self.text_input_array:
                     if text_input.cursor_hovers(self.mouse_pos):
                         text_input.set_clicked(True)
