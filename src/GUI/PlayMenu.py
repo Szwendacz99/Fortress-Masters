@@ -85,11 +85,11 @@ class NewGameMenu(Menu):
                 for i in range(len(self.__lobby_display_players)):
                     if i < 2:
                         self.game.draw_text(self.__lobby_display_players[i].get_username(), self.title_font_size,
-                                            self.game.get_window_width() / 4,
+                                            self.game.get_window_width() / 5,
                                             self.title_font_size * 5 + self.title_font_size * i)
                     else:
                         self.game.draw_text(self.__lobby_display_players[i].get_username(), self.title_font_size,
-                                            3 * self.game.get_window_width() / 4,
+                                            4 * self.game.get_window_width() / 5,
                                             self.title_font_size * 3 + self.title_font_size * i)
 
             for button in self.buttons:
