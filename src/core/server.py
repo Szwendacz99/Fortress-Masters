@@ -52,7 +52,7 @@ class Server(Thread, MessageReceiver):
         info(f"Player {player.get_name()} has successfully joined the lobby!")
 
     def receive(self, message: BasicMessage) -> bool:
-        debug("Server received mesage")
+        debug("Server received message")
         return True
 
     def get_lobby_list(self) -> list[Identity]:

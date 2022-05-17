@@ -33,7 +33,7 @@ class Client(Thread):
             return False
 
     def receive(self, message) -> bool:
-        debug("Client received mesage")
+        debug("Client received message")
         if message.get_type() == MessageType.LOBBY_STATE:
             message: LobbyStateMessage = message
             debug(f"Client received lobby list: {[p.get_username() for p in message.get_players()]}")
