@@ -136,6 +136,7 @@ class NewGameMenu(Menu):
                         error(f"Cannot start server: {str(e)}")
                         # TODO GUI inform that cannot start server because port is taken
                         self.__server = None
+                        return
                     self.__server.start()
                     success: bool = self.__client.join_server(address=self.text_input_array[0].input_text,
                                                               port=int(self.text_input_array[1].input_text))
