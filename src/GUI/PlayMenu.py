@@ -21,7 +21,7 @@ class NewGameMenu(Menu):
 
         # TODO: ?Make input manager class
         self.INPUT_LETTERS = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
-                              's', 't', 'u', 'v', 'w', 'x', 'y', 'z'}
+                              's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '.'}
 
         self.INPUT_KEYS = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'}
 
@@ -30,15 +30,15 @@ class NewGameMenu(Menu):
                                              label_text="GO BACK", font=self.game.get_font(self.text_font_size),
                                              color="Red", hovering_color="Green"),
                                       Button(pos=(self.game.get_window_width() / 2,
-                                                  self.title_font_size * 8),
+                                                  self.title_font_size * 9),
                                              label_text="Create lobby", font=self.game.get_font(self.text_font_size),
                                              color="WHITE", hovering_color="Green"),
                                       Button(pos=(self.game.get_window_width() / 2,
-                                                  self.title_font_size * 9),
+                                                  self.title_font_size * 10),
                                              label_text="Join lobby", font=self.game.get_font(self.text_font_size),
                                              color="WHITE", hovering_color="Green"),
                                       Button(pos=(self.game.get_window_width() / 2,
-                                                  self.title_font_size * 10),
+                                                  self.title_font_size * 11),
                                              label_text="Start game", font=self.game.get_font(self.text_font_size),
                                              color="WHITE", hovering_color="Yellow", is_visible=False),
                                       Button(pos=(self.game.get_window_width() / 2,
@@ -51,11 +51,18 @@ class NewGameMenu(Menu):
                                                             font=self.game.get_font(self.text_font_size), color="BLACK",
                                                             background_color="WHITE",
                                                             clicked_color="BLUE",
-                                                            input_text="1234",
+                                                            input_text="127.0.0.1",
+                                                            input_label="ADDR: ",
+                                                            input_label_color="WHITE"),
+                                                  TextInput(pos=(self.mid_w, self.title_font_size * 7),
+                                                            font=self.game.get_font(self.text_font_size), color="BLACK",
+                                                            background_color="WHITE",
+                                                            clicked_color="BLUE",
+                                                            input_text="4401",
                                                             input_label="PORT: ",
                                                             input_label_color="WHITE"),
 
-                                                  TextInput(pos=(self.mid_w, self.title_font_size * 7),
+                                                  TextInput(pos=(self.mid_w, self.title_font_size * 8),
                                                             font=self.game.get_font(self.text_font_size), color="BLACK",
                                                             background_color="WHITE",
                                                             clicked_color="BLUE",
@@ -82,11 +89,11 @@ class NewGameMenu(Menu):
                 for i in range(len(self.__lobby_display_players)):
                     if i < 2:
                         self.game.draw_text(self.__lobby_display_players[i].get_username(), self.title_font_size,
-                                            self.game.get_window_width() / 4,
+                                            self.game.get_window_width() / 5,
                                             self.title_font_size * 5 + self.title_font_size * i)
                     else:
                         self.game.draw_text(self.__lobby_display_players[i].get_username(), self.title_font_size,
-                                            3 * self.game.get_window_width() / 4,
+                                            4 * self.game.get_window_width() / 5,
                                             self.title_font_size * 3 + self.title_font_size * i)
 
             for button in self.buttons:
@@ -125,25 +132,26 @@ class NewGameMenu(Menu):
                     # TODO: Create lobby
                     if self.__server is not None and self.__server.is_alive():
                         return
-                    self.__client = Client(username=self.text_input_array[1].input_text)
+                    self.__client = Client(username=self.text_input_array[2].input_text)
                     try:
-                        self.__server = Server(port=int(self.text_input_array[0].input_text),
+                        self.__server = Server(port=int(self.text_input_array[1].input_text),
                                                identity=self.__client.get_identity())
                     except OSError as e:
                         error(f"Cannot start server: {str(e)}")
                         # TODO GUI inform that cannot start server because port is taken
                         self.__server = None
+                        return
                     self.__server.start()
-                    success: bool = self.__client.join_server(address="127.0.0.1",
-                                                              port=int(self.text_input_array[0].input_text))
+                    success: bool = self.__client.join_server(address=self.text_input_array[0].input_text,
+                                                              port=int(self.text_input_array[1].input_text))
                     if not success:
                         self.__client = None
                     self.buttons[3].set_visible(True)
                 elif self.buttons[2].cursor_hovers(self.mouse_pos):
                     # TODO: Join Lobby
-                    self.__client = Client(username=self.text_input_array[1].input_text)
-                    success: bool = self.__client.join_server(address="127.0.0.1",
-                                                              port=int(self.text_input_array[0].input_text))
+                    self.__client = Client(username=self.text_input_array[2].input_text)
+                    success: bool = self.__client.join_server(address=self.text_input_array[0].input_text,
+                                                              port=int(self.text_input_array[1].input_text))
                     if not success:
                         self.__client = None
 

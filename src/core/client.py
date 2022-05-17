@@ -3,6 +3,7 @@ from threading import Thread
 from time import time
 
 from core.identity import Identity
+from exceptions.network_exception import NetworkException
 from network.connection import Connection
 from network.messages.basic_message import BasicMessage
 from network.messages.join_message import JoinMessage
@@ -33,7 +34,8 @@ class Client(Thread):
             return False
 
     def receive(self, message) -> bool:
-        debug("Client received message")
+
+        # debug("Client received message")
         if message.get_type() == MessageType.LOBBY_STATE:
             message: LobbyStateMessage = message
             debug(f"Client received lobby list: {[p.get_username() for p in message.get_players()]}")
@@ -60,8 +62,8 @@ class Client(Thread):
         while self.__connection.is_alive():
             try:
                 self.receive(self.__connection.receive_data())
-            except:
-                error("Lost connection with server!")
+            except Exception as e:
+                error(f"Lost connection with server: {str(e)}")
                 self.__connection.disconnect()
             self.__last_msg_receive_time = time()
 
