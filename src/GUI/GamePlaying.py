@@ -47,6 +47,9 @@ class GamePlaying(Menu):
     def check_input(self):
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    quit()
                 pass
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 self.__units.append(Unit(self.game, self.mouse_pos))

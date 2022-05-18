@@ -41,8 +41,8 @@ class NewGameMenu(Menu):
                                                   self.title_font_size * 11),
                                              label_text="Start game", font=self.game.get_font(self.text_font_size),
                                              color="WHITE", hovering_color="Yellow", is_visible=False),
-                                      Button(pos=(self.game.get_window_width() / 2,
-                                                  self.title_font_size * 11),
+                                      Button(pos=(3 * self.game.get_window_width() / 4,
+                                                  self.title_font_size * 10),
                                              label_text="Demo", font=self.game.get_font(self.text_font_size//2),
                                              color="WHITE", hovering_color="Yellow", is_visible=True),
                                       ]
