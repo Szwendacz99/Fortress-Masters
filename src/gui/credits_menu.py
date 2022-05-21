@@ -1,7 +1,7 @@
 import pygame
 
-from GUI.Menu import Menu
-from GUI.Widgets.Button import Button
+from gui.menu import Menu
+from gui.widgets.button import Button
 
 
 class CreditsMenu(Menu):

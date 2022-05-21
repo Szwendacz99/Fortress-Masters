@@ -5,7 +5,7 @@ import math
 
 from pygame.rect import Rect
 from pygame.surface import Surface
-from Utils.Building import Building
+from game.building import Building
 from pygame.math import Vector2
 
 

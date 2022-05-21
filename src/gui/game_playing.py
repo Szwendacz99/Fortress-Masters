@@ -2,12 +2,11 @@ import pygame
 import pygame.mouse
 import os
 
-from pygame.rect import Rect
 from pygame.surface import Surface
 
-from GUI.Menu import Menu
-from Utils.Building import Building
-from Utils.Unit import Unit
+from gui.menu import Menu
+from game.building import Building
+from game.unit import Unit
 
 
 class GamePlaying(Menu):
