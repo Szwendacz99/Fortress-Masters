@@ -21,6 +21,7 @@ class Button(libWidget.Widget):
             else:
                 self.text = self.font.render(self.label_text, True, self.color)
 
+
             screen.blit(self.text, self.rect)
 
     def cursor_hovers(self, mouse_position: tuple):

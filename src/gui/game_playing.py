@@ -7,6 +7,7 @@ from pygame.surface import Surface
 from gui.menu import Menu
 from game.building import Building
 from game.unit import Unit
+from game.unit_selection_button import UnitSelectionButton
 
 
 class GamePlaying(Menu):
@@ -23,6 +24,8 @@ class GamePlaying(Menu):
         self.__x0: int = self.mid_w - self.__background_img.get_width() // 2
         self.create_buildings()
 
+        self.selectionButton = UnitSelectionButton(self.game.get_window_width()/2, self.game.get_window_height()/2, pygame.image.load('resources/img/spaceship-selection.png'), 1)
+
     def display_menu(self):
         clock = pygame.time.Clock()
         self.run_display = True
@@ -30,6 +33,7 @@ class GamePlaying(Menu):
             self.mouse_pos = pygame.mouse.get_pos()
             clock.tick(self.__fps)
             self.draw()
+            self.selectionButton.update(self.game.get_display())
             self.check_input()
             self.game.check_events()
             self.blit_screen()
