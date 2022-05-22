@@ -2,12 +2,12 @@ import pygame
 import pygame.mouse
 import os
 
-from pygame.rect import Rect
 from pygame.surface import Surface
 
-from GUI.Menu import Menu
-from Utils.Building import Building
-from Utils.Unit import Unit
+from gui.menu import Menu
+from game.building import Building
+from game.unit import Unit
+from game.unit_selection_bar import UnitSelectionBar
 
 
 class GamePlaying(Menu):
@@ -24,6 +24,9 @@ class GamePlaying(Menu):
         self.__x0: int = self.mid_w - self.__background_img.get_width() // 2
         self.create_buildings()
 
+        self.__unit_selection_bar = UnitSelectionBar(game, self.game.get_window_width()/2 + 564/2, self.game.get_window_height()/10)
+
+
     def display_menu(self):
         clock = pygame.time.Clock()
         self.run_display = True
@@ -31,6 +34,9 @@ class GamePlaying(Menu):
             self.mouse_pos = pygame.mouse.get_pos()
             clock.tick(self.__fps)
             self.draw()
+
+            self.__unit_selection_bar.update()
+
             self.check_input()
             self.game.check_events()
             self.blit_screen()
@@ -52,7 +58,17 @@ class GamePlaying(Menu):
                     quit()
                 pass
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                self.__units.append(Unit(self.game, self.mouse_pos))
+                bar_clicked = False
+
+                selection_buttons = self.__unit_selection_bar.get_selection_buttons()
+                for button in selection_buttons:
+                    if button.cursor_hovers(mouse_position=self.mouse_pos):
+                        for button_1 in selection_buttons:
+                            button_1.set_clicked(False)
+                        button.set_clicked(True)
+                        bar_clicked = True
+                if not bar_clicked:
+                    self.__units.append(Unit(self.game, self.mouse_pos))
 
     def create_buildings(self):
         self.__buildings.append(Building(True, 0))

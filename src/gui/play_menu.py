@@ -2,9 +2,9 @@ from logging import debug, error
 
 import pygame.mouse
 
-from GUI.Menu import Menu
-from GUI.Widgets.Button import Button
-from GUI.Widgets.TextInput import TextInput
+from gui.menu import Menu
+from gui.widgets.button import Button
+from gui.widgets.text_input import TextInput
 from core.client import Client
 from core.identity import Identity
 from core.server import Server
@@ -138,7 +138,7 @@ class NewGameMenu(Menu):
                                                identity=self.__client.get_identity())
                     except OSError as e:
                         error(f"Cannot start server: {str(e)}")
-                        # TODO GUI inform that cannot start server because port is taken
+                        # TODO gui inform that cannot start server because port is taken
                         self.__server = None
                         return
                     self.__server.start()

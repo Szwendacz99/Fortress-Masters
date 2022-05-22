@@ -1,6 +1,6 @@
 import pygame
 
-import GUI.Widgets.Widget as libWidget
+import gui.widgets.widget as libWidget
 
 
 class Button(libWidget.Widget):
@@ -20,6 +20,7 @@ class Button(libWidget.Widget):
                 self.text = self.font.render(self.label_text, True, self.hovering_color)
             else:
                 self.text = self.font.render(self.label_text, True, self.color)
+
 
             screen.blit(self.text, self.rect)
 
