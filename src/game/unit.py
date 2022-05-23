@@ -9,53 +9,66 @@ from game.building import Building
 from pygame.math import Vector2
 
 
-class Unit:
-    __x0: int = 0
-    __bg_width: int = 564
-    __rect: Rect = None
-    __vector: pygame.Vector2 = pygame.Vector2(0, 0)
-    __target = None
-    __target_in_atk_range: bool = False
-    __seeing_range: int = 50
+def img_load(path, size):
+    return pygame.transform.scale(pygame.image.load(
+        os.path.normpath(path)), (size, size)).convert_alpha()
 
-    def __init__(self, game, start_pos, speed: int = 2, atk_range: int = 20, team: int = 0, left: bool = True):
-        self.__angle: int = 0
-        self.__speed: int = speed
-        self.__atk_range: int = atk_range
+
+class Unit:
+
+    def __init__(self, game, start_pos, speed: float = 0.3, atk_range: int = 60, team: int = 0, left: bool = True):
+        self.__game = game
         self.__team: int = team
         self.__left: bool = left
+        # stats of unit
+        # TODO add hp, attack speed
+        self.__speed: float = speed
+        self.__atk_range: int = atk_range
+        self.__atk_speed: float = 0
+        self.__seeing_range: int = 200
+
         self.__img_size: int = 50
+        self.__rect: Rect = None
         self.__pos: pygame.math.Vector2 = pygame.math.Vector2(start_pos)
-        self.__game = game
+        self.__vector: pygame.Vector2 = pygame.Vector2(0, 0)
+        self.__angle: float = 0
 
-        self.__img: Surface = pygame.transform.scale(pygame.image.load(
-            os.path.normpath('resources/img/spaceship.png')), (self.__img_size, self.__img_size))
+        self.__target = None
+        self.__target_in_atk_range: bool = False
 
+        self.__img: Surface = img_load('resources/img/spaceship.png', self.__img_size)
+        if team == 1:
+            self.__img = pygame.transform.rotate(self.__img, 180)
         self.__rect: Rect = pygame.Rect(self.get_x(), self.get_y(), self.__img_size, self.h(self.__img_size, game))
 
-    def find_target(self, buildings: list[Building], units: list, player_team):
-        current_closest_target_dist = 9999999
-        current_closest_target = None
-        current_target_in_atk_range: bool = False
-        current_vector: pygame.math.Vector2 = pygame.math.Vector2(0, 0)
+    def find_target(self, buildings: list[Building], units: list['Unit']):
         if self.__target is not None and self.__target_in_atk_range:
             # TODO attack enemy
-            # self.attack(self.__target)
-            pass
-        else:
+            """ for unit in units:
+                if unit == self:
+                    units.remove(unit)
             for building in buildings:
-                if building.get_team() != player_team:
-                    dist_to_building = self.rect_dist(building.get_rect())
+                if building.get_target() == self:
+                    building.set_target(None)
+            """
+            pass
+
+        else:
+            current_closest_target_dist = 9999999
+            current_closest_target = None
+            current_target_in_atk_range: bool = False
+            for building in buildings:
+                if building.get_team() != self.__team:
+                    dist_to_building = self.calc_dist(building) - building.get_size()/2
                     if dist_to_building <= current_closest_target_dist:
                         current_closest_target = building
                         current_closest_target_dist = dist_to_building
-                        print(current_closest_target_dist)
                         if dist_to_building < self.__atk_range:
                             current_target_in_atk_range = True
 
             for unit in units:
-                if unit.get_team() != player_team:
-                    dist_to_unit = self.unit_dist(unit)
+                if unit.get_team() != self.__team:
+                    dist_to_unit = self.calc_dist(unit)
                     if dist_to_unit <= current_closest_target_dist and dist_to_unit <= self.__seeing_range:
                         current_closest_target = unit
                         current_closest_target_dist = dist_to_unit
@@ -69,55 +82,30 @@ class Unit:
     def move(self):
         if not self.__target_in_atk_range:
             self.__pos += self.__vector
-            self.__rect.x += self.get_x()
-            self.__rect.y += self.get_y()
+            self.__rect.x += self.__vector.x
+            self.__rect.y += self.__vector.y
 
     def draw(self):
-        self.__game.get_display().blit(self.__img,
+        # TODO rotate img
+        temp = pygame.transform.rotate(self.__img, self.__angle)
+        self.__game.get_display().blit(temp,
                                        (self.get_x() - self.__img.get_width() // 2,
                                         self.get_y() - self.__img.get_height() // 2))
 
-    def action(self, buildings, units, player_team):
-        self.find_target(buildings, units, player_team)
+    def action(self, buildings, units):
+        self.find_target(buildings, units)
         self.move()
         self.draw()
 
     def calc_vector(self, target):
-        print(target.__class__.__name__)
         self.__vector = pygame.math.Vector2(target.get_x() - self.get_x(), target.get_y() - self.get_y())
-        pygame.math.Vector2.scale_to_length(self.__vector, self.__speed)
-        print(self.__vector)
+        if self.__vector:
+            pygame.math.Vector2.scale_to_length(self.__vector, self.__speed)
+        # get angle between vector of going straight up and our vector
+        self.__angle = self.__vector.angle_to(pygame.math.Vector2(0, -1))
 
-    def unit_dist(self, unit):
+    def calc_dist(self, unit):
         return math.hypot(self.get_x() - unit.get_x(), self.get_y() - unit.get_y())
-
-    def rect_dist(self, rect):
-        x1, y1 = self.__rect.topleft
-        x1b, y1b = self.__rect.bottomright
-        x2, y2 = rect.topleft
-        x2b, y2b = rect.bottomright
-        left = x2b < x1
-        right = x1b < x2
-        top = y2b < y1
-        bottom = y1b < y2
-        if bottom and left:
-            return math.hypot(x2b - x1, y2 - y1b)
-        elif left and top:
-            return math.hypot(x2b - x1, y2b - y1)
-        elif top and right:
-            return math.hypot(x2 - x1b, y2b - y1)
-        elif right and bottom:
-            return math.hypot(x2 - x1b, y2 - y1b)
-        elif left:
-            return x1 - x2b
-        elif right:
-            return x2 - x1b
-        elif top:
-            return y1 - y2b
-        elif bottom:
-            return y2 - y1b
-        else:
-            return 0.
 
     # Normalizes given height to match the background scaled down to user's screen
     def h(self, h: int, game):
