@@ -1,7 +1,7 @@
 import pygame
 
-import GameWindow as libGame
-from Utils.FontManager import FontManager
+import game_window as libGame
+from utils.font_manager import FontManager
 
 
 class Menu:

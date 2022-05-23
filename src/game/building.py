@@ -7,7 +7,7 @@ from pygame.rect import Rect
 from pygame.surface import Surface
 
 
-def img_load(path, size, angle = 0):
+def img_load(path, size, angle=0):
     if angle:
         return pygame.transform.rotate(pygame.transform.scale(
             pygame.image.load(os.path.normpath(path)), (size, size)), angle)
@@ -53,7 +53,7 @@ class Building:
         else:
             for unit in units:
                 if unit.get_team() != self.__team:
-                    dist_to_unit = self.calc_dist(unit) - self.get_size()/2
+                    dist_to_unit = self.calc_dist(unit) - self.get_size() / 2
                     if dist_to_unit <= current_closest_target_dist and dist_to_unit <= self.__atk_range:
                         current_closest_target = unit
                         current_closest_target_dist = dist_to_unit
@@ -70,11 +70,11 @@ class Building:
         # Displaying blue turret
         if self.__team == player_team:
             temp = pygame.transform.rotate(self.__blue_img, self.__angle)
-            game.get_display().blit(temp, (self.__x-temp.get_width()//2, self.__y-temp.get_height()//2))
+            game.get_display().blit(temp, (self.__x - temp.get_width() // 2, self.__y - temp.get_height() // 2))
         # Displaying red turret
         else:
-            temp = pygame.transform.rotate(self.__red_img, 180+self.__angle)
-            game.get_display().blit(temp, (self.__x-temp.get_width()//2, self.__y-temp.get_height()//2))
+            temp = pygame.transform.rotate(self.__red_img, 180 + self.__angle)
+            game.get_display().blit(temp, (self.__x - temp.get_width() // 2, self.__y - temp.get_height() // 2))
 
     def action(self, game, units, player_team: int = 0):
         self.find_target(units)

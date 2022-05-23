@@ -1,12 +1,12 @@
 import pygame
 from pygame.surface import Surface
 
-from GUI.CreditsMenu import CreditsMenu
-from GUI.PlayMenu import NewGameMenu
-from GUI.MainMenu import MainMenu
-from GUI.Menu import Menu
-from GUI.GamePlaying import GamePlaying
-from Utils.FontManager import FontManager
+from gui.credits_menu import CreditsMenu
+from gui.play_menu import NewGameMenu
+from gui.main_menu import MainMenu
+from gui.menu import Menu
+from gui.game_playing import GamePlaying
+from utils.font_manager import FontManager
 
 
 class GameWindow:

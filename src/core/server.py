@@ -1,10 +1,11 @@
-from logging import debug, info
+from logging import info, warning
 from threading import Thread
 
 from core.server_game_thread import ServerGameThread
 from core.identity import Identity
 from core.message_receiver import MessageReceiver
 from core.connected_player import ConnectedPlayer
+from exceptions.network_exception import NetworkException
 from network.connection import Connection
 from network.messages.basic_message import BasicMessage
 from network.messages.lobby_state_message import LobbyStateMessage
@@ -27,12 +28,22 @@ class Server(Thread, MessageReceiver):
     def run(self):
         info(f"Started server lobby on port {self.__listener.get_port()}")
         while self.__listener.is_active():
-            new_conn: Connection = self.__listener.receive_connection()
-            debug(f"Received connection from {new_conn.get_peer()}")
-            msg: [BasicMessage, JoinMessage] = new_conn.receive_data()
-            if msg.get_type() == MessageType.JOIN:
-                msg: JoinMessage = msg
-                self.add_new_player(conn=new_conn, identity=msg.get_identity())
+            try:
+                self.recv_connection_from_player()
+            except NetworkException as e:
+                warning(f"Client failed to join the server: {str(e)}")
+
+    def recv_connection_from_player(self):
+        """
+        receive connection and identity from plater, and
+        add the player to lobby
+        :return:
+        """
+        new_conn: Connection = self.__listener.receive_connection()
+        msg: [BasicMessage, JoinMessage] = new_conn.receive_data()
+        if msg.get_type() == MessageType.JOIN:
+            msg: JoinMessage = msg
+            self.add_new_player(conn=new_conn, identity=msg.get_identity())
 
     def add_new_player(self, conn: Connection, identity: Identity):
         """
@@ -52,7 +63,8 @@ class Server(Thread, MessageReceiver):
         info(f"Player {player.get_name()} has successfully joined the lobby!")
 
     def receive(self, message: BasicMessage) -> bool:
-        debug("Server received message")
+
+        # debug("Server received message")
         return True
 
     def get_lobby_list(self) -> list[Identity]:

@@ -60,7 +60,7 @@ class ServerGameThread(Thread):
         player.disconnect()
         if player in self.__team_blu:
             self.__team_blu.remove(player)
-        else:
+        elif player in self.__team_red:
             self.__team_red.remove(player)
         self.__lock.release()
         self.broadcast(LobbyStateMessage(self.get_identities()))
