@@ -35,7 +35,7 @@ class UnitSelectionBar:
         for button in self.__selection_buttons:
             button.update(self.game.get_display())
 
-    def get_selected_unit(self) -> UnitType:
+    def get_selected_unit_type(self) -> UnitType:
         for button in self.__selection_buttons:
             if button.is_clicked():
                 return button.get_unit_type()
