@@ -25,6 +25,7 @@ class Building:
         self.__game = game
         self.__team: int = team
         self.__left: bool = left
+
         # big turret or small one
         self.__big: bool = big
         self.__x = None
@@ -35,7 +36,7 @@ class Building:
         else:
             self.__full_hp: int = 1500
         self.__hp: int = self.__full_hp
-        self.__atk_range: int = 150
+        self.__atk_range: int = 125
         self.__atk_damage: int = 75
         self.__atk_speed: int = 60
         self.__cooldown: int = self.__atk_speed
@@ -90,6 +91,8 @@ class Building:
             self.__game.get_display().blit(temp, (self.__x - temp.get_width() // 2, self.__y - temp.get_height() // 2))
         # Displaying red turret
         else:
+            if self.__angle == 0:
+                self.__angle = 180
             temp = pygame.transform.rotate(self.__red_img, 180 + self.__angle)
             self.__game.get_display().blit(temp, (self.__x - temp.get_width() // 2, self.__y - temp.get_height() // 2))
 

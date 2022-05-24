@@ -12,9 +12,9 @@ from game.unit_selection_bar import UnitSelectionBar
 
 
 class GamePlaying(Menu):
-    __buildings: list[Building] = []
-    __units: list[Unit] = []
-    __bullets: list[Bullet] = []
+    buildings: list[Building] = []
+    units: list[Unit] = []
+    bullets: list[Bullet] = []
 
     def __init__(self, game):
         Menu.__init__(self, game)
@@ -28,6 +28,10 @@ class GamePlaying(Menu):
 
         self.__unit_selection_bar = UnitSelectionBar(game, self.game.get_window_width() / 2 + 564 / 2,
                                                      self.game.get_window_height() / 10)
+
+    def resize(self):
+        self.__background_img: Surface = pygame.transform.scale(pygame.image.load(
+            os.path.normpath('resources/img/map_bg.png')), (564, self.game.get_window_height())).convert()
 
     def display_menu(self):
         clock = pygame.time.Clock()
@@ -48,12 +52,12 @@ class GamePlaying(Menu):
         self.game.get_display().blit(self.__background_img,
                                      (self.mid_w - self.__background_img.get_width() // 2, 0))
 
-        for building in self.__buildings:
-            building.action(self.__units, self.__bullets, self.__player_team)
-        for bullet in self.__bullets:
-            bullet.action(self.__bullets, self.__player_team)
-        for unit in self.__units:
-            unit.action(self.__buildings, self.__units, self.__bullets, self.__player_team)
+        for building in self.buildings:
+            building.action(self.units, self.bullets, self.__player_team)
+        for bullet in self.bullets:
+            bullet.action(self.bullets, self.__player_team)
+        for unit in self.units:
+            unit.action(self.buildings, self.units, self.bullets, self.__player_team)
 
     def check_input(self):
         for event in pygame.event.get():
@@ -75,18 +79,18 @@ class GamePlaying(Menu):
                 if not bar_clicked:
                     # TODO send message to server that unit is being placed
                     if event.button == 1 or event.button == 5:
-                        self.__units.append(Unit(self.game, self.mouse_pos))
+                        self.units.append(Unit(self.game, self.mouse_pos))
                     else:
-                        self.__units.append(Unit(self.game, self.mouse_pos, team=1))
+                        self.units.append(Unit(self.game, self.mouse_pos, team=1))
 
     def create_buildings(self):
-        self.__buildings.append(Building(self.game, True, 0))
-        self.__buildings.append(Building(self.game, True, 0, False))
-        self.__buildings.append(Building(self.game, True, 1))
-        self.__buildings.append(Building(self.game, True, 1, False))
-        self.__buildings.append(Building(self.game, False, 0))
-        self.__buildings.append(Building(self.game, False, 0, False))
-        self.__buildings.append(Building(self.game, False, 1))
-        self.__buildings.append(Building(self.game, False, 1, False))
-        for building in self.__buildings:
+        self.buildings.append(Building(self.game, True, 0))
+        self.buildings.append(Building(self.game, True, 0, False))
+        self.buildings.append(Building(self.game, True, 1))
+        self.buildings.append(Building(self.game, True, 1, False))
+        self.buildings.append(Building(self.game, False, 0))
+        self.buildings.append(Building(self.game, False, 0, False))
+        self.buildings.append(Building(self.game, False, 1))
+        self.buildings.append(Building(self.game, False, 1, False))
+        for building in self.buildings:
             building.set_coordinates(self.__player_team, self.__x0)

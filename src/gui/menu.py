@@ -7,9 +7,7 @@ from utils.font_manager import FontManager
 class Menu:
     def __init__(self, game):
 
-        font_manager: FontManager = FontManager()
-        self.title_font_size: int = font_manager.get_title_font_size()
-        self.text_font_size: int = font_manager.get_regular_font_size()
+        self.font_manager: FontManager = FontManager()
 
         self.mouse_pos: tuple = None
 
@@ -17,6 +15,13 @@ class Menu:
         self.mid_w: float = self.game.get_window_width() / 2
         self.mid_h: float = self.game.get_window_height() / 2
         self.run_display: bool = True
+
+    def resize(self):
+        self.font_manager.set_title_font_size(int(self.game.get_window_height()/10))
+        self.font_manager.set_regular_font_size(int(self.game.get_window_height()/20))
+        self.mid_w: float = self.game.get_window_width() / 2
+        self.mid_h: float = self.game.get_window_height() / 2
+        print('hey ydas')
 
     def blit_screen(self):
         self.game.get_display().blit(self.game.get_display(), (0, 0))

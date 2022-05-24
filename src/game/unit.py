@@ -41,7 +41,7 @@ class Unit:
         self.__target_in_atk_range: bool = False
 
         self.__alive: bool = True
-        self.__opacity: int = 244
+        self.__opacity: int = 253
 
         self.__pos: pygame.math.Vector2 = pygame.math.Vector2(start_pos)
         self.__vector: pygame.Vector2 = pygame.Vector2(0, 0)
