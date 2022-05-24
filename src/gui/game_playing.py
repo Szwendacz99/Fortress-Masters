@@ -7,12 +7,14 @@ from pygame.surface import Surface
 from gui.menu import Menu
 from game.building import Building
 from game.unit import Unit
+from game.bullet import Bullet
 from game.unit_selection_bar import UnitSelectionBar
 
 
 class GamePlaying(Menu):
     __buildings: list[Building] = []
     __units: list[Unit] = []
+    __bullets: list[Bullet] = []
 
     def __init__(self, game):
         Menu.__init__(self, game)
@@ -45,10 +47,13 @@ class GamePlaying(Menu):
         self.game.get_display().fill(self.game.BLACK)
         self.game.get_display().blit(self.__background_img,
                                      (self.mid_w - self.__background_img.get_width() // 2, 0))
+
         for building in self.__buildings:
-            building.action(self.game, self.__units, self.__player_team)
+            building.action(self.__units, self.__bullets, self.__player_team)
+        for bullet in self.__bullets:
+            bullet.action(self.__bullets, self.__player_team)
         for unit in self.__units:
-            unit.action(self.__buildings, self.__units)
+            unit.action(self.__buildings, self.__units, self.__bullets, self.__player_team)
 
     def check_input(self):
         for event in pygame.event.get():
@@ -75,14 +80,13 @@ class GamePlaying(Menu):
                         self.__units.append(Unit(self.game, self.mouse_pos, team=1))
 
     def create_buildings(self):
-
-        self.__buildings.append(Building(True, 0))
-        self.__buildings.append(Building(True, 0, False))
-        self.__buildings.append(Building(True, 1))
-        self.__buildings.append(Building(True, 1, False))
-        self.__buildings.append(Building(False, 0))
-        self.__buildings.append(Building(False, 0, False))
-        self.__buildings.append(Building(False, 1))
-        self.__buildings.append(Building(False, 1, False))
+        self.__buildings.append(Building(self.game, True, 0))
+        self.__buildings.append(Building(self.game, True, 0, False))
+        self.__buildings.append(Building(self.game, True, 1))
+        self.__buildings.append(Building(self.game, True, 1, False))
+        self.__buildings.append(Building(self.game, False, 0))
+        self.__buildings.append(Building(self.game, False, 0, False))
+        self.__buildings.append(Building(self.game, False, 1))
+        self.__buildings.append(Building(self.game, False, 1, False))
         for building in self.__buildings:
-            building.set_coordinates(self.game, self.__player_team, self.__x0)
+            building.set_coordinates(self.__player_team, self.__x0)
