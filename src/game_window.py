@@ -2,7 +2,7 @@ import pygame
 from pygame.surface import Surface
 
 from gui.credits_menu import CreditsMenu
-from gui.play_menu import NewGameMenu
+from gui.play_menu import PlayMenu
 from gui.main_menu import MainMenu
 from gui.menu import Menu
 from gui.game_playing import GamePlaying
@@ -10,6 +10,8 @@ from utils.font_manager import FontManager
 
 
 class GameWindow:
+    menus: list[Menu] = []
+
     def __init__(self):
         pygame.init()
         self.__running: bool = True
@@ -18,7 +20,7 @@ class GameWindow:
         self.__window_width: int = pygame.display.Info().current_w
         self.__window_height: int = pygame.display.Info().current_h
 
-        self.__display: Surface = pygame.display.set_mode((self.__window_width, self.__window_height))
+        self.__display: Surface = pygame.display.set_mode((self.__window_width, self.__window_height), pygame.RESIZABLE)
         # self.__font_name: str = '../resources/fonts/8-BIT WONDER.TTF'
 
         # TODO: Refactor fonts
@@ -31,18 +33,46 @@ class GameWindow:
         pygame.mouse.set_visible(True)
 
         self.main_menu: MainMenu = MainMenu(self)
+        self.menus.append(self.main_menu)
         self.credits: CreditsMenu = CreditsMenu(self)
-        self.new_game: NewGameMenu = NewGameMenu(self)
+        self.menus.append(self.credits)
+        self.new_game: PlayMenu = PlayMenu(self)
+        self.menus.append(self.new_game)
         self.game_playing: GamePlaying = GamePlaying(self)
+        self.menus.append(self.game_playing)
+
         self.curr_menu: Menu = self.main_menu
 
     def check_events(self):
+
+        if self.__window_width != pygame.display.Info().current_w or self.__window_height != pygame.display.Info().current_h:
+            self.__window_width = pygame.display.Info().current_w
+            self.__window_height = pygame.display.Info().current_h
+            self.__display = pygame.display.set_mode((self.__window_width, self.__window_height), pygame.RESIZABLE)
+
+            for menu in self.menus:
+                print('hey')
+                menu.resize()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.__running = False
                 self.__playing = False
                 self.curr_menu.run_display = False
                 pygame.quit()
+            elif event.type == pygame.VIDEORESIZE:
+                print('kek')
+                wid, hei = event.dict["size"]
+                self.__display = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
+                self.__window_width = self.__display.get_width()
+                self.__window_height = self.__display.get_height()
+                print('hey')
+                for menu in self.menus:
+                    print('hey')
+                    menu.resize()
+
+    def resize(self):
+        pass
 
     def draw_text(self, text, size, x, y):
         font = pygame.font.Font(self.font_manager.font_path, size)

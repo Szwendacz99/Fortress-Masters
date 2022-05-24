@@ -10,7 +10,7 @@ from core.identity import Identity
 from core.server import Server
 
 
-class NewGameMenu(Menu):
+class PlayMenu(Menu):
     def __init__(self, game):
         Menu.__init__(self, game)
 
@@ -25,45 +25,54 @@ class NewGameMenu(Menu):
 
         self.INPUT_KEYS = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'}
 
+        self.buttons: list[Button] = []
+
+        self.text_input_array: list[TextInput] = []
+
+        self.resize()
+
+    def resize(self):
+        super().resize()
+
         self.buttons: list[Button] = [Button(pos=(self.game.get_window_width() / 2,
-                                                  self.title_font_size * 4),
-                                             label_text="GO BACK", font=self.game.get_font(self.text_font_size),
+                                                  self.font_manager.title_font_size * 3),
+                                             label_text="GO BACK", font=self.game.get_font(self.font_manager.get_regular_font_size()),
                                              color="Red", hovering_color="Green"),
                                       Button(pos=(self.game.get_window_width() / 2,
-                                                  self.title_font_size * 9),
-                                             label_text="Create lobby", font=self.game.get_font(self.text_font_size),
+                                                  self.font_manager.title_font_size * 7),
+                                             label_text="Create lobby", font=self.game.get_font(self.font_manager.get_regular_font_size()),
                                              color="WHITE", hovering_color="Green"),
                                       Button(pos=(self.game.get_window_width() / 2,
-                                                  self.title_font_size * 10),
-                                             label_text="Join lobby", font=self.game.get_font(self.text_font_size),
+                                                  self.font_manager.title_font_size * 8),
+                                             label_text="Join lobby", font=self.game.get_font(self.font_manager.get_regular_font_size()),
                                              color="WHITE", hovering_color="Green"),
                                       Button(pos=(self.game.get_window_width() / 2,
-                                                  self.title_font_size * 11),
-                                             label_text="Start game", font=self.game.get_font(self.text_font_size),
+                                                  self.font_manager.title_font_size * 9),
+                                             label_text="Start game", font=self.game.get_font(self.font_manager.get_regular_font_size()),
                                              color="WHITE", hovering_color="Yellow", is_visible=False),
                                       Button(pos=(3 * self.game.get_window_width() / 4,
-                                                  self.title_font_size * 10),
-                                             label_text="Demo", font=self.game.get_font(self.text_font_size//2),
+                                                  self.font_manager.title_font_size * 8),
+                                             label_text="Demo", font=self.game.get_font(self.font_manager.get_regular_font_size() // 2),
                                              color="WHITE", hovering_color="Yellow", is_visible=True),
                                       ]
 
-        self.text_input_array: list[TextInput] = [TextInput(pos=(self.mid_w, self.title_font_size * 6),
-                                                            font=self.game.get_font(self.text_font_size), color="BLACK",
+        self.text_input_array: list[TextInput] = [TextInput(pos=(self.mid_w, self.font_manager.title_font_size * 4),
+                                                            font=self.game.get_font(self.font_manager.get_regular_font_size()), color="BLACK",
                                                             background_color="WHITE",
                                                             clicked_color="BLUE",
                                                             input_text="127.0.0.1",
                                                             input_label="ADDR: ",
                                                             input_label_color="WHITE"),
-                                                  TextInput(pos=(self.mid_w, self.title_font_size * 7),
-                                                            font=self.game.get_font(self.text_font_size), color="BLACK",
+                                                  TextInput(pos=(self.mid_w, self.font_manager.title_font_size * 5),
+                                                            font=self.game.get_font(self.font_manager.get_regular_font_size()), color="BLACK",
                                                             background_color="WHITE",
                                                             clicked_color="BLUE",
                                                             input_text="4401",
                                                             input_label="PORT: ",
                                                             input_label_color="WHITE"),
 
-                                                  TextInput(pos=(self.mid_w, self.title_font_size * 8),
-                                                            font=self.game.get_font(self.text_font_size), color="BLACK",
+                                                  TextInput(pos=(self.mid_w, self.font_manager.title_font_size * 6),
+                                                            font=self.game.get_font(self.font_manager.get_regular_font_size()), color="BLACK",
                                                             background_color="WHITE",
                                                             clicked_color="BLUE",
                                                             input_text="NICK",
@@ -77,8 +86,8 @@ class NewGameMenu(Menu):
             self.mouse_pos = pygame.mouse.get_pos()
             self.game.get_display().fill(self.game.BLACK)
 
-            self.game.draw_text('Lobby', self.title_font_size, self.game.get_window_width() / 2,
-                                self.title_font_size * 3)
+            self.game.draw_text('Lobby', self.font_manager.title_font_size, self.game.get_window_width() / 2,
+                                self.font_manager.title_font_size * 2)
 
             if self.__server is not None and self.__server.is_alive():
                 self.__lobby_display_players = self.__server.get_lobby_list()
@@ -88,13 +97,13 @@ class NewGameMenu(Menu):
             if len(self.__lobby_display_players) > 0:
                 for i in range(len(self.__lobby_display_players)):
                     if i < 2:
-                        self.game.draw_text(self.__lobby_display_players[i].get_username(), self.title_font_size,
+                        self.game.draw_text(self.__lobby_display_players[i].get_username(), self.font_manager.get_title_font_size(),
                                             self.game.get_window_width() / 5,
-                                            self.title_font_size * 5 + self.title_font_size * i)
+                                            self.font_manager.get_title_font_size() * 5 + self.font_manager.get_title_font_size() * i)
                     else:
-                        self.game.draw_text(self.__lobby_display_players[i].get_username(), self.title_font_size,
+                        self.game.draw_text(self.__lobby_display_players[i].get_username(), self.font_manager.get_title_font_size(),
                                             4 * self.game.get_window_width() / 5,
-                                            self.title_font_size * 3 + self.title_font_size * i)
+                                            self.font_manager.get_title_font_size() * 3 + self.font_manager.get_title_font_size() * i)
 
             for button in self.buttons:
                 button.update(self.game.get_display(), self.mouse_pos)

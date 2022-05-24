@@ -27,7 +27,8 @@ class UnitSelectionBar:
         If you want to add new Units to game, modify body of this method
         :return:
         """
-        self.__selection_buttons.append(UnitSelectionButton(self.x, self.y, pygame.image.load('resources/img/spaceship-selection.png'), 1, self.game.get_font(14), UnitType.SPACESHIP))
+        self.__selection_buttons.append(UnitSelectionButton(
+            self.x, self.y, pygame.image.load('resources/img/spaceship-selection.png'), 1, self.game.get_font(14), UnitType.SPACESHIP))
 
     def update(self):
         self.mouse_pos = pygame.mouse.get_pos()
