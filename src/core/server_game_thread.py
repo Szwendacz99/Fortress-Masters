@@ -4,9 +4,11 @@ from time import sleep, time
 
 from core.identity import Identity
 from core.connected_player import ConnectedPlayer
+from core.team import Team
 from network.messages.basic_message import BasicMessage
 from network.messages.lobby_state_message import LobbyStateMessage
 from network.messages.message_type import MessageType
+from network.messages.team_set_message import TeamSetMessage
 
 
 class ServerGameThread(Thread):
@@ -28,9 +30,17 @@ class ServerGameThread(Thread):
         player.start()
         if len(self.__team_red) < 2:
             self.__team_red.append(player)
+            player.get_identity().set_team(Team.RED)
+            self.__lock.acquire()
+            player.send_message(TeamSetMessage(Team.RED))
+            self.__lock.release()
             return True
         elif len(self.__team_blu) < 2:
             self.__team_blu.append(player)
+            player.get_identity().set_team(Team.BLU)
+            self.__lock.acquire()
+            player.send_message(TeamSetMessage(Team.BLU))
+            self.__lock.release()
             return True
         return False
 

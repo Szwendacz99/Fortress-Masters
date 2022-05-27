@@ -2,6 +2,7 @@ from logging import debug, error
 
 import pygame.mouse
 
+from core.team import Team
 from gui.menu import Menu
 from gui.widgets.button import Button
 from gui.widgets.text_input import TextInput
@@ -95,15 +96,19 @@ class PlayMenu(Menu):
                 self.__lobby_display_players = self.__client.get_lobby_list()
 
             if len(self.__lobby_display_players) > 0:
-                for i in range(len(self.__lobby_display_players)):
-                    if i < 2:
-                        self.game.draw_text(self.__lobby_display_players[i].get_username(), self.font_manager.get_title_font_size(),
+                blu_players: int = 0
+                red_players: int = 0
+                for player in self.__lobby_display_players:
+                    if player.get_team() == Team.RED:
+                        self.game.draw_text(player.get_username(), self.font_manager.get_title_font_size(),
                                             self.game.get_window_width() / 5,
-                                            self.font_manager.get_title_font_size() * 5 + self.font_manager.get_title_font_size() * i)
+                                            self.font_manager.get_title_font_size() * 5 + self.font_manager.get_title_font_size() * red_players)
+                        red_players += 1
                     else:
-                        self.game.draw_text(self.__lobby_display_players[i].get_username(), self.font_manager.get_title_font_size(),
+                        self.game.draw_text(player.get_username(), self.font_manager.get_title_font_size(),
                                             4 * self.game.get_window_width() / 5,
-                                            self.font_manager.get_title_font_size() * 3 + self.font_manager.get_title_font_size() * i)
+                                            self.font_manager.get_title_font_size() * 5 + self.font_manager.get_title_font_size() * blu_players)
+                        blu_players += 1
 
             for button in self.buttons:
                 button.update(self.game.get_display(), self.mouse_pos)

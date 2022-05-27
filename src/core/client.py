@@ -44,6 +44,9 @@ class Client(Thread):
             self.send_message(message)
         elif message.get_type() == MessageType.GAME_START:
             info("Received info on game start!")
+        elif message.get_type == MessageType.TEAM_SET:
+            self.__identity.set_team(message.get_team())
+            info(f"Assigned to team {message.get_team()}")
         return True
 
     def get_identity(self) -> Identity:
