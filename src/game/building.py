@@ -51,9 +51,9 @@ class Building:
         self.__alive: bool = True
 
         if big:
-            self.__building_size = 110
+            self.__building_size = 120
         else:
-            self.__building_size = 90
+            self.__building_size = 100
         self.__blue_img: Surface = img_load('resources/img/blue_turret.png', self.__building_size, -45)
         self.__red_img: Surface = img_load('resources/img/red_turret.png', self.__building_size, 135)
         self.__blue_img_dead: Surface = img_load('resources/img/blue_turret_dead.png', self.__building_size, -45)
