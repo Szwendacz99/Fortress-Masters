@@ -148,8 +148,8 @@ class Unit:
     def die(self):
         self.__alive = False
 
-    def calc_vector(self, target=0):
-        if target == 0:
+    def calc_vector(self, target=None):
+        if target is None:
             target = self.__target
         self.__vector = pygame.math.Vector2(target.get_x() - self.get_x(), target.get_y() - self.get_y())
         temp_vector = pygame.math.Vector2(self.w(target.get_x() - self.get_x()), self.h(target.get_y() - self.get_y()))
