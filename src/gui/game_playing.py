@@ -12,6 +12,9 @@ from game.unit_selection_bar import UnitSelectionBar
 
 
 class GamePlaying(Menu):
+    default_width: int = 1536
+    default_height: int = 864
+
     buildings: list[Building] = []
     units: list[Unit] = []
     bullets: list[Bullet] = []
@@ -22,8 +25,7 @@ class GamePlaying(Menu):
         self.__player_team = 0
         self.__fps: int = 60
         self.__background_img: Surface = pygame.transform.scale(pygame.image.load(
-            os.path.normpath('resources/img/map_bg.png')), (564, self.game.get_window_height())).convert()
-        self.__x0: int = self.mid_w - self.__background_img.get_width() // 2
+            os.path.normpath('resources/img/map_bg.png')), (self.w(564), self.h(864))).convert()
         self.create_buildings()
 
         self.__unit_selection_bar = UnitSelectionBar(game, self.game.get_window_width() / 2 + 564 / 2,
@@ -31,7 +33,10 @@ class GamePlaying(Menu):
 
     def resize(self):
         self.__background_img: Surface = pygame.transform.scale(pygame.image.load(
-            os.path.normpath('resources/img/map_bg.png')), (564, self.game.get_window_height())).convert()
+            os.path.normpath('resources/img/map_bg.png')),
+            (self.w(564), self.h(864))).convert()
+        for unit in self.units:
+            unit.calc_vector()
 
     def display_menu(self):
         clock = pygame.time.Clock()
@@ -50,7 +55,7 @@ class GamePlaying(Menu):
     def draw(self):
         self.game.get_display().fill(self.game.BLACK)
         self.game.get_display().blit(self.__background_img,
-                                     (self.mid_w - self.__background_img.get_width() // 2, 0))
+                                     (self.game.get_window_width()/2 - self.__background_img.get_width() // 2, 0))
 
         for building in self.buildings:
             building.action(self.units, self.bullets, self.__player_team)
@@ -93,4 +98,10 @@ class GamePlaying(Menu):
         self.buildings.append(Building(self.game, False, 1))
         self.buildings.append(Building(self.game, False, 1, False))
         for building in self.buildings:
-            building.set_coordinates(self.__player_team, self.__x0)
+            building.set_coordinates(self.__player_team)
+
+    def h(self, h: int):
+        return int(h / self.default_height * self.game.get_window_height())
+
+    def w(self, w: int):
+        return int(w / self.default_width * self.game.get_window_width())

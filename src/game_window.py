@@ -51,7 +51,6 @@ class GameWindow:
             self.__display = pygame.display.set_mode((self.__window_width, self.__window_height), pygame.RESIZABLE)
 
             for menu in self.menus:
-                print('hey')
                 menu.resize()
 
         for event in pygame.event.get():
@@ -61,14 +60,11 @@ class GameWindow:
                 self.curr_menu.run_display = False
                 pygame.quit()
             elif event.type == pygame.VIDEORESIZE:
-                print('kek')
                 wid, hei = event.dict["size"]
                 self.__display = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
                 self.__window_width = self.__display.get_width()
                 self.__window_height = self.__display.get_height()
-                print('hey')
                 for menu in self.menus:
-                    print('hey')
                     menu.resize()
 
     def resize(self):

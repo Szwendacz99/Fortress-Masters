@@ -3,7 +3,6 @@ import pygame.mouse
 import os
 import math
 
-
 from pygame.surface import Surface
 from game.laser import Laser
 from game.bullet import Bullet
@@ -19,7 +18,10 @@ def img_load(path, size, angle: float = 0):
 
 class Building:
     x0: int = 0
+    default_width: int = 1536
+    default_height: int = 864
     bg_width: int = 564
+    bg_height: int = 992
 
     def __init__(self, game, big: bool = False, team: int = 0, left: bool = True):
         self.__game = game
@@ -33,12 +35,14 @@ class Building:
 
         if big:
             self.__full_hp: int = 3500
+            self.__atk_damage: int = 100
+            self.__atk_speed: int = 48
         else:
-            self.__full_hp: int = 1500
+            self.__full_hp: int = 2000
+            self.__atk_damage: int = 55
+            self.__atk_speed: int = 54
         self.__hp: int = self.__full_hp
-        self.__atk_range: int = 125
-        self.__atk_damage: int = 75
-        self.__atk_speed: int = 60
+        self.__atk_range: int = 140
         self.__cooldown: int = self.__atk_speed
         self.__target = None
 
@@ -53,14 +57,20 @@ class Building:
         self.__blue_img: Surface = img_load('resources/img/blue_turret.png', self.__building_size, -45)
         self.__red_img: Surface = img_load('resources/img/red_turret.png', self.__building_size, 135)
         self.__blue_img_dead: Surface = img_load('resources/img/blue_turret_dead.png', self.__building_size, -45)
-        self.__red_img_dead: Surface = img_load('resources/img/red_turret_dead.png', self.__building_size, -45)
+        self.__red_img_dead: Surface = img_load('resources/img/red_turret_dead.png', self.__building_size, 135)
 
     def find_target(self, units, bullets):
+
+        # attacking
         if self.__cooldown < self.__atk_speed:
             self.__cooldown += 1
-        if self.__target is not None and self.__target.is_alive():
+
+        if self.__target is not None and self.__target.is_alive() and \
+                self.calc_dist(self.__target) - self.get_size() / 2 <= self.__atk_range:
             if self.__cooldown == self.__atk_speed:
                 self.attack(bullets)
+
+        # looking for closest target
         else:
             current_closest_target_dist = 9999999
             current_closest_target = None
@@ -70,31 +80,39 @@ class Building:
                     if dist_to_unit <= current_closest_target_dist and dist_to_unit <= self.__atk_range:
                         current_closest_target = unit
                         current_closest_target_dist = dist_to_unit
-                        if dist_to_unit < self.__atk_range:
-                            # TODO attacking or shit knows
-                            pass
+
             if current_closest_target is not None:
                 self.__target = current_closest_target
                 self.calc_vector(current_closest_target)
 
     def draw(self, player_team: int = 0):
         if not self.__alive:
+            # Displaying dead blue turret
             if self.__team == player_team:
-                temp = pygame.transform.rotate(self.__blue_img_dead, self.__angle)
-                self.__game.get_display().blit(temp, (self.__x - temp.get_width() // 2, self.__y - temp.get_height() // 2))
+                temp = self.scaled_img(self.__blue_img_dead, self.__angle)
+                self.__game.get_display().blit(temp,
+                                               (self.w(self.__x - temp.get_width() // 2),
+                                                self.h(self.__y) - temp.get_height() // 2))
+            # Displaying dead red turret
             else:
-                temp = pygame.transform.rotate(self.__red_img_dead, 180 + self.__angle)
-                self.__game.get_display().blit(temp, (self.__x - temp.get_width() // 2, self.__y - temp.get_height() // 2))
+                temp = self.scaled_img(self.__red_img_dead, 180 + self.__angle)
+                self.__game.get_display().blit(temp,
+                                               (self.w(self.__x - temp.get_width() // 2),
+                                                self.h(self.__y) - temp.get_height() // 2))
         # Displaying blue turret
         elif self.__team == player_team:
-            temp = pygame.transform.rotate(self.__blue_img, self.__angle)
-            self.__game.get_display().blit(temp, (self.__x - temp.get_width() // 2, self.__y - temp.get_height() // 2))
+            temp = self.scaled_img(self.__blue_img, self.__angle)
+            self.__game.get_display().blit(temp,
+                                           (self.w(self.__x) - temp.get_width() // 2,
+                                            self.h(self.__y) - temp.get_height() // 2))
         # Displaying red turret
         else:
             if self.__angle == 0:
                 self.__angle = 180
-            temp = pygame.transform.rotate(self.__red_img, 180 + self.__angle)
-            self.__game.get_display().blit(temp, (self.__x - temp.get_width() // 2, self.__y - temp.get_height() // 2))
+            temp = self.scaled_img(self.__red_img, 180 + self.__angle)
+            self.__game.get_display().blit(temp,
+                                           (self.w(self.__x) - temp.get_width() // 2,
+                                            self.h(self.__y) - temp.get_height() // 2))
 
     def action(self, units, bullets, player_team: int = 0):
         if self.__alive:
@@ -115,22 +133,23 @@ class Building:
         # get angle between vector of going straight up and our vector
         self.__angle = self.__vector.angle_to(pygame.math.Vector2(0, -1))
 
-    def set_coordinates(self, player_team: int = 0, x0: int = 0):
-        if x0:
-            self.x0 = x0
+    def set_coordinates(self, player_team: int = 0):
+        self.x0 = self.__game.get_window_width() / 2 - self.bg_width / 2
         big_x = 200
         small_x = 117
+        small_h = 167
+        big_h = 64
 
         # Establishing blue turret's coordinates
         if self.__team == player_team:
             if self.__big:
-                self.__y = self.h(918)
+                self.__y = self.default_height - big_h
                 if self.__left:
                     self.__x = self.x0 + big_x
                 else:
-                    self.__x = self.x0 + self.bg_width - 200
+                    self.__x = self.x0 + self.bg_width - big_x
             else:
-                self.__y = self.h(800)
+                self.__y = self.default_height - small_h
                 if self.__left:
                     self.__x = self.x0 + small_x
                 else:
@@ -139,15 +158,16 @@ class Building:
         # Establishing red turret's coordinates
         else:
             if self.__big:
-                self.__y = self.h(74)
+                self.__y = big_h
                 if self.__left:
                     self.__x = self.x0 + big_x
                 else:
-                    self.__x = self.x0 + self.bg_width - 200
+                    self.__x = self.x0 + self.bg_width - big_x
             else:
-                self.__y = self.h(192)
+                self.__y = small_h
                 if self.__left:
                     self.__x = self.x0 + small_x
+                    print(self.__x)
                 else:
                     self.__x = self.x0 + self.bg_width - small_x
 
@@ -164,7 +184,14 @@ class Building:
 
     # Normalizes given height to match the background scaled down to user's screen
     def h(self, h: int):
-        return int(h / 992 * self.__game.get_window_height())
+        return int(h / self.default_height * self.__game.get_window_height())
+
+    def w(self, w: int):
+        return int(w / self.default_width * self.__game.get_window_width())
+
+    def scaled_img(self, img: pygame.Surface, angle):
+        return pygame.transform.rotate(pygame.transform.scale(
+            img, (self.w(self.__building_size), self.h(self.__building_size))), angle)
 
     def get_team(self):
         return self.__team

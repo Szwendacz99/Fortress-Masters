@@ -17,11 +17,12 @@ def img_load(path, size):
 
 
 class Unit:
+    default_width: int = 1536
+    default_height: int = 864
     img_blue = None
     img_red = None
     img_blue_dead = None
     img_red_dead = None
-    img_size = 45
 
     def __init__(self, game, start_pos, speed: float = 0.3, atk_range: int = 100, team: int = 0, left: bool = True):
         self.__game = game
@@ -43,34 +44,41 @@ class Unit:
         self.__alive: bool = True
         self.__opacity: int = 253
 
-        self.__pos: pygame.math.Vector2 = pygame.math.Vector2(start_pos)
+        self.__pos: pygame.math.Vector2 = pygame.math.Vector2(
+            (self.w_revert(start_pos[0]), self.h_revert(start_pos[1])))
         self.__vector: pygame.Vector2 = pygame.Vector2(0, 0)
         self.__angle: float = 0
+        self.__unit_size: int = 45
 
         if self.img_blue is None:
-            self.img_blue: Surface = img_load('resources/img/ship_blue.png', self.img_size)
-            self.img_red: Surface = img_load('resources/img/ship_red.png', self.img_size)
-            self.img_blue_dead = img_load('resources/img/ship_blue_dead.png', self.img_size)
-            self.img_red_dead = img_load('resources/img/ship_red_dead.png', self.img_size)
+            self.img_blue: Surface = img_load('resources/img/ship_blue.png', self.__unit_size)
+            self.img_red: Surface = img_load('resources/img/ship_red.png', self.__unit_size)
+            self.img_blue_dead = img_load('resources/img/ship_blue_dead.png', self.__unit_size)
+            self.img_red_dead = img_load('resources/img/ship_red_dead.png', self.__unit_size)
 
     def find_target(self, buildings: list[Building], units: list['Unit'], bullets: list[Rocket]):
+
+        # attacking
         if self.__cooldown < self.__atk_speed:
             self.__cooldown += 1
         if self.__target is not None and self.__target_in_atk_range and self.__target.is_alive():
-            if self.__cooldown == self.__atk_speed:
+            if self.calc_dist(self.__target) > self.__atk_range:
+                self.__target_in_atk_range = False
+            elif self.__cooldown == self.__atk_speed:
                 self.attack(bullets)
 
+        # looking for closest target
         else:
             current_closest_target_dist = 9999999
             current_closest_target = None
             current_target_in_atk_range: bool = False
             for building in buildings:
                 if building.get_team() != self.__team and building.is_alive():
-                    dist_to_building = self.calc_dist(building) - building.get_size() / 2
+                    dist_to_building = self.calc_dist(building)
                     if dist_to_building <= current_closest_target_dist:
                         current_closest_target = building
                         current_closest_target_dist = dist_to_building
-                        if dist_to_building < self.__atk_range:
+                        if dist_to_building <= self.__atk_range:
                             current_target_in_atk_range = True
 
             for unit in units:
@@ -79,7 +87,7 @@ class Unit:
                     if dist_to_unit <= current_closest_target_dist and dist_to_unit <= self.__seeing_range:
                         current_closest_target = unit
                         current_closest_target_dist = dist_to_unit
-                        if dist_to_unit < self.__atk_range:
+                        if dist_to_unit <= self.__atk_range:
                             current_target_in_atk_range = True
 
             self.__target = current_closest_target
@@ -96,33 +104,33 @@ class Unit:
             self.__pos += self.__vector
 
     def draw(self, player_team, units):
-        if self.__opacity <= 20:
+        if self.__opacity <= 12:
             units.remove(self)
         elif not self.__alive:
             self.__opacity -= 1
             if player_team == self.__team:
-                temp = pygame.transform.rotate(self.img_blue_dead, self.__angle)
+                temp = self.scaled_img(self.img_blue_dead, self.__angle)
                 temp.set_alpha(self.__opacity)
                 self.__game.get_display().blit(temp,
-                                               (self.get_x() - temp.get_width() // 2,
-                                                self.get_y() - temp.get_height() // 2))
+                                               (self.w(self.get_x() - temp.get_width() // 2),
+                                                self.h(self.get_y() - temp.get_height() // 2)))
             else:
-                temp = pygame.transform.rotate(self.img_red_dead, self.__angle)
+                temp = self.scaled_img(self.img_red_dead, self.__angle)
                 temp.set_alpha(self.__opacity)
                 self.__game.get_display().blit(temp,
-                                               (self.get_x() - temp.get_width() // 2,
-                                                self.get_y() - temp.get_height() // 2))
+                                               (self.w(self.get_x() - temp.get_width() // 2),
+                                                self.h(self.get_y() - temp.get_height() // 2)))
 
         elif player_team == self.__team:
-            temp = pygame.transform.rotate(self.img_blue, self.__angle)
+            temp = self.scaled_img(self.img_blue, self.__angle)
             self.__game.get_display().blit(temp,
-                                           (self.get_x() - temp.get_width() // 2,
-                                            self.get_y() - temp.get_height() // 2))
+                                           (self.w(self.get_x() - temp.get_width() // 2),
+                                            self.h(self.get_y() - temp.get_height() // 2)))
         else:
-            temp = pygame.transform.rotate(self.img_red, self.__angle)
+            temp = self.scaled_img(self.img_red, self.__angle)
             self.__game.get_display().blit(temp,
-                                           (self.get_x() - temp.get_width() // 2,
-                                            self.get_y() - temp.get_height() // 2))
+                                           (self.w(self.get_x() - temp.get_width() // 2),
+                                            self.h(self.get_y() - temp.get_height() // 2)))
 
     def action(self, buildings, units, bullets, player_team):
         if self.__alive:
@@ -140,19 +148,38 @@ class Unit:
     def die(self):
         self.__alive = False
 
-    def calc_vector(self, target):
+    def calc_vector(self, target=0):
+        if target == 0:
+            target = self.__target
         self.__vector = pygame.math.Vector2(target.get_x() - self.get_x(), target.get_y() - self.get_y())
+        temp_vector = pygame.math.Vector2(self.w(target.get_x() - self.get_x()), self.h(target.get_y() - self.get_y()))
         if self.__vector:
             pygame.math.Vector2.scale_to_length(self.__vector, self.__speed)
-        # get angle between vector of going straight up and our vector
-        self.__angle = self.__vector.angle_to(pygame.math.Vector2(0, -1))
 
-    def calc_dist(self, unit):
-        return math.hypot(self.get_x() - unit.get_x(), self.get_y() - unit.get_y())
+        # get angle between vector of going straight up and our vector
+        self.__angle = temp_vector.angle_to(pygame.math.Vector2(0, -1))
+
+    def calc_dist(self, target):
+        if target.__class__ == Building:
+            return math.hypot(self.get_x() - target.get_x(), self.get_y() - target.get_y()) - target.get_size() / 2
+        return math.hypot(self.get_x() - target.get_x(), self.get_y() - target.get_y())
 
     # Normalizes given height to match the background scaled down to user's screen
-    def h(self, h: int, game):
-        return int(h / 992 * game.get_window_height())
+    def h(self, h: int):
+        return int(h / self.default_height * self.__game.get_window_height())
+
+    def h_revert(self, h: int):
+        return int(h / self.__game.get_window_height() * self.default_height)
+
+    def w(self, w: int):
+        return int(w / self.default_width * self.__game.get_window_width())
+
+    def w_revert(self, w: int):
+        return int(w / self.__game.get_window_width() * self.default_width)
+
+    def scaled_img(self, img: pygame.Surface, angle):
+        return pygame.transform.rotate(pygame.transform.scale(
+            img, (self.w(self.__unit_size), self.h(self.__unit_size))), angle)
 
     def get_x(self):
         return self.__pos.x
@@ -164,7 +191,7 @@ class Unit:
         return self.__team
 
     def get_size(self):
-        return self.img_size
+        return self.__unit_size
 
     def is_alive(self):
         return self.__alive
