@@ -46,13 +46,13 @@ class Bullet:
         if player_team == self.__team:
             temp = self.scaled_img(self.__img_blue, self.__angle)
             self.__game.get_display().blit(temp,
-                                           (self.w(self.get_x() - self.__img_blue.get_width() // 2),
-                                            self.h(self.get_y() - self.__img_blue.get_height() // 2)))
+                                           (self.w(self.get_x()) - self.__img_blue.get_width() // 2,
+                                            self.h(self.get_y()) - self.__img_blue.get_height() // 2))
         else:
             temp = self.scaled_img(self.__img_red, self.__angle)
             self.__game.get_display().blit(temp,
-                                           (self.w(self.get_x() - temp.get_width() // 2),
-                                            self.h(self.get_y() - temp.get_height() // 2)))
+                                           (self.w(self.get_x()) - temp.get_width() // 2,
+                                            self.h(self.get_y()) - temp.get_height() // 2))
 
     def action(self, bullets, player_team):
         self.move(bullets)
