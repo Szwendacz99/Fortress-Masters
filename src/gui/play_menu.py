@@ -34,35 +34,44 @@ class PlayMenu(Menu):
 
         self.buttons: list[Button] = [Button(pos=(self.game.get_window_width() / 2,
                                                   self.font_manager.title_font_size * 3),
-                                             label_text="GO BACK", font=self.game.get_font(self.font_manager.get_regular_font_size()),
+                                             label_text="GO BACK",
+                                             font=self.game.get_font(self.font_manager.get_regular_font_size()),
                                              color="Red", hovering_color="Green"),
                                       Button(pos=(self.game.get_window_width() / 2,
                                                   self.font_manager.title_font_size * 7),
-                                             label_text="Create lobby", font=self.game.get_font(self.font_manager.get_regular_font_size()),
+                                             label_text="Create lobby",
+                                             font=self.game.get_font(self.font_manager.get_regular_font_size()),
                                              color="WHITE", hovering_color="Green"),
                                       Button(pos=(self.game.get_window_width() / 2,
                                                   self.font_manager.title_font_size * 8),
-                                             label_text="Join lobby", font=self.game.get_font(self.font_manager.get_regular_font_size()),
+                                             label_text="Join lobby",
+                                             font=self.game.get_font(self.font_manager.get_regular_font_size()),
                                              color="WHITE", hovering_color="Green"),
                                       Button(pos=(self.game.get_window_width() / 2,
                                                   self.font_manager.title_font_size * 9),
-                                             label_text="Start game", font=self.game.get_font(self.font_manager.get_regular_font_size()),
+                                             label_text="Start game",
+                                             font=self.game.get_font(self.font_manager.get_regular_font_size()),
                                              color="WHITE", hovering_color="Yellow", is_visible=False),
                                       Button(pos=(3 * self.game.get_window_width() / 4,
                                                   self.font_manager.title_font_size * 8),
-                                             label_text="Demo", font=self.game.get_font(self.font_manager.get_regular_font_size() // 2),
+                                             label_text="Demo",
+                                             font=self.game.get_font(self.font_manager.get_regular_font_size() // 2),
                                              color="WHITE", hovering_color="Yellow", is_visible=True),
                                       ]
 
         self.text_input_array: list[TextInput] = [TextInput(pos=(self.mid_w, self.font_manager.title_font_size * 4),
-                                                            font=self.game.get_font(self.font_manager.get_regular_font_size()), color="BLACK",
+                                                            font=self.game.get_font(
+                                                                self.font_manager.get_regular_font_size()),
+                                                            color="BLACK",
                                                             background_color="WHITE",
                                                             clicked_color="BLUE",
                                                             input_text="127.0.0.1",
                                                             input_label="ADDR: ",
                                                             input_label_color="WHITE"),
                                                   TextInput(pos=(self.mid_w, self.font_manager.title_font_size * 5),
-                                                            font=self.game.get_font(self.font_manager.get_regular_font_size()), color="BLACK",
+                                                            font=self.game.get_font(
+                                                                self.font_manager.get_regular_font_size()),
+                                                            color="BLACK",
                                                             background_color="WHITE",
                                                             clicked_color="BLUE",
                                                             input_text="4401",
@@ -70,7 +79,9 @@ class PlayMenu(Menu):
                                                             input_label_color="WHITE"),
 
                                                   TextInput(pos=(self.mid_w, self.font_manager.title_font_size * 6),
-                                                            font=self.game.get_font(self.font_manager.get_regular_font_size()), color="BLACK",
+                                                            font=self.game.get_font(
+                                                                self.font_manager.get_regular_font_size()),
+                                                            color="BLACK",
                                                             background_color="WHITE",
                                                             clicked_color="BLUE",
                                                             input_text="NICK",
@@ -87,10 +98,10 @@ class PlayMenu(Menu):
             self.game.draw_text('Lobby', self.font_manager.title_font_size, self.game.get_window_width() / 2,
                                 self.font_manager.title_font_size * 2)
 
-            if self.server is not None and self.__server.is_alive():
-                self.__lobby_display_players = self.__server.get_lobby_list()
-            elif self.__client is not None:
-                self.__lobby_display_players = self.__client.get_lobby_list()
+            if self.game.server is not None and self.game.server.is_alive():
+                self.__lobby_display_players = self.game.server.get_lobby_list()
+            elif self.game.client is not None:
+                self.__lobby_display_players = self.game.client.get_lobby_list()
 
             if len(self.__lobby_display_players) > 0:
                 blu_players: int = 0
@@ -141,34 +152,34 @@ class PlayMenu(Menu):
                     self.game.curr_menu.display_menu()
                 elif self.buttons[1].cursor_hovers(self.mouse_pos):
                     # TODO: Create lobby
-                    if self.__server is not None and self.__server.is_alive():
+                    if self.game.server is not None and self.game.server.is_alive():
                         return
-                    self.__client = Client(username=self.text_input_array[2].input_text)
+                    self.game.client = Client(username=self.text_input_array[2].input_text)
                     try:
-                        self.__server = Server(port=int(self.text_input_array[1].input_text),
-                                               identity=self.__client.get_identity())
+                        self.game.server = Server(port=int(self.text_input_array[1].input_text),
+                                                  identity=self.game.client.get_identity())
                     except OSError as e:
                         error(f"Cannot start server: {str(e)}")
                         # TODO gui inform that cannot start server because port is taken
-                        self.__server = None
+                        self.game.server = None
                         return
-                    self.__server.start()
-                    success: bool = self.__client.join_server(address=self.text_input_array[0].input_text,
-                                                              port=int(self.text_input_array[1].input_text))
+                    self.game.server.start()
+                    success: bool = self.game.client.join_server(address=self.text_input_array[0].input_text,
+                                                                 port=int(self.text_input_array[1].input_text))
                     if not success:
-                        self.__client = None
+                        self.game.client = None
                     self.buttons[3].set_visible(True)
                 elif self.buttons[2].cursor_hovers(self.mouse_pos):
                     # TODO: Join Lobby
-                    self.__client = Client(username=self.text_input_array[2].input_text)
-                    success: bool = self.__client.join_server(address=self.text_input_array[0].input_text,
-                                                              port=int(self.text_input_array[1].input_text))
+                    self.game.client = Client(username=self.text_input_array[2].input_text)
+                    success: bool = self.game.client.join_server(address=self.text_input_array[0].input_text,
+                                                                 port=int(self.text_input_array[1].input_text))
                     if not success:
-                        self.__client = None
+                        self.game.client = None
 
                 elif self.buttons[3].cursor_hovers(self.mouse_pos):
                     # TODO: Send message to other clients, that game has started. Temporarily it will start the game.
-                    self.__server.start_game()
+                    self.game.server.start_game()
                     if len(self.__lobby_display_players) == 4:
                         self.run_display = False
                         self.game.curr_menu = self.game.game_playing

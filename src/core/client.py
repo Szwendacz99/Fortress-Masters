@@ -3,6 +3,7 @@ from threading import Thread
 from time import time
 
 from core.identity import Identity
+from core.message_receiver import MessageReceiver
 from exceptions.network_exception import NetworkException
 from network.connection import Connection
 from network.messages.basic_message import BasicMessage
@@ -11,7 +12,7 @@ from network.messages.lobby_state_message import LobbyStateMessage
 from network.messages.message_type import MessageType
 
 
-class Client(Thread):
+class Client(Thread, MessageReceiver):
     def __init__(self, username: str):
         Thread.__init__(self)
         self.lobby_list: list[Identity] = []
@@ -45,7 +46,7 @@ class Client(Thread):
             self.send_message(message)
         elif message.get_type() == MessageType.GAME_START:
             info("Received info on game start!")
-        elif message.get_type == MessageType.TEAM_SET:
+        elif message.get_type() == MessageType.TEAM_SET:
             self.__identity.set_team(message.get_team())
             info(f"Assigned to team {message.get_team()}")
         return True
