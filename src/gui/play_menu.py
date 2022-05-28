@@ -15,9 +15,6 @@ class PlayMenu(Menu):
     def __init__(self, game):
         Menu.__init__(self, game)
 
-        self.__client: Client = None
-        self.__server: Server = None
-
         self.__lobby_display_players: list[Identity] = []
 
         # TODO: ?Make input manager class
@@ -90,7 +87,7 @@ class PlayMenu(Menu):
             self.game.draw_text('Lobby', self.font_manager.title_font_size, self.game.get_window_width() / 2,
                                 self.font_manager.title_font_size * 2)
 
-            if self.__server is not None and self.__server.is_alive():
+            if self.server is not None and self.__server.is_alive():
                 self.__lobby_display_players = self.__server.get_lobby_list()
             elif self.__client is not None:
                 self.__lobby_display_players = self.__client.get_lobby_list()
