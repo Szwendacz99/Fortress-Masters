@@ -1,24 +1,24 @@
+from uuid import uuid4
+
 import pygame
 import pygame.mouse
 import os
 
 from pygame.surface import Surface
 
+from core.client import Client
+from core.team import Team
+from game.unit_type import UnitType
 from gui.menu import Menu
 from game.building import Building
-from game.unit import Unit
-from game.bullet import Bullet
 from game.spaceship import Spaceship
 from game.unit_selection_bar import UnitSelectionBar
+from network.messages.new_unit_message import NewUnitMessage
 
 
 class GamePlaying(Menu):
     default_width: int = 1536
     default_height: int = 864
-
-    buildings: list[Building] = []
-    units: list[Unit] = []
-    bullets: list[Bullet] = []
 
     def __init__(self, game):
         Menu.__init__(self, game)
@@ -36,7 +36,7 @@ class GamePlaying(Menu):
         self.__background_img: Surface = pygame.transform.scale(pygame.image.load(
             os.path.normpath('resources/img/map_bg.png')),
             (self.w(564), self.h(864))).convert()
-        for unit in self.units:
+        for unit in Client.units.values():
             unit.calc_vector()
 
     def display_menu(self):
@@ -58,12 +58,14 @@ class GamePlaying(Menu):
         self.game.get_display().blit(self.__background_img,
                                      (self.game.get_window_width()/2 - self.__background_img.get_width() // 2, 0))
 
-        for building in self.buildings:
-            building.action(self.units, self.bullets, self.__player_team)
-        for bullet in self.bullets:
-            bullet.action(self.bullets, self.__player_team)
-        for unit in self.units:
-            unit.action(self.buildings, self.units, self.bullets, self.__player_team)
+        # iterating this way to prevent
+        # RuntimeError: dictionary changed size during iteration
+        for building in [f for f in Client.buildings.values()]:
+            building.action(Client.units, Client.bullets, self.game.client.get_identity().get_team())
+        for bullet in [f for f in Client.bullets.values()]:
+            bullet.action(Client.bullets, self.game.client.get_identity().get_team())
+        for unit in [f for f in Client.units.values()]:
+            unit.action(Client.buildings, Client.units, Client.bullets, self.game.client.get_identity().get_team())
 
     def check_input(self):
         for event in pygame.event.get():
@@ -84,20 +86,28 @@ class GamePlaying(Menu):
                 if not bar_clicked:
                     # TODO send message to server that unit is being placed
                     if event.button == 1 or event.button == 5:
-                        self.units.append(Spaceship(self.game, self.mouse_pos))
+                        self.game.client.send_message(NewUnitMessage(uuid4(),
+                                                                     unit_type=UnitType.SPACESHIP,
+                                                                     pos=self.mouse_pos,
+                                                                     team=Team.RED))
+                        # Client.units.append(Spaceship(self.game, self.mouse_pos))
                     else:
-                        self.units.append(Spaceship(self.game, self.mouse_pos, team=1))
+                        self.game.client.send_message(NewUnitMessage(uuid4(),
+                                                                     unit_type=UnitType.SPACESHIP,
+                                                                     pos=self.mouse_pos,
+                                                                     team=Team.BLU))
+                        # Client.units.append(Spaceship(self.game, self.mouse_pos, team=1))
 
     def create_buildings(self):
-        self.buildings.append(Building(self.game, True, 0))
-        self.buildings.append(Building(self.game, True, 0, False))
-        self.buildings.append(Building(self.game, True, 1))
-        self.buildings.append(Building(self.game, True, 1, False))
-        self.buildings.append(Building(self.game, False, 0))
-        self.buildings.append(Building(self.game, False, 0, False))
-        self.buildings.append(Building(self.game, False, 1))
-        self.buildings.append(Building(self.game, False, 1, False))
-        for building in self.buildings:
+        Client.add_building(Building(self.game, True, 0))
+        Client.add_building(Building(self.game, True, 0, False))
+        Client.add_building(Building(self.game, True, 1))
+        Client.add_building(Building(self.game, True, 1, False))
+        Client.add_building(Building(self.game, False, 0))
+        Client.add_building(Building(self.game, False, 0, False))
+        Client.add_building(Building(self.game, False, 1))
+        Client.add_building(Building(self.game, False, 1, False))
+        for building in Client.buildings.values():
             building.set_coordinates(self.__player_team)
 
     def h(self, h: int):

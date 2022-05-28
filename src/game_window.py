@@ -4,6 +4,8 @@ from logging import info
 import pygame
 from pygame.surface import Surface
 
+from core.client import Client
+from core.server import Server
 from gui.credits_menu import CreditsMenu
 from gui.play_menu import PlayMenu
 from gui.main_menu import MainMenu
@@ -19,6 +21,9 @@ class GameWindow:
         pygame.init()
         self.__running: bool = True
         self.__playing: bool = False
+
+        self.client: Client = None
+        self.server: Server = None
 
         self.__window_width: int = pygame.display.Info().current_w
         self.__window_height: int = pygame.display.Info().current_h
@@ -39,8 +44,8 @@ class GameWindow:
         self.menus.append(self.main_menu)
         self.credits: CreditsMenu = CreditsMenu(self)
         self.menus.append(self.credits)
-        self.new_game: PlayMenu = PlayMenu(self)
-        self.menus.append(self.new_game)
+        self.play_menu: PlayMenu = PlayMenu(self)
+        self.menus.append(self.play_menu)
         self.game_playing: GamePlaying = GamePlaying(self)
         self.menus.append(self.game_playing)
 

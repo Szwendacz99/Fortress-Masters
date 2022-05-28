@@ -1,11 +1,17 @@
+import uuid
+from uuid import UUID
+
 import pygame
 import pygame.mouse
 import os
 import math
 
 from pygame.surface import Surface
+
+from core.team import Team
 from game.laser import Laser
 from game.bullet import Bullet
+from game.unit import Unit
 
 
 def img_load(path, size, angle: float = 0):
@@ -23,15 +29,16 @@ class Building:
     bg_width: int = 564
     bg_height: int = 992
 
-    def __init__(self, game, big: bool = False, team: int = 0, left: bool = True):
+    def __init__(self, game, big: bool = False, team: Team = Team.RED, left: bool = True):
         self.__game = game
-        self.__team: int = team
+        self.__team: Team = team
         self.__left: bool = left
 
         # big turret or small one
         self.__big: bool = big
         self.__x = None
         self.__y = None
+        self.uuid = uuid.uuid4()
 
         if big:
             self.__full_hp: int = 3500
@@ -59,7 +66,7 @@ class Building:
         self.__blue_img_dead: Surface = img_load('resources/img/blue_turret_dead.png', self.__building_size, -45)
         self.__red_img_dead: Surface = img_load('resources/img/red_turret_dead.png', self.__building_size, 135)
 
-    def find_target(self, units, bullets):
+    def find_target(self, units: dict[UUID, Unit], bullets: dict[UUID, Bullet]):
 
         # attacking
         if self.__cooldown < self.__atk_speed:
@@ -74,7 +81,7 @@ class Building:
         else:
             current_closest_target_dist = 9999999
             current_closest_target = None
-            for unit in units:
+            for unit in units.values():
                 if unit.get_team() != self.__team and unit.is_alive():
                     dist_to_unit = self.calc_dist(unit) - self.get_size() / 2
                     if dist_to_unit <= current_closest_target_dist and dist_to_unit <= self.__atk_range:
@@ -119,10 +126,11 @@ class Building:
             self.find_target(units, bullets)
         self.draw(player_team)
 
-    def attack(self, bullets: list[Bullet]):
+    def attack(self, bullets: dict[UUID, Bullet]):
         self.__cooldown = 0
         bullet_pos = pygame.Vector2(self.__x, self.__y) + 56 * self.__vector
-        bullets.append(Laser(self.__game, bullet_pos, self.__target, self.__atk_damage, team=self.__team))
+        laser = Laser(self.__game, bullet_pos, self.__target, self.__atk_damage, team=self.__team)
+        bullets[laser.uuid] = laser
 
     def calc_dist(self, unit):
         return math.hypot(self.get_x() - unit.get_x(), self.get_y() - unit.get_y())

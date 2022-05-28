@@ -1,18 +1,29 @@
+from builtins import staticmethod
 from logging import debug, info, error
 from threading import Thread
 from time import time
+from uuid import UUID
 
 from core.identity import Identity
-from exceptions.network_exception import NetworkException
+from core.message_receiver import MessageReceiver
+from game.building import Building
+from game.bullet import Bullet
+from game.spaceship import Spaceship
+from game.unit import Unit
 from network.connection import Connection
 from network.messages.basic_message import BasicMessage
 from network.messages.join_message import JoinMessage
 from network.messages.lobby_state_message import LobbyStateMessage
 from network.messages.message_type import MessageType
+from network.messages.new_unit_message import NewUnitMessage
 
 
-class Client(Thread):
-    def __init__(self, username: str):
+class Client(Thread, MessageReceiver):
+    buildings: dict[UUID, Building] = {}
+    units: dict[UUID, Unit] = {}
+    bullets: dict[UUID, Bullet] = {}
+
+    def __init__(self, game, username: str):
         Thread.__init__(self)
         self.lobby_list: list[Identity] = []
         self.__game_started: bool = False
@@ -21,6 +32,7 @@ class Client(Thread):
         self.__connection: Connection = None
         self.__last_msg_receive_time: float = time()
         self.daemon = True
+        self.__game = game
 
     def join_server(self, address: str, port: int) -> bool:
         try:
@@ -45,9 +57,16 @@ class Client(Thread):
             self.send_message(message)
         elif message.get_type() == MessageType.GAME_START:
             info("Received info on game start!")
-        elif message.get_type == MessageType.TEAM_SET:
+            self.__game.play_menu.start_game()
+        elif message.get_type() == MessageType.TEAM_SET:
             self.__identity.set_team(message.get_team())
             info(f"Assigned to team {message.get_team()}")
+        elif message.get_type() == MessageType.NEW_UNIT:
+            msg: NewUnitMessage = message
+            Client.units[msg.uuid] = Spaceship(uuid=msg.uuid,
+                                               game=self.__game,
+                                               start_pos=msg.pos,
+                                               team=msg.team)
         return True
 
     def get_identity(self) -> Identity:
@@ -57,6 +76,7 @@ class Client(Thread):
         return self.lobby_list
 
     def send_message(self, msg: [BasicMessage, LobbyStateMessage]):
+        # debug(f"Client sending message with type: {msg.get_type()}")
         self.__connection.send_data(msg)
 
     def get_last_msg_receive_time(self) -> float:
@@ -73,3 +93,7 @@ class Client(Thread):
 
     def disconnect(self):
         self.__connection.disconnect()
+
+    @staticmethod
+    def add_building(building: Building):
+        Client.buildings[building.uuid] = building

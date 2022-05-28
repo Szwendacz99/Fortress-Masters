@@ -67,7 +67,7 @@ class MainMenu(Menu):
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.button_array[0].cursor_hovers(self.mouse_pos):
-                    self.game.curr_menu = self.game.new_game
+                    self.game.curr_menu = self.game.play_menu
                     self.run_display = False
                     self.game.curr_menu.display_menu()
                 elif self.button_array[1].cursor_hovers(self.mouse_pos):
