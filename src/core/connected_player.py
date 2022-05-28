@@ -16,6 +16,7 @@ class ConnectedPlayer(Thread):
         self.__connection: Connection = None
         self.__message_receiver: MessageReceiver = msg_receiver
         self.__last_msg_receive_time: float = time()
+        self.daemon = True
 
     def get_name(self) -> str:
         return self.__identity.get_username()

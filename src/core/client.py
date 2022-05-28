@@ -20,6 +20,7 @@ class Client(Thread):
         self.__identity: Identity = Identity(username)
         self.__connection: Connection = None
         self.__last_msg_receive_time: float = time()
+        self.daemon = True
 
     def join_server(self, address: str, port: int) -> bool:
         try:

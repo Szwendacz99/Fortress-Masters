@@ -24,6 +24,7 @@ class Server(Thread, MessageReceiver):
         self.__identity = identity
         self.__team_blu: list[ConnectedPlayer] = []
         self.__team_red: list[ConnectedPlayer] = []
+        self.daemon = True
 
     def run(self):
         info(f"Started server lobby on port {self.__listener.get_port()}")

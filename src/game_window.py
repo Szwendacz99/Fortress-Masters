@@ -61,9 +61,10 @@ class GameWindow:
                 self.__running = False
                 self.__playing = False
                 self.curr_menu.run_display = False
-                # pygame.quit()
+
                 # TODO end all threads on exit
                 info("Exiting game...")
+                pygame.quit()
                 sys.exit(0)
 
     def resize(self):

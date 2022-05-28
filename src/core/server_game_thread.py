@@ -18,6 +18,7 @@ class ServerGameThread(Thread):
         self.__team_red: list[ConnectedPlayer] = []
         self.__active = True
         self.__lock = Lock()
+        self.daemon = True
 
     def add_player(self, player: ConnectedPlayer) -> bool:
         """

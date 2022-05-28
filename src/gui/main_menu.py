@@ -1,3 +1,6 @@
+import sys
+from logging import info
+
 import pygame.mouse
 
 from gui.menu import Menu
@@ -72,5 +75,6 @@ class MainMenu(Menu):
                     self.run_display = False
                     self.game.curr_menu.display_menu()
                 elif self.button_array[2].cursor_hovers(self.mouse_pos):
+                    info("Exiting game...")
                     pygame.quit()
-                    quit(0)
+                    sys.exit(0)
