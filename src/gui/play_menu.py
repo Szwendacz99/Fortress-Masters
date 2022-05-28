@@ -133,6 +133,9 @@ class PlayMenu(Menu):
                                             (0, 0, 255))
                         blu_players += 1
 
+            if len(self.__lobby_display_players) == 4:
+                self.buttons[3].set_visible(True)
+
             for button in self.buttons:
                 button.update(self.game.get_display(), self.mouse_pos)
             for text_input in self.text_input_array:
@@ -184,7 +187,6 @@ class PlayMenu(Menu):
                                                                  port=int(self.text_input_array[1].input_text))
                     if not success:
                         self.game.client = None
-                    self.buttons[3].set_visible(True)
                     self.connection_status = "created lobby"
                     self.connection_color = (0, 255, 0)
                 elif self.buttons[2].cursor_hovers(self.mouse_pos):

@@ -28,7 +28,7 @@ class GameWindow:
         self.__window_width: int = pygame.display.Info().current_w
         self.__window_height: int = pygame.display.Info().current_h
 
-        self.__display: Surface = pygame.display.set_mode((self.__window_width, self.__window_height), pygame.RESIZABLE)
+        self.__display: Surface = pygame.display.set_mode((self.__window_width, self.__window_height/2), pygame.RESIZABLE)
         # self.__font_name: str = '../resources/fonts/8-BIT WONDER.TTF'
 
         # TODO: Refactor fonts
