@@ -91,13 +91,13 @@ class Building:
             if self.__team == player_team:
                 temp = self.scaled_img(self.__blue_img_dead, self.__angle)
                 self.__game.get_display().blit(temp,
-                                               (self.w(self.__x - temp.get_width() // 2),
+                                               (self.w(self.__x) - temp.get_width() // 2,
                                                 self.h(self.__y) - temp.get_height() // 2))
             # Displaying dead red turret
             else:
                 temp = self.scaled_img(self.__red_img_dead, 180 + self.__angle)
                 self.__game.get_display().blit(temp,
-                                               (self.w(self.__x - temp.get_width() // 2),
+                                               (self.w(self.__x) - temp.get_width() // 2,
                                                 self.h(self.__y) - temp.get_height() // 2))
         # Displaying blue turret
         elif self.__team == player_team:

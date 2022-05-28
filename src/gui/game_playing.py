@@ -74,7 +74,6 @@ class GamePlaying(Menu):
                 pass
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 bar_clicked = False
-
                 selection_buttons = self.__unit_selection_bar.get_selection_buttons()
                 for button in selection_buttons:
                     if button.cursor_hovers(mouse_position=self.mouse_pos):

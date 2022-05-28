@@ -114,25 +114,25 @@ class Unit:
                 temp = self.scaled_img(self.img_blue_dead, self.__angle)
                 temp.set_alpha(self.__opacity)
                 self.__game.get_display().blit(temp,
-                                               (self.w(self.get_x() - temp.get_width() // 2),
-                                                self.h(self.get_y() - temp.get_height() // 2)))
+                                               (self.w(self.get_x()) - temp.get_width() // 2,
+                                                self.h(self.get_y()) - temp.get_height() // 2))
             else:
                 temp = self.scaled_img(self.img_red_dead, self.__angle)
                 temp.set_alpha(self.__opacity)
                 self.__game.get_display().blit(temp,
-                                               (self.w(self.get_x() - temp.get_width() // 2),
-                                                self.h(self.get_y() - temp.get_height() // 2)))
+                                               (self.w(self.get_x()) - temp.get_width() // 2,
+                                                self.h(self.get_y()) - temp.get_height() // 2))
 
         elif player_team == self.__team:
             temp = self.scaled_img(self.img_blue, self.__angle)
             self.__game.get_display().blit(temp,
-                                           (self.w(self.get_x() - temp.get_width() // 2),
-                                            self.h(self.get_y() - temp.get_height() // 2)))
+                                           (self.w(self.get_x()) - temp.get_width() // 2,
+                                            self.h(self.get_y()) - temp.get_height() // 2))
         else:
             temp = self.scaled_img(self.img_red, self.__angle)
             self.__game.get_display().blit(temp,
-                                           (self.w(self.get_x() - temp.get_width() // 2),
-                                            self.h(self.get_y() - temp.get_height() // 2)))
+                                           (self.w(self.get_x()) - temp.get_width() // 2,
+                                            self.h(self.get_y()) - temp.get_height() // 2))
 
     def action(self, buildings, units, bullets, player_team):
         if self.__alive:
@@ -167,13 +167,13 @@ class Unit:
         return math.hypot(self.get_x() - target.get_x(), self.get_y() - target.get_y())
 
     # Normalizes given height to match the background scaled down to user's screen
-    def h(self, h: int):
+    def h(self, h):
         return int(h / self.default_height * self.__game.get_window_height())
 
     def h_revert(self, h: int):
         return int(h / self.__game.get_window_height() * self.default_height)
 
-    def w(self, w: int):
+    def w(self, w):
         return int(w / self.default_width * self.__game.get_window_width())
 
     def w_revert(self, w: int):
