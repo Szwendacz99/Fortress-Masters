@@ -24,20 +24,20 @@ class Unit:
     img_blue_dead = None
     img_red_dead = None
 
-    def __init__(self, game, start_pos, speed, atk_range, team, left,
+    def __init__(self, game, start_pos, hp, atk_damage, atk_speed, atk_range, speed, team, left,
                  path_blue, path_red, path_blue_dead, path_red_dead, unit_size, bullet_type):
         self.__game = game
         self.__team: int = team
         self.__left: bool = left
 
-        self.__hp_full: int = 255
+        self.__hp_full: int = hp
         self.__hp: int = self.__hp_full
-        self.__speed: float = speed
+        self.__atk_damage: int = atk_damage
+        self.__atk_speed: int = atk_speed
+        self.__cooldown: int = atk_speed
         self.__atk_range: int = atk_range
+        self.__speed: float = speed
         self.__seeing_range: int = 200
-        self.__atk_damage: int = 50
-        self.__atk_speed: int = 110
-        self.__cooldown: int = self.__atk_speed
 
         self.__target = None
         self.__target_in_atk_range: bool = False
