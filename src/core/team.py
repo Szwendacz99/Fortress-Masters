@@ -3,5 +3,5 @@ from enum import Enum, unique
 
 @unique
 class Team(Enum):
-    RED = 0
-    BLU = 1
+    BLU = 0
+    RED = 1
