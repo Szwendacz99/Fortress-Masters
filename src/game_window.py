@@ -1,3 +1,6 @@
+import sys
+from logging import info
+
 import pygame
 from pygame.surface import Surface
 
@@ -58,14 +61,10 @@ class GameWindow:
                 self.__running = False
                 self.__playing = False
                 self.curr_menu.run_display = False
-                pygame.quit()
-            elif event.type == pygame.VIDEORESIZE:
-                wid, hei = event.dict["size"]
-                self.__display = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
-                self.__window_width = self.__display.get_width()
-                self.__window_height = self.__display.get_height()
-                for menu in self.menus:
-                    menu.resize()
+                # pygame.quit()
+                # TODO end all threads on exit
+                info("Exiting game...")
+                sys.exit(0)
 
     def resize(self):
         pass
