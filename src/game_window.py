@@ -75,9 +75,9 @@ class GameWindow:
     def resize(self):
         pass
 
-    def draw_text(self, text, size, x, y):
+    def draw_text(self, text, size, x, y, color=(255,255,255)):
         font = pygame.font.Font(self.font_manager.font_path, size)
-        text_surface = font.render(text, True, self.WHITE)
+        text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect()
         text_rect.center = (x, y)
         self.__display.blit(text_surface, text_rect)
