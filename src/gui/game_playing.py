@@ -23,7 +23,7 @@ class GamePlaying(Menu):
     def __init__(self, game):
         Menu.__init__(self, game)
         # TODO establishing on which team is a player
-        self.__player_team = 0
+        self.__player_team = Team.RED
         self.__fps: int = 60
         self.__background_img: Surface = pygame.transform.scale(pygame.image.load(
             os.path.normpath('resources/img/map_bg.png')), (self.w(564), self.h(864))).convert()
@@ -99,14 +99,15 @@ class GamePlaying(Menu):
                         # Client.units.append(Spaceship(self.game, self.mouse_pos, team=1))
 
     def create_buildings(self):
-        Client.add_building(Building(self.game, True, 0))
-        Client.add_building(Building(self.game, True, 0, False))
-        Client.add_building(Building(self.game, True, 1))
-        Client.add_building(Building(self.game, True, 1, False))
-        Client.add_building(Building(self.game, False, 0))
-        Client.add_building(Building(self.game, False, 0, False))
-        Client.add_building(Building(self.game, False, 1))
-        Client.add_building(Building(self.game, False, 1, False))
+        Client.add_building(Building(self.game, True, Team.RED))
+        Client.add_building(Building(self.game, True, Team.RED, False))
+        Client.add_building(Building(self.game, True, Team.BLU))
+        Client.add_building(Building(self.game, True, Team.BLU, False))
+        Client.add_building(Building(self.game, False, Team.RED))
+        Client.add_building(Building(self.game, False, Team.RED, False))
+        Client.add_building(Building(self.game, False, Team.BLU))
+        Client.add_building(Building(self.game, False, Team.BLU, False))
+        # if self.game.client is not None:
         for building in Client.buildings.values():
             building.set_coordinates(self.__player_team)
 

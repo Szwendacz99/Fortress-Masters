@@ -98,4 +98,4 @@ class GameWindow:
         self.__running = __running
 
     def set_playing(self, __playing):
-        self.__playing == __playing
+        self.__playing = __playing

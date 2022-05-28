@@ -24,12 +24,12 @@ def img_load(path, size, angle: float = 0):
 
 class Building:
     x0: int = 0
-    default_width: int = 1536
-    default_height: int = 864
+    default_width: int = 0
+    default_height: int = 0
     bg_width: int = 564
     bg_height: int = 992
 
-    def __init__(self, game, big: bool = False, team: Team = Team.RED, left: bool = True):
+    def __init__(self, game, big: bool = False, team: Team = None, left: bool = True):
         self.__game = game
         self.__team: Team = team
         self.__left: bool = left
@@ -92,7 +92,7 @@ class Building:
                 self.__target = current_closest_target
                 self.calc_vector(current_closest_target)
 
-    def draw(self, player_team: int = 0):
+    def draw(self, player_team: Team):
         if not self.__alive:
             # Displaying dead blue turret
             if self.__team == player_team:
@@ -121,7 +121,7 @@ class Building:
                                            (self.w(self.__x) - temp.get_width() // 2,
                                             self.h(self.__y) - temp.get_height() // 2))
 
-    def action(self, units, bullets, player_team: int = 0):
+    def action(self, units, bullets, player_team: Team):
         if self.__alive:
             self.find_target(units, bullets)
         self.draw(player_team)
@@ -141,12 +141,15 @@ class Building:
         # get angle between vector of going straight up and our vector
         self.__angle = self.__vector.angle_to(pygame.math.Vector2(0, -1))
 
-    def set_coordinates(self, player_team: int = 0):
+    def set_coordinates(self, player_team: Team):
         self.x0 = self.__game.get_window_width() / 2 - self.bg_width / 2
         big_x = 200
         small_x = 117
         small_h = 167
         big_h = 64
+
+        self.default_width = self.__game.get_window_width()
+        self.default_height = self.__game.get_window_height()
 
         # Establishing blue turret's coordinates
         if self.__team == player_team:
@@ -175,7 +178,6 @@ class Building:
                 self.__y = small_h
                 if self.__left:
                     self.__x = self.x0 + small_x
-                    print(self.__x)
                 else:
                     self.__x = self.x0 + self.bg_width - small_x
 
