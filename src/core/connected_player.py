@@ -37,8 +37,8 @@ class ConnectedPlayer(Thread):
         while self.__connection.is_alive():
             try:
                 self.__message_receiver.receive(self.__connection.receive_data())
-            except:
-                error("Lost connection with server!")
+            except Exception as e:
+                error(f"Lost connection with server! {str(e)}")
                 self.__connection.disconnect()
             self.__last_msg_receive_time = time()
 

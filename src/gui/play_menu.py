@@ -154,7 +154,8 @@ class PlayMenu(Menu):
                     # TODO: Create lobby
                     if self.game.server is not None and self.game.server.is_alive():
                         return
-                    self.game.client = Client(username=self.text_input_array[2].input_text)
+                    self.game.client = Client(self.game,
+                                              username=self.text_input_array[2].input_text)
                     try:
                         self.game.server = Server(port=int(self.text_input_array[1].input_text),
                                                   identity=self.game.client.get_identity())
@@ -171,7 +172,8 @@ class PlayMenu(Menu):
                     self.buttons[3].set_visible(True)
                 elif self.buttons[2].cursor_hovers(self.mouse_pos):
                     # TODO: Join Lobby
-                    self.game.client = Client(username=self.text_input_array[2].input_text)
+                    self.game.client = Client(self.game,
+                                              username=self.text_input_array[2].input_text)
                     success: bool = self.game.client.join_server(address=self.text_input_array[0].input_text,
                                                                  port=int(self.text_input_array[1].input_text))
                     if not success:
@@ -181,16 +183,17 @@ class PlayMenu(Menu):
                     # TODO: Send message to other clients, that game has started. Temporarily it will start the game.
                     self.game.server.start_game()
                     if len(self.__lobby_display_players) == 4:
-                        self.run_display = False
-                        self.game.curr_menu = self.game.game_playing
-                        self.game.curr_menu.display_menu()
+                        self.start_game()
                 elif self.buttons[4].cursor_hovers(self.mouse_pos):
                     # Demo start button
-                    self.run_display = False
-                    self.game.curr_menu = self.game.game_playing
-                    self.game.curr_menu.display_menu()
+                    self.start_game()
                 for text_input in self.text_input_array:
                     if text_input.cursor_hovers(self.mouse_pos):
                         text_input.set_clicked(True)
                     else:
                         text_input.set_clicked(False)
+
+    def start_game(self):
+        self.run_display = False
+        self.game.curr_menu = self.game.game_playing
+        self.game.curr_menu.display_menu()

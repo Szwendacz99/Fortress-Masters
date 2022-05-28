@@ -9,3 +9,4 @@ class MessageType(Enum):
     LOBBY_FULL = 4
     GAME_START = 5
     TEAM_SET = 6
+    NEW_UNIT = 7

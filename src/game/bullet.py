@@ -1,3 +1,5 @@
+import uuid
+
 import pygame
 import pygame.mouse
 import os
@@ -31,15 +33,16 @@ class Bullet:
         self.__angle: float = 0
 
         self.__target = target
+        self.uuid = uuid.uuid4()
 
         self.__img_blue: Surface = img_load(path_blue, self.__img_size_x, self.__img_size_y)
         self.__img_red: Surface = img_load(path_red, self.__img_size_x, self.__img_size_y)
 
-    def move(self, bullets):
+    def move(self, bullets: dict):
         self.calc_vector(self.__target)
         self.__pos += self.__vector
         if self.calc_dist(self.__target) <= self.__target.get_size()/2:
-            bullets.remove(self)
+            bullets.pop(self.uuid)
             self.__target.lose_hp(self.__damage)
 
     def draw(self, player_team):
