@@ -27,6 +27,9 @@ class PlayMenu(Menu):
 
         self.text_input_array: list[TextInput] = []
 
+        self.connection_status: str = "not connected"
+        self.connection_color: tuple = (220, 220, 200)
+
         self.resize()
 
     def resize(self):
@@ -98,6 +101,16 @@ class PlayMenu(Menu):
             self.game.draw_text('Lobby', self.font_manager.title_font_size, self.game.get_window_width() / 2,
                                 self.font_manager.title_font_size * 2)
 
+            self.game.draw_text('Connection status:', self.font_manager.regular_font_size,
+                                self.game.get_window_width() / 8,
+                                self.font_manager.title_font_size)
+
+            if self.connection_status is not None:
+                self.game.draw_text(self.connection_status, self.font_manager.regular_font_size,
+                                    self.game.get_window_width() / 8,
+                                    self.font_manager.title_font_size * 2,
+                                    self.connection_color)
+
             if self.game.server is not None and self.game.server.is_alive():
                 self.__lobby_display_players = self.game.server.get_lobby_list()
             elif self.game.client is not None:
@@ -110,12 +123,14 @@ class PlayMenu(Menu):
                     if player.get_team() == Team.RED:
                         self.game.draw_text(player.get_username(), self.font_manager.get_title_font_size(),
                                             self.game.get_window_width() / 5,
-                                            self.font_manager.get_title_font_size() * 5 + self.font_manager.get_title_font_size() * red_players)
+                                            self.font_manager.get_title_font_size() * 5 + self.font_manager.get_title_font_size() * red_players,
+                                            (255, 0, 0))
                         red_players += 1
                     else:
                         self.game.draw_text(player.get_username(), self.font_manager.get_title_font_size(),
                                             4 * self.game.get_window_width() / 5,
-                                            self.font_manager.get_title_font_size() * 5 + self.font_manager.get_title_font_size() * blu_players)
+                                            self.font_manager.get_title_font_size() * 5 + self.font_manager.get_title_font_size() * blu_players,
+                                            (0, 0, 255))
                         blu_players += 1
 
             for button in self.buttons:
@@ -170,6 +185,8 @@ class PlayMenu(Menu):
                     if not success:
                         self.game.client = None
                     self.buttons[3].set_visible(True)
+                    self.connection_status = "created lobby"
+                    self.connection_color = (0, 255, 0)
                 elif self.buttons[2].cursor_hovers(self.mouse_pos):
                     # TODO: Join Lobby
                     self.game.client = Client(self.game,
@@ -178,6 +195,9 @@ class PlayMenu(Menu):
                                                                  port=int(self.text_input_array[1].input_text))
                     if not success:
                         self.game.client = None
+
+                    self.connection_status = "joined lobby"
+                    self.connection_color = (0, 255, 0)
 
                 elif self.buttons[3].cursor_hovers(self.mouse_pos):
                     # TODO: Send message to other clients, that game has started. Temporarily it will start the game.

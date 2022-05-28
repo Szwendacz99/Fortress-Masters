@@ -1,4 +1,4 @@
-from click import UUID
+from uuid import UUID
 
 from core.identity import Identity
 from core.team import Team
