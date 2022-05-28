@@ -8,6 +8,7 @@ from gui.menu import Menu
 from game.building import Building
 from game.unit import Unit
 from game.bullet import Bullet
+from game.spaceship import Spaceship
 from game.unit_selection_bar import UnitSelectionBar
 
 
@@ -84,9 +85,9 @@ class GamePlaying(Menu):
                 if not bar_clicked:
                     # TODO send message to server that unit is being placed
                     if event.button == 1 or event.button == 5:
-                        self.units.append(Unit(self.game, self.mouse_pos))
+                        self.units.append(Spaceship(self.game, self.mouse_pos))
                     else:
-                        self.units.append(Unit(self.game, self.mouse_pos, team=1))
+                        self.units.append(Spaceship(self.game, self.mouse_pos, team=1))
 
     def create_buildings(self):
         self.buildings.append(Building(self.game, True, 0))

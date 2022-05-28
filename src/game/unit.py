@@ -24,7 +24,8 @@ class Unit:
     img_blue_dead = None
     img_red_dead = None
 
-    def __init__(self, game, start_pos, speed: float = 0.3, atk_range: int = 100, team: int = 0, left: bool = True):
+    def __init__(self, game, start_pos, speed, atk_range, team, left,
+                 path_blue, path_red, path_blue_dead, path_red_dead, unit_size, bullet_type):
         self.__game = game
         self.__team: int = team
         self.__left: bool = left
@@ -48,13 +49,14 @@ class Unit:
             (self.w_revert(start_pos[0]), self.h_revert(start_pos[1])))
         self.__vector: pygame.Vector2 = pygame.Vector2(0, 0)
         self.__angle: float = 0
-        self.__unit_size: int = 45
+        self.__unit_size: int = unit_size
+        self.__bullet_type: Bullet = bullet_type
 
         if self.img_blue is None:
-            self.img_blue: Surface = img_load('resources/img/ship_blue.png', self.__unit_size)
-            self.img_red: Surface = img_load('resources/img/ship_red.png', self.__unit_size)
-            self.img_blue_dead = img_load('resources/img/ship_blue_dead.png', self.__unit_size)
-            self.img_red_dead = img_load('resources/img/ship_red_dead.png', self.__unit_size)
+            self.img_blue: Surface = img_load(path_blue, self.__unit_size)
+            self.img_red: Surface = img_load(path_red, self.__unit_size)
+            self.img_blue_dead = img_load(path_blue_dead, self.__unit_size)
+            self.img_red_dead = img_load(path_red_dead, self.__unit_size)
 
     def find_target(self, buildings: list[Building], units: list['Unit'], bullets: list[Rocket]):
 
@@ -97,7 +99,7 @@ class Unit:
     def attack(self, bullets: list[Bullet]):
         self.__cooldown = 0
         bullet_pos = self.__pos + 80 * self.__vector
-        bullets.append(Rocket(self.__game, bullet_pos, self.__target, self.__atk_damage, team=self.__team))
+        bullets.append(self.__bullet_type(self.__game, bullet_pos, self.__target, self.__atk_damage, team=self.__team))
 
     def move(self):
         if not self.__target_in_atk_range:
