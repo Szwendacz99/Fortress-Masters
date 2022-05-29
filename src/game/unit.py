@@ -117,29 +117,43 @@ class Unit:
             units.pop(self.uuid)
         elif not self.__alive:
             self.__opacity -= 1
+
+            # Displaying dead units of player's team
             if player_team == self.__team:
-                temp = self.scaled_img(self.img_blue_dead, self.__angle)
+                if self.__team == Team.RED:
+                    temp = self.scaled_img(self.img_red_dead, self.__angle)
+                else:
+                    temp = self.scaled_img(self.img_blue_dead, self.__angle)
                 temp.set_alpha(self.__opacity)
                 self.__game.get_display().blit(temp,
                                                (self.w(self.get_x()) - temp.get_width() // 2,
                                                 self.h(self.get_y()) - temp.get_height() // 2))
+            # Displaying dead units of enemies' team
             else:
-                temp = self.scaled_img(self.img_red_dead, self.__angle)
+                if self.__team == Team.RED:
+                    temp = self.scaled_img(self.img_red_dead, 180 + self.__angle)
+                else:
+                    temp = self.scaled_img(self.img_blue_dead, 180 + self.__angle)
                 temp.set_alpha(self.__opacity)
                 self.__game.get_display().blit(temp,
                                                (self.w(self.default_width - self.get_x()) - temp.get_width() // 2,
                                                 self.h(self.default_height - self.get_y()) - temp.get_height() // 2))
 
+        # Displaying units of the player's team
         elif player_team == self.__team:
-            if self.__team == Team.BLU:
-                temp = self.scaled_img(self.img_blue, self.__angle)
-            else:
+            if self.__team == Team.RED:
                 temp = self.scaled_img(self.img_red, self.__angle)
+            else:
+                temp = self.scaled_img(self.img_blue, self.__angle)
             self.__game.get_display().blit(temp,
                                            (self.w(self.get_x()) - temp.get_width() // 2,
                                             self.h(self.get_y()) - temp.get_height() // 2))
+        # Displaying units of the enemies' team
         else:
-            temp = self.scaled_img(self.img_red, self.__angle)
+            if self.__team == Team.RED:
+                temp = self.scaled_img(self.img_red, 180 + self.__angle)
+            else:
+                temp = self.scaled_img(self.img_blue, 180 + self.__angle)
             self.__game.get_display().blit(temp,
                                            (self.w(self.default_width - self.get_x()) - temp.get_width() // 2,
                                             self.h(self.default_height - self.get_y()) - temp.get_height() // 2))
@@ -164,21 +178,27 @@ class Unit:
         elif server_told:
             self.__alive = False
 
+    def calc_dist(self, target):
+        if target.__class__ == libBuilding.Building:
+            return math.hypot(self.get_x() - self.get_enemy_x(target),
+                              self.get_y() - self.get_enemy_y(target)) - target.get_size() / 2
+        return math.hypot(self.get_x() - self.get_enemy_x(target),
+                          self.get_y() - self.get_enemy_y(target))
+
     def calc_vector(self, target=None):
         if target is None:
             target = self.__target
-        self.__vector = pygame.math.Vector2(target.get_x() - self.get_x(), target.get_y() - self.get_y())
-        temp_vector = pygame.math.Vector2(self.w(target.get_x() - self.get_x()), self.h(target.get_y() - self.get_y()))
+        self.__vector = pygame.math.Vector2(
+            self.get_enemy_x(target) - self.get_x(),
+            self.get_enemy_y(target) - self.get_y())
+        temp_vector = pygame.math.Vector2(
+            self.w(self.get_enemy_x(target) - self.get_x()),
+            self.h(self.get_enemy_y(target) - self.get_y()))
         if self.__vector:
             pygame.math.Vector2.scale_to_length(self.__vector, self.__speed)
 
         # get angle between vector of going straight up and our vector
         self.__angle = temp_vector.angle_to(pygame.math.Vector2(0, -1))
-
-    def calc_dist(self, target):
-        if target.__class__ == libBuilding.Building:
-            return math.hypot(self.get_x() - target.get_x(), self.get_y() - target.get_y()) - target.get_size() / 2
-        return math.hypot(self.get_x() - target.get_x(), self.get_y() - target.get_y())
 
     # Normalizes given height to match the background scaled down to user's screen
     def h(self, h):
@@ -196,6 +216,20 @@ class Unit:
     def scaled_img(self, img: pygame.Surface, angle):
         return pygame.transform.rotate(pygame.transform.scale(
             img, (self.w(self.__unit_size), self.h(self.__unit_size))), angle)
+
+    def get_enemy_x(self, target=None):
+        if target is None:
+            target = self.__target
+        if target.__class__ == libBuilding.Building:
+            return target.get_x()
+        return self.default_width - target.get_x()
+
+    def get_enemy_y(self, target=None):
+        if target is None:
+            target = self.__target
+        if target.__class__ == libBuilding.Building:
+            return target.get_y()
+        return self.default_height - target.get_y()
 
     def get_x(self):
         return self.__pos.x
