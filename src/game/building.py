@@ -1,5 +1,5 @@
 import uuid
-from uuid import UUID
+from uuid import UUID, uuid4
 
 import pygame
 import pygame.mouse
@@ -12,6 +12,8 @@ from core.team import Team
 from game.laser import Laser
 from game.bullet import Bullet
 from game.unit import Unit
+from network.messages.building_hit_message import BuildingHitMessage
+from network.messages.unit_hit_message import UnitHitMessage
 
 
 def img_load(path, size, angle: float = 0):
@@ -188,8 +190,15 @@ class Building:
                 else:
                     self.__x = self.x0 + self.bg_width - small_x
 
-    def lose_hp(self, damage):
-        self.__hp -= damage
+    def lose_hp(self, damage, server_told: bool = False):
+        if self.__game.client.get_is_server() and not server_told:
+            self.__game.client.send_message(BuildingHitMessage(team=self.__team,
+                                                               left=self.__left,
+                                                               big=self.__big,
+                                                               damage=damage))
+            return
+        elif server_told:
+            self.__hp -= damage
         if self.__hp <= 0:
             self.die()
 
@@ -242,3 +251,9 @@ class Building:
 
     def get_size(self):
         return self.__building_size
+
+    def get_big(self) -> bool:
+        return self.__big
+
+    def get_left(self) -> bool:
+        return self.__left
