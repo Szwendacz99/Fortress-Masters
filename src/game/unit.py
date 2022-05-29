@@ -125,19 +125,22 @@ class Unit:
                 temp = self.scaled_img(self.img_red_dead, self.__angle)
                 temp.set_alpha(self.__opacity)
                 self.__game.get_display().blit(temp,
-                                               (self.w(self.get_x()) - temp.get_width() // 2,
-                                                self.h(self.get_y()) - temp.get_height() // 2))
+                                               (self.w(self.default_width - self.get_x()) - temp.get_width() // 2,
+                                                self.h(self.default_height - self.get_y()) - temp.get_height() // 2))
 
         elif player_team == self.__team:
-            temp = self.scaled_img(self.img_blue, self.__angle)
+            if self.__team == Team.BLU:
+                temp = self.scaled_img(self.img_blue, self.__angle)
+            else:
+                temp = self.scaled_img(self.img_red, self.__angle)
             self.__game.get_display().blit(temp,
                                            (self.w(self.get_x()) - temp.get_width() // 2,
                                             self.h(self.get_y()) - temp.get_height() // 2))
         else:
             temp = self.scaled_img(self.img_red, self.__angle)
             self.__game.get_display().blit(temp,
-                                           (self.w(self.get_x()) - temp.get_width() // 2,
-                                            self.h(self.get_y()) - temp.get_height() // 2))
+                                           (self.w(self.default_width - self.get_x()) - temp.get_width() // 2,
+                                            self.h(self.default_height - self.get_y()) - temp.get_height() // 2))
 
     def action(self, buildings, units, bullets, player_team):
         if self.__alive:

@@ -23,11 +23,9 @@ class GamePlaying(Menu):
     def __init__(self, game):
         Menu.__init__(self, game)
         # TODO establishing on which team is a player
-        self.__player_team = Team.RED
         self.__fps: int = 60
         self.__background_img: Surface = pygame.transform.scale(pygame.image.load(
             os.path.normpath('resources/img/map_bg.png')), (self.w(564), self.h(864))).convert()
-        self.create_buildings()
 
         self.__unit_selection_bar = UnitSelectionBar(game, self.game.get_window_width() / 2 + 564 / 2,
                                                      self.game.get_window_height() / 10)
@@ -42,6 +40,7 @@ class GamePlaying(Menu):
     def display_menu(self):
         clock = pygame.time.Clock()
         self.run_display = True
+        self.create_buildings()
         while self.run_display:
             self.mouse_pos = pygame.mouse.get_pos()
             clock.tick(self.__fps)
@@ -109,7 +108,7 @@ class GamePlaying(Menu):
         Client.add_building(Building(self.game, False, Team.BLU, False))
         # if self.game.client is not None:
         for building in Client.buildings.values():
-            building.set_coordinates(self.__player_team)
+            building.set_coordinates(self.game.client.get_identity().get_team())
 
     def h(self, h: int):
         return int(h / self.default_height * self.game.get_window_height())

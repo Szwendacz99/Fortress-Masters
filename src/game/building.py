@@ -114,7 +114,7 @@ class Building:
                                             self.h(self.__y) - temp.get_height() // 2))
         # Displaying red turret
         else:
-            if self.__angle == 0:
+            if self.__angle == 0 and self.__team != player_team:
                 self.__angle = 180
             temp = self.scaled_img(self.__red_img, 180 + self.__angle)
             self.__game.get_display().blit(temp,
@@ -142,7 +142,7 @@ class Building:
         self.__angle = self.__vector.angle_to(pygame.math.Vector2(0, -1))
 
     def set_coordinates(self, player_team: Team = 0):
-        self.x0 = self.__game.get_window_width() / 2 - self.bg_width / 2
+        self.x0 = self.default_width / 2 - self.bg_width / 2
         big_x = 200
         small_x = 117
         small_h = 167
