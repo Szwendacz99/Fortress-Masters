@@ -21,7 +21,6 @@ class CreditsMenu(Menu):
 
     def resize(self):
 
-
         super().resize()
 
         self.__c1x: float = self.mid_w
@@ -33,13 +32,15 @@ class CreditsMenu(Menu):
 
         self.back_button = Button(pos=(self.game.get_window_width() / 2,
                                        self.game.get_window_height() / 2 - self.font_manager.get_title_font_size()),
-                                  label_text="GO BACK", font=self.game.get_font(self.font_manager.get_title_font_size()),
+                                  label_text="GO BACK",
+                                  font=self.game.get_font(self.font_manager.get_title_font_size()),
                                   color="Red", hovering_color="Green")
-
 
     def display_menu(self):
         self.run_display = True
+        clock = pygame.time.Clock()
         while self.run_display:
+            clock.tick(60)
             self.mouse_pos = pygame.mouse.get_pos()
             self.game.get_display().fill(self.game.BLACK)
 

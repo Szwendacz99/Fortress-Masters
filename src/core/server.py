@@ -64,9 +64,9 @@ class Server(Thread, MessageReceiver):
         info(f"Player {player.get_name()} has successfully joined the lobby!")
 
     def receive(self, message: BasicMessage) -> bool:
-        if message.get_type() in [MessageType.NEW_UNIT]:
+        if message.get_type() in [MessageType.NEW_UNIT, MessageType.UNIT_DEATH]:
             self.__server_game_thread.broadcast(message)
-            debug(f"Server broadcasting message with type: {message.get_type()}")
+            # debug(f"Server broadcasting message with type: {message.get_type()}")
         return True
 
     def get_lobby_list(self) -> list[Identity]:

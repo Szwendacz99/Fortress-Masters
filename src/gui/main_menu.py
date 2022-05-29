@@ -49,7 +49,9 @@ class MainMenu(Menu):
 
     def display_menu(self):
         self.run_display = True
+        clock = pygame.time.Clock()
         while self.run_display:
+            clock.tick(60)
             self.mouse_pos = pygame.mouse.get_pos()
             self.game.get_display().fill(self.game.BLACK)
 
