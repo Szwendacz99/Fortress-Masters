@@ -29,7 +29,6 @@ class Building:
     default_width: int = 1536
     default_height: int = 864
     bg_width: int = 564
-    bg_height: int = 992
 
     def __init__(self, game, big: bool = False, team: Team = None, left: bool = True):
         self.__game = game
@@ -64,9 +63,9 @@ class Building:
         else:
             self.__building_size = 100
         self.__blue_img: Surface = img_load('resources/img/blue_turret.png', self.__building_size, -45)
-        self.__red_img: Surface = img_load('resources/img/red_turret.png', self.__building_size, 135)
+        self.__red_img: Surface = img_load('resources/img/red_turret.png', self.__building_size, -45)
         self.__blue_img_dead: Surface = img_load('resources/img/blue_turret_dead.png', self.__building_size, -45)
-        self.__red_img_dead: Surface = img_load('resources/img/red_turret_dead.png', self.__building_size, 135)
+        self.__red_img_dead: Surface = img_load('resources/img/red_turret_dead.png', self.__building_size, -45)
 
     def find_target(self, units: dict[UUID, Unit], bullets: dict[UUID, Bullet]):
 
@@ -94,31 +93,49 @@ class Building:
                 self.__target = current_closest_target
                 self.calc_vector(current_closest_target)
 
-    def draw(self, player_team: Team = 0):
+    def draw(self, player_team: Team):
+
         if not self.__alive:
-            # Displaying dead blue turret
+            # Displaying dead lower turrets
             if self.__team == player_team:
-                temp = self.scaled_img(self.__blue_img_dead, self.__angle)
+                if self.__team == Team.RED:
+                    temp = self.scaled_img(self.__red_img_dead, self.__angle)
+                else:
+                    temp = self.scaled_img(self.__blue_img_dead, self.__angle)
                 self.__game.get_display().blit(temp,
                                                (self.w(self.__x) - temp.get_width() // 2,
                                                 self.h(self.__y) - temp.get_height() // 2))
-            # Displaying dead red turret
+            # Displaying dead upper turrets
             else:
-                temp = self.scaled_img(self.__red_img_dead, 180 + self.__angle)
+                if self.__angle == 0:
+                    self.__angle = 180
+                if self.__team == Team.RED:
+                    temp = self.scaled_img(self.__red_img_dead, self.__angle)
+                else:
+                    temp = self.scaled_img(self.__blue_img_dead, self.__angle)
+
                 self.__game.get_display().blit(temp,
                                                (self.w(self.__x) - temp.get_width() // 2,
                                                 self.h(self.__y) - temp.get_height() // 2))
-        # Displaying blue turret
+
+        # Displaying lower turrets
         elif self.__team == player_team:
-            temp = self.scaled_img(self.__blue_img, self.__angle)
+            if self.__team == Team.RED:
+                temp = self.scaled_img(self.__red_img, self.__angle)
+            else:
+                temp = self.scaled_img(self.__blue_img, self.__angle)
             self.__game.get_display().blit(temp,
                                            (self.w(self.__x) - temp.get_width() // 2,
                                             self.h(self.__y) - temp.get_height() // 2))
-        # Displaying red turret
+        # Displaying upper turrets
         else:
-            if self.__angle == 0 and self.__team != player_team:
+            if self.__angle == 0:
                 self.__angle = 180
-            temp = self.scaled_img(self.__red_img, 180 + self.__angle)
+            if self.__team == Team.RED:
+                temp = self.scaled_img(self.__red_img, self.__angle)
+            else:
+                temp = self.scaled_img(self.__blue_img, self.__angle)
+
             self.__game.get_display().blit(temp,
                                            (self.w(self.__x) - temp.get_width() // 2,
                                             self.h(self.__y) - temp.get_height() // 2))
@@ -134,16 +151,8 @@ class Building:
         laser = Laser(self.__game, bullet_pos, self.__target, self.__atk_damage, team=self.__team)
         bullets[laser.uuid] = laser
 
-    def calc_dist(self, unit):
-        return math.hypot(self.get_x() - unit.get_x(), self.get_y() - unit.get_y())
+    def set_coordinates(self, player_team: Team):
 
-    def calc_vector(self, target):
-        self.__vector = pygame.math.Vector2(target.get_x() - self.get_x(), target.get_y() - self.get_y())
-        pygame.math.Vector2.scale_to_length(self.__vector, 1)
-        # get angle between vector of going straight up and our vector
-        self.__angle = self.__vector.angle_to(pygame.math.Vector2(0, -1))
-
-    def set_coordinates(self, player_team: Team = 0):
         self.x0 = self.default_width // 2 - self.bg_width // 2
 
         big_x = 200
@@ -196,8 +205,16 @@ class Building:
     def die(self):
         self.__alive = False
 
-    def is_alive(self):
-        return self.__alive
+    def calc_dist(self, target):
+        return math.hypot(self.get_x() - self.get_enemy_x(target), self.get_y() - self.get_enemy_y(target))
+
+    def calc_vector(self, target):
+        self.__vector = pygame.math.Vector2(
+            self.get_enemy_x(target) - self.get_x(), self.get_enemy_x(target) - self.get_y())
+        pygame.math.Vector2.scale_to_length(self.__vector, 1)
+
+        # get angle between vector of going straight up and our vector
+        self.__angle = self.__vector.angle_to(pygame.math.Vector2(0, -1))
 
     # Normalizes given height to match the background scaled down to user's screen
     def h(self, h: int):
@@ -209,6 +226,19 @@ class Building:
     def scaled_img(self, img: pygame.Surface, angle):
         return pygame.transform.rotate(pygame.transform.scale(
             img, (self.w(self.__building_size), self.h(self.__building_size))), angle)
+
+    def get_enemy_x(self, target=None):
+        if target is None:
+            target = self.__target
+        return self.default_width - target.get_x()
+
+    def get_enemy_y(self, target=None):
+        if target is None:
+            target = self.__target
+        return self.default_height - target.get_y()
+
+    def is_alive(self):
+        return self.__alive
 
     def get_team(self):
         return self.__team

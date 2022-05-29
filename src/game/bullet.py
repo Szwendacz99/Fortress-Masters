@@ -5,6 +5,7 @@ import pygame.mouse
 import os
 import math
 
+import game.building as libBuilding
 from pygame.surface import Surface
 from pygame.math import Vector2
 
@@ -62,16 +63,20 @@ class Bullet:
         self.draw(player_team)
 
     def calc_vector(self, target):
-        self.__vector = pygame.math.Vector2(target.get_x() - self.get_x(), target.get_y() - self.get_y())
-        temp_vector = pygame.math.Vector2(self.w(target.get_x() - self.get_x()), self.h(target.get_y() - self.get_y()))
+        self.__vector = pygame.math.Vector2(
+            self.get_enemy_x(target) - self.get_x(),
+            self.get_enemy_y(target) - self.get_y())
+        temp_vector = pygame.math.Vector2(
+            self.w(self.get_enemy_x(target) - self.get_x()),
+            self.h(self.get_enemy_y(target) - self.get_y()))
         if self.__vector:
             pygame.math.Vector2.scale_to_length(self.__vector, self.__speed)
 
         # get angle between vector of going straight up and our vector
         self.__angle = temp_vector.angle_to(pygame.math.Vector2(0, -1))
 
-    def calc_dist(self, unit):
-        return math.hypot(self.get_x() - unit.get_x(), self.get_y() - unit.get_y())
+    def calc_dist(self, target):
+        return math.hypot(self.get_x() - self.get_enemy_x(target), self.get_y() - self.get_enemy_y(target))
 
     # Normalizes given height to match the background scaled down to user's screen
     def h(self, h: int):
@@ -89,6 +94,20 @@ class Bullet:
     def scaled_img(self, img: pygame.Surface, angle):
         return pygame.transform.rotate(pygame.transform.scale(
             img, (self.w(self.__img_size_x), self.h(self.__img_size_y))), angle)
+
+    def get_enemy_x(self, target=None):
+        if target is None:
+            target = self.__target
+        if target.__class__ == libBuilding.Building:
+            return target.get_x()
+        return self.default_width - target.get_x()
+
+    def get_enemy_y(self, target=None):
+        if target is None:
+            target = self.__target
+        if target.__class__ == libBuilding.Building:
+            return target.get_y()
+        return self.default_height - target.get_y()
 
     def get_x(self):
         return self.__pos.x
