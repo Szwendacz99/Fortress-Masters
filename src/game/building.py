@@ -142,7 +142,7 @@ class Building:
         self.__angle = self.__vector.angle_to(pygame.math.Vector2(0, -1))
 
     def set_coordinates(self, player_team: Team = 0):
-        self.x0 = self.__game.get_window_width() / 2 - self.bg_width / 2
+        self.x0 = self.default_width // 2 - self.bg_width // 2
         big_x = 200
         small_x = 117
         small_h = 167
