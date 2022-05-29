@@ -1,14 +1,18 @@
-from logging import info
+from logging import info, debug
 from threading import Thread, Lock
 from time import sleep, time
 
+from core.client import Client
 from core.identity import Identity
 from core.connected_player import ConnectedPlayer
 from core.team import Team
 from network.messages.basic_message import BasicMessage
 from network.messages.lobby_state_message import LobbyStateMessage
 from network.messages.message_type import MessageType
+from network.messages.new_unit_message import NewUnitMessage
 from network.messages.team_set_message import TeamSetMessage
+from network.messages.unit_sync_data import UnitSyncData
+from network.messages.units_update_message import UnitsUpdateMessage
 
 
 class ServerGameThread(Thread):
@@ -17,6 +21,7 @@ class ServerGameThread(Thread):
         self.__team_blu: list[ConnectedPlayer] = []
         self.__team_red: list[ConnectedPlayer] = []
         self.__active = True
+        self.__last_heartbeat_send_time = time()
         self.__lock = Lock()
         self.daemon = True
 
@@ -47,9 +52,10 @@ class ServerGameThread(Thread):
 
     def broadcast(self, msg):
         self.__lock.acquire()
-        for p in self.__team_blu+self.__team_red:
+        for p in self.__team_blu + self.__team_red:
             try:
                 p.send_message(msg)
+                # debug(f"Server sending broadcast with {msg.get_type()} message")
             except:
                 self.__lock.release()
                 self.__disconnect(p)
@@ -57,7 +63,7 @@ class ServerGameThread(Thread):
         self.__lock.release()
 
     def get_identities(self) -> list[Identity]:
-        return [p.get_identity() for p in self.__team_blu+self.__team_red]
+        return [p.get_identity() for p in self.__team_blu + self.__team_red]
 
     def __check_for_disconnects(self):
         for player in self.__team_blu + self.__team_red:
@@ -81,5 +87,17 @@ class ServerGameThread(Thread):
         hb: BasicMessage = BasicMessage(MessageType.HEARTBEAT)
         while self.__active:
             self.__check_for_disconnects()
-            self.broadcast(hb)
-            sleep(1)
+            if (time() - self.__last_heartbeat_send_time) > 1:
+                self.broadcast(hb)
+                self.__last_heartbeat_send_time = time()
+            self.broadcast(UnitsUpdateMessage(self.get_units_list()))
+            sleep(0.1)
+
+    def get_units_list(self) -> list[UnitSyncData]:
+        result = []
+        for unit in Client.units.values():
+            result.append(UnitSyncData(uuid=unit.uuid,
+                                       pos=unit.get_pos()
+                                       )
+                          )
+        return result

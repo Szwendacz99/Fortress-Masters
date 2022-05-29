@@ -11,7 +11,6 @@ from core.team import Team
 from game.unit_type import UnitType
 from gui.menu import Menu
 from game.building import Building
-from game.spaceship import Spaceship
 from game.unit_selection_bar import UnitSelectionBar
 from network.messages.new_unit_message import NewUnitMessage
 
@@ -56,7 +55,7 @@ class GamePlaying(Menu):
     def draw(self):
         self.game.get_display().fill(self.game.BLACK)
         self.game.get_display().blit(self.__background_img,
-                                     (self.game.get_window_width()/2 - self.__background_img.get_width() // 2, 0))
+                                     (self.game.get_window_width() / 2 - self.__background_img.get_width() // 2, 0))
 
         # iterating this way to prevent
         # RuntimeError: dictionary changed size during iteration
@@ -86,17 +85,14 @@ class GamePlaying(Menu):
                 if not bar_clicked:
                     # TODO send message to server that unit is being placed
                     if event.button == 1 or event.button == 5:
-                        self.game.client.send_message(NewUnitMessage(uuid4(),
-                                                                     unit_type=UnitType.SPACESHIP,
-                                                                     pos=self.mouse_pos,
-                                                                     team=Team.RED))
-                        # Client.units.append(Spaceship(self.game, self.mouse_pos))
+                        team = team = Team.RED
                     else:
-                        self.game.client.send_message(NewUnitMessage(uuid4(),
-                                                                     unit_type=UnitType.SPACESHIP,
-                                                                     pos=self.mouse_pos,
-                                                                     team=Team.BLU))
-                        # Client.units.append(Spaceship(self.game, self.mouse_pos, team=1))
+                        team = team = Team.BLU
+                    self.game.client.send_message(NewUnitMessage(uuid4(),
+                                                                 unit_type=UnitType.SPACESHIP,
+                                                                 pos=self.mouse_pos,
+                                                                 team=team
+                                                                 ))
 
     def create_buildings(self):
         Client.add_building(Building(self.game, True, Team.RED))

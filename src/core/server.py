@@ -66,7 +66,7 @@ class Server(Thread, MessageReceiver):
     def receive(self, message: BasicMessage) -> bool:
         if message.get_type() in [MessageType.NEW_UNIT]:
             self.__server_game_thread.broadcast(message)
-            debug(f"Server broadcasting message with type: {message.get_type()}")
+            # debug(f"Server broadcasting message with type: {message.get_type()}")
         return True
 
     def get_lobby_list(self) -> list[Identity]:

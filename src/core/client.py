@@ -10,23 +10,28 @@ from game.building import Building
 from game.bullet import Bullet
 from game.spaceship import Spaceship
 from game.unit import Unit
+from game.unit_type import UnitType
 from network.connection import Connection
 from network.messages.basic_message import BasicMessage
 from network.messages.join_message import JoinMessage
 from network.messages.lobby_state_message import LobbyStateMessage
 from network.messages.message_type import MessageType
 from network.messages.new_unit_message import NewUnitMessage
+from network.messages.units_update_message import UnitsUpdateMessage
 
 
 class Client(Thread, MessageReceiver):
     buildings: dict[UUID, Building] = {}
     units: dict[UUID, Unit] = {}
     bullets: dict[UUID, Bullet] = {}
+    is_server: bool = False
 
-    def __init__(self, game, username: str):
+    def __init__(self, game, username: str, is_server: bool = False):
         Thread.__init__(self)
         self.lobby_list: list[Identity] = []
         self.__game_started: bool = False
+
+        Client.is_server = is_server
 
         self.__identity: Identity = Identity(username)
         self.__connection: Connection = None
@@ -62,12 +67,24 @@ class Client(Thread, MessageReceiver):
             self.__identity.set_team(message.get_team())
             info(f"Assigned to team {message.get_team()}")
         elif message.get_type() == MessageType.NEW_UNIT:
-            msg: NewUnitMessage = message
+            self.add_new_unit(message)
+        elif message.get_type() == MessageType.UNITS_UPDATE:
+            self.update_units(message)
+
+        return True
+
+    def add_new_unit(self, msg: NewUnitMessage):
+        if msg.unit_type == UnitType.SPACESHIP:
             Client.units[msg.uuid] = Spaceship(uuid=msg.uuid,
                                                game=self.__game,
                                                start_pos=msg.pos,
                                                team=msg.team)
-        return True
+
+    def update_units(self, msg: UnitsUpdateMessage):
+        for unit in msg.units:
+            curr_unit = Client.units.get(unit.uuid)
+            if curr_unit is not None:
+                curr_unit.set_pos(unit.pos)
 
     def get_identity(self) -> Identity:
         return self.__identity

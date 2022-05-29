@@ -173,7 +173,8 @@ class PlayMenu(Menu):
                     if self.game.server is not None and self.game.server.is_alive():
                         return
                     self.game.client = Client(self.game,
-                                              username=self.text_input_array[2].input_text)
+                                              username=self.text_input_array[2].input_text,
+                                              is_server=True)
                     try:
                         self.game.server = Server(port=int(self.text_input_array[1].input_text),
                                                   identity=self.game.client.get_identity())

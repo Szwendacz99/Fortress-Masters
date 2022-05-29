@@ -202,3 +202,9 @@ class Unit:
 
     def is_alive(self):
         return self.__alive
+
+    def get_pos(self) -> Vector2:
+        return self.__pos
+
+    def set_pos(self, pos: Vector2):
+        self.__pos = pos
