@@ -1,6 +1,6 @@
 from builtins import staticmethod
 from logging import debug, info, error
-from threading import Thread
+from threading import Thread, Lock
 from time import time
 from uuid import UUID
 
@@ -24,20 +24,19 @@ class Client(Thread, MessageReceiver):
     buildings: dict[UUID, Building] = {}
     units: dict[UUID, Unit] = {}
     bullets: dict[UUID, Bullet] = {}
-    is_server: bool = False
 
     def __init__(self, game, username: str, is_server: bool = False):
         Thread.__init__(self)
         self.lobby_list: list[Identity] = []
         self.__game_started: bool = False
-
-        Client.is_server = is_server
+        self.__is_server: bool = is_server
 
         self.__identity: Identity = Identity(username)
         self.__connection: Connection = None
         self.__last_msg_receive_time: float = time()
         self.daemon = True
         self.__game = game
+        self.__lock = Lock()
 
     def join_server(self, address: str, port: int) -> bool:
         try:
@@ -70,6 +69,8 @@ class Client(Thread, MessageReceiver):
             self.add_new_unit(message)
         elif message.get_type() == MessageType.UNITS_UPDATE:
             self.update_units(message)
+        elif message.get_type() == MessageType.UNIT_DEATH:
+            self.units.get(message.uuid).die(server_told=True)
 
         return True
 
@@ -94,7 +95,9 @@ class Client(Thread, MessageReceiver):
 
     def send_message(self, msg: [BasicMessage, LobbyStateMessage]):
         # debug(f"Client sending message with type: {msg.get_type()}")
+        self.__lock.acquire()
         self.__connection.send_data(msg)
+        self.__lock.release()
 
     def get_last_msg_receive_time(self) -> float:
         return self.__last_msg_receive_time
@@ -114,3 +117,6 @@ class Client(Thread, MessageReceiver):
     @staticmethod
     def add_building(building: Building):
         Client.buildings[building.uuid] = building
+
+    def get_is_server(self) -> bool:
+        return self.__is_server

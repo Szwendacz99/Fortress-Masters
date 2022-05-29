@@ -12,6 +12,8 @@ import game.building as libBuilding
 from game.bullet import Bullet
 from pygame.math import Vector2
 
+from network.messages.unit_death_message import UnitDeathMessage
+
 
 def img_load(path, size):
     return pygame.transform.scale(pygame.image.load(
@@ -152,8 +154,12 @@ class Unit:
         if self.__hp <= 0:
             self.die()
 
-    def die(self):
-        self.__alive = False
+    def die(self, server_told: bool = False):
+        if self.__game.client.get_is_server() and self.__alive:
+            self.__alive = False
+            self.__game.client.send_message(UnitDeathMessage(self.uuid))
+        elif server_told:
+            self.__alive = False
 
     def calc_vector(self, target=None):
         if target is None:

@@ -11,3 +11,4 @@ class MessageType(Enum):
     TEAM_SET = 6
     NEW_UNIT = 7
     UNITS_UPDATE = 8
+    UNIT_DEATH = 9
