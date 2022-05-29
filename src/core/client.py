@@ -13,6 +13,7 @@ from game.unit import Unit
 from game.unit_type import UnitType
 from network.connection import Connection
 from network.messages.basic_message import BasicMessage
+from network.messages.building_hit_message import BuildingHitMessage
 from network.messages.join_message import JoinMessage
 from network.messages.lobby_state_message import LobbyStateMessage
 from network.messages.message_type import MessageType
@@ -61,7 +62,7 @@ class Client(Thread, MessageReceiver):
             self.send_message(message)
         elif message.get_type() == MessageType.GAME_START:
             info("Received info on game start!")
-            self.__game.play_menu.start_game()
+            self.__game.play_menu.set_game_ready()
         elif message.get_type() == MessageType.TEAM_SET:
             self.__identity.set_team(message.get_team())
             info(f"Assigned to team {message.get_team()}")
@@ -69,8 +70,10 @@ class Client(Thread, MessageReceiver):
             self.add_new_unit(message)
         elif message.get_type() == MessageType.UNITS_UPDATE:
             self.update_units(message)
-        elif message.get_type() == MessageType.UNIT_DEATH:
-            self.units.get(message.uuid).die(server_told=True)
+        elif message.get_type() == MessageType.UNIT_HIT:
+            self.units.get(message.uuid).lose_hp(message.damage, server_told=True)
+        elif message.get_type() == MessageType.BUILDING_HIT:
+            self.building_receive_hit(message)
 
         return True
 
@@ -80,6 +83,13 @@ class Client(Thread, MessageReceiver):
                                                game=self.__game,
                                                start_pos=msg.pos,
                                                team=msg.team)
+
+    def building_receive_hit(self, msg: BuildingHitMessage):
+        for building in self.buildings.values():
+            if building.get_team() == msg.team and\
+                    building.get_big() is msg.big and\
+                    building.get_left() is msg.left:
+                building.lose_hp(msg.damage, server_told=True)
 
     def update_units(self, msg: UnitsUpdateMessage):
         for unit in msg.units:

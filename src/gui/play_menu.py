@@ -17,6 +17,8 @@ class PlayMenu(Menu):
 
         self.__lobby_display_players: list[Identity] = []
 
+        self.__game_ready: bool = False
+
         # TODO: ?Make input manager class
         self.INPUT_LETTERS = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
                               's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '.'}
@@ -147,6 +149,9 @@ class PlayMenu(Menu):
             self.game.check_events()
             self.blit_screen()
 
+            if self.__game_ready:
+                self.start_game()
+
     def check_input(self):
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
@@ -208,10 +213,10 @@ class PlayMenu(Menu):
                     # TODO: Send message to other clients, that game has started. Temporarily it will start the game.
                     self.game.server.start_game()
                     if len(self.__lobby_display_players) == 4:
-                        self.start_game()
+                        self.set_game_ready()
                 elif self.buttons[4].cursor_hovers(self.mouse_pos):
                     # Demo start button
-                    self.start_game()
+                    self.set_game_ready()
                 for text_input in self.text_input_array:
                     if text_input.cursor_hovers(self.mouse_pos):
                         text_input.set_clicked(True)
@@ -222,3 +227,6 @@ class PlayMenu(Menu):
         self.run_display = False
         self.game.curr_menu = self.game.game_playing
         self.game.curr_menu.display_menu()
+
+    def set_game_ready(self, ready: bool = True):
+        self.__game_ready = ready
