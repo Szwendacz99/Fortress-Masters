@@ -1,6 +1,6 @@
 import pygame
 
-from game.unit_type import UnitType
+from game.units.unit_type import UnitType
 
 
 class UnitSelectionButton:

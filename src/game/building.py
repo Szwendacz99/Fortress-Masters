@@ -1,5 +1,5 @@
 import uuid
-from uuid import UUID, uuid4
+from uuid import UUID
 
 import pygame
 import pygame.mouse
@@ -11,7 +11,7 @@ from pygame.surface import Surface
 from core.team import Team
 from game.laser import Laser
 from game.bullet import Bullet
-from game.unit import Unit
+from game.units.unit import Unit
 from network.messages.building_hit_message import BuildingHitMessage
 
 

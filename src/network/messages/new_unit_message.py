@@ -2,10 +2,8 @@ from uuid import UUID
 
 from pygame.math import Vector2
 
-from core.identity import Identity
 from core.team import Team
-from game.unit import Unit
-from game.unit_type import UnitType
+from game.units.unit_type import UnitType
 from network.messages.basic_message import BasicMessage
 from network.messages.message_type import MessageType
 

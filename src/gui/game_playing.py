@@ -8,7 +8,7 @@ from pygame.surface import Surface
 
 from core.client import Client
 from core.team import Team
-from game.unit_type import UnitType
+from game.units.unit_type import UnitType
 from gui.menu import Menu
 from game.building import Building
 from game.unit_selection_bar import UnitSelectionBar
@@ -28,6 +28,8 @@ class GamePlaying(Menu):
 
         self.__unit_selection_bar = UnitSelectionBar(game, self.game.get_window_width() / 2 + 564 / 2,
                                                      self.game.get_window_height() / 10)
+
+        self.__selected_unit = UnitType.SPACESHIP
 
     def resize(self):
         self.__background_img: Surface = pygame.transform.scale(pygame.image.load(
@@ -80,6 +82,7 @@ class GamePlaying(Menu):
                         for button_1 in selection_buttons:
                             button_1.set_clicked(False)
                         button.set_clicked(True)
+                        self.__selected_unit = button.get_unit_type()
                         bar_clicked = True
                 if not bar_clicked:
                     # TODO send message to server that unit is being placed
@@ -88,7 +91,7 @@ class GamePlaying(Menu):
                     else:
                         team = not self.game.client.get_identity().get_team()
                     self.game.client.send_message(NewUnitMessage(uuid4(),
-                                                                 unit_type=UnitType.SPACESHIP,
+                                                                 unit_type=self.__selected_unit,
                                                                  pos=(self.w_revert(self.mouse_pos[0]),
                                                                       self.h_revert(self.mouse_pos[1])),
                                                                  team=team
