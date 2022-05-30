@@ -5,9 +5,9 @@ import pygame.mouse
 import os
 import math
 
-import game.building as libBuilding
 from pygame.surface import Surface
 from pygame.math import Vector2
+from core.team import Team
 
 
 def img_load(path, size_x, size_y):
@@ -20,16 +20,16 @@ class Bullet:
     default_height: int = 864
 
     def __init__(self, game, start_pos, target, damage, path_blue, path_red,
-                 speed: float = 1.66, team: int = 0, img_size_x: int = 13, img_size_y: int = 13):
+                 speed: float = 1.66, team: Team = Team.RED, img_size_x: int = 13, img_size_y: int = 13):
         self.__game = game
-        self.__team: int = team
+        self.__team: Team = team
 
         self.__damage: int = damage
         self.__speed: float = speed
 
         self.__img_size_x = img_size_x
         self.__img_size_y = img_size_y
-        self.__pos: pygame.math.Vector2 = start_pos
+        self.__pos: pygame.math.Vector2 = pygame.Vector2(start_pos)
         self.__vector: pygame.Vector2 = pygame.Vector2(0, 0)
         self.__angle: float = 0
 
@@ -50,8 +50,8 @@ class Bullet:
         if player_team == self.__team:
             temp = self.scaled_img(self.__img_blue, self.__angle)
             self.__game.get_display().blit(temp,
-                                           (self.w(self.get_x()) - self.__img_blue.get_width() // 2,
-                                            self.h(self.get_y()) - self.__img_blue.get_height() // 2))
+                                           (self.w(self.get_x()) - temp.get_width() // 2,
+                                            self.h(self.get_y()) - temp.get_height() // 2))
         else:
             temp = self.scaled_img(self.__img_red, self.__angle)
             self.__game.get_display().blit(temp,
@@ -64,11 +64,11 @@ class Bullet:
 
     def calc_vector(self, target):
         self.__vector = pygame.math.Vector2(
-            self.get_enemy_x(target) - self.get_x(),
-            self.get_enemy_y(target) - self.get_y())
+            target.get_x() - self.get_x(),
+            target.get_y() - self.get_y())
         temp_vector = pygame.math.Vector2(
-            self.w(self.get_enemy_x(target) - self.get_x()),
-            self.h(self.get_enemy_y(target) - self.get_y()))
+            self.w(target.get_x() - self.get_x()),
+            self.h(target.get_y() - self.get_y()))
         if self.__vector:
             pygame.math.Vector2.scale_to_length(self.__vector, self.__speed)
 
@@ -76,7 +76,7 @@ class Bullet:
         self.__angle = temp_vector.angle_to(pygame.math.Vector2(0, -1))
 
     def calc_dist(self, target):
-        return math.hypot(self.get_x() - self.get_enemy_x(target), self.get_y() - self.get_enemy_y(target))
+        return math.hypot(self.get_x() - target.get_x(), self.get_y() - target.get_y())
 
     # Normalizes given height to match the background scaled down to user's screen
     def h(self, h: int):
@@ -94,20 +94,6 @@ class Bullet:
     def scaled_img(self, img: pygame.Surface, angle):
         return pygame.transform.rotate(pygame.transform.scale(
             img, (self.w(self.__img_size_x), self.h(self.__img_size_y))), angle)
-
-    def get_enemy_x(self, target=None):
-        if target is None:
-            target = self.__target
-        if target.__class__ == libBuilding.Building:
-            return target.get_x()
-        return self.default_width - target.get_x()
-
-    def get_enemy_y(self, target=None):
-        if target is None:
-            target = self.__target
-        if target.__class__ == libBuilding.Building:
-            return target.get_y()
-        return self.default_height - target.get_y()
 
     def get_x(self):
         return self.__pos.x

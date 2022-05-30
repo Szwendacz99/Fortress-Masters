@@ -18,7 +18,7 @@ class Server(Thread, MessageReceiver):
 
     def __init__(self, port: int, identity: Identity):
         super().__init__()
-        self.__listener: ServerListener = ServerListener(port, 3)
+        self.__listener: ServerListener = ServerListener(port, 15)
         self.__server_game_thread: ServerGameThread = ServerGameThread()
         self.__server_game_thread.start()
         self.__identity = identity

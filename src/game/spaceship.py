@@ -17,8 +17,8 @@ class Spaceship(Unit):
 
     def __init__(self, uuid: UUID, game, start_pos,
                  hp: int = 255, atk_damage: int = 50, atk_speed: int = 110, atk_range: int = 100, speed: float = 0.22,
-                 team: Team = Team.RED, left: bool = True):
-        Unit.__init__(self, uuid, game, start_pos, hp, atk_damage, atk_speed, atk_range, speed, team, left,
+                 team: Team = Team.RED, left: bool = True, client_team: Team = Team.RED):
+        Unit.__init__(self, uuid, game, start_pos, hp, atk_damage, atk_speed, atk_range, speed, team, client_team, left,
                       self.path_blue, self.path_red, self.path_blue_dead, self.path_red_dead,
                       self.unit_size, self.bullet_type)
         self.uuid = uuid

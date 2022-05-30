@@ -84,12 +84,13 @@ class GamePlaying(Menu):
                 if not bar_clicked:
                     # TODO send message to server that unit is being placed
                     if event.button == 1 or event.button == 5:
-                        team = team = Team.RED
+                        team = self.game.client.get_identity().get_team()
                     else:
-                        team = team = Team.BLU
+                        team = not self.game.client.get_identity().get_team()
                     self.game.client.send_message(NewUnitMessage(uuid4(),
                                                                  unit_type=UnitType.SPACESHIP,
-                                                                 pos=self.mouse_pos,
+                                                                 pos=(self.w_revert(self.mouse_pos[0]),
+                                                                      self.h_revert(self.mouse_pos[1])),
                                                                  team=team
                                                                  ))
 
@@ -108,6 +109,12 @@ class GamePlaying(Menu):
 
     def h(self, h: int):
         return int(h / self.default_height * self.game.get_window_height())
+
+    def h_revert(self, h: int):
+        return int(h / self.game.get_window_height() * self.default_height)
+
+    def w_revert(self, w: int):
+        return int(w / self.game.get_window_width() * self.default_width)
 
     def w(self, w: int):
         return int(w / self.default_width * self.game.get_window_width())
