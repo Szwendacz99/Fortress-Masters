@@ -13,7 +13,6 @@ from game.laser import Laser
 from game.bullet import Bullet
 from game.unit import Unit
 from network.messages.building_hit_message import BuildingHitMessage
-from network.messages.unit_hit_message import UnitHitMessage
 
 
 def img_load(path, size, angle: float = 0):
@@ -160,7 +159,7 @@ class Building:
         small_h = 167
         big_h = 64
 
-        # Establishing blue turret's coordinates
+        # Establishing player's turrets coordinates
         if self.__team == player_team:
             if self.__big:
                 self.__y = self.default_height - big_h
@@ -175,20 +174,20 @@ class Building:
                 else:
                     self.__x = self.x0 + self.bg_width - small_x
 
-        # Establishing red turret's coordinates
+        # Establishing enemies' turrets coordinates
         else:
             if self.__big:
                 self.__y = big_h
                 if self.__left:
-                    self.__x = self.x0 + big_x
-                else:
                     self.__x = self.x0 + self.bg_width - big_x
+                else:
+                    self.__x = self.x0 + big_x
             else:
                 self.__y = small_h
                 if self.__left:
-                    self.__x = self.x0 + small_x
-                else:
                     self.__x = self.x0 + self.bg_width - small_x
+                else:
+                    self.__x = self.x0 + small_x
 
     def lose_hp(self, damage, server_told: bool = False):
         if self.__game.client.get_is_server() and not server_told:
@@ -206,11 +205,11 @@ class Building:
         self.__alive = False
 
     def calc_dist(self, target):
-        return math.hypot(self.get_x() - self.get_enemy_x(target), self.get_y() - self.get_enemy_y(target))
+        return math.hypot(self.get_x() - target.get_x(), self.get_y() - target.get_y())
 
     def calc_vector(self, target):
         self.__vector = pygame.math.Vector2(
-            self.get_enemy_x(target) - self.get_x(), self.get_enemy_x(target) - self.get_y())
+            target.get_x() - self.get_x(), target.get_y() - self.get_y())
         pygame.math.Vector2.scale_to_length(self.__vector, 1)
 
         # get angle between vector of going straight up and our vector
@@ -226,16 +225,6 @@ class Building:
     def scaled_img(self, img: pygame.Surface, angle):
         return pygame.transform.rotate(pygame.transform.scale(
             img, (self.w(self.__building_size), self.h(self.__building_size))), angle)
-
-    def get_enemy_x(self, target=None):
-        if target is None:
-            target = self.__target
-        return self.default_width - target.get_x()
-
-    def get_enemy_y(self, target=None):
-        if target is None:
-            target = self.__target
-        return self.default_height - target.get_y()
 
     def is_alive(self):
         return self.__alive

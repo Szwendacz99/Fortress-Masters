@@ -43,7 +43,7 @@ class Client(Thread, MessageReceiver):
         try:
             conn: Connection = Connection(address=address,
                                           port=port,
-                                          timeout=5)
+                                          timeout=3)
             conn.send_data(JoinMessage(self.get_identity()))
             self.__connection = conn
             self.start()
@@ -71,7 +71,8 @@ class Client(Thread, MessageReceiver):
         elif message.get_type() == MessageType.UNITS_UPDATE:
             self.update_units(message)
         elif message.get_type() == MessageType.UNIT_HIT:
-            self.units.get(message.uuid).lose_hp(message.damage, server_told=True)
+            if self.units.get(message.uuid) is not None:
+                self.units.get(message.uuid).lose_hp(message.damage, server_told=True)
         elif message.get_type() == MessageType.BUILDING_HIT:
             self.building_receive_hit(message)
 
@@ -79,16 +80,24 @@ class Client(Thread, MessageReceiver):
 
     def add_new_unit(self, msg: NewUnitMessage):
         if msg.unit_type == UnitType.SPACESHIP:
+            # tomorrow print(self.__game.client.get_identity().get_team())
             Client.units[msg.uuid] = Spaceship(uuid=msg.uuid,
                                                game=self.__game,
                                                start_pos=msg.pos,
-                                               team=msg.team)
+                                               team=msg.team,
+                                               client_team=self.__game.client.get_identity().get_team())
 
     def building_receive_hit(self, msg: BuildingHitMessage):
         for building in self.buildings.values():
             if building.get_team() == msg.team and\
                     building.get_big() is msg.big and\
                     building.get_left() is msg.left:
+                print(f"{building.get_x()} {building.get_y()} hm")
+                building.lose_hp(msg.damage, server_told=True)
+            elif building.get_team() == (not msg.team) and\
+                    building.get_big() is msg.big and\
+                    building.get_left() is not msg.left:
+                print(f"{building.get_x()} {building.get_y()}")
                 building.lose_hp(msg.damage, server_told=True)
 
     def update_units(self, msg: UnitsUpdateMessage):

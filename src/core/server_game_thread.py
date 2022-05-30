@@ -91,7 +91,7 @@ class ServerGameThread(Thread):
                 self.broadcast(hb)
                 self.__last_heartbeat_send_time = time()
             self.broadcast(UnitsUpdateMessage(self.get_units_list()))
-            sleep(10)
+            sleep(0.05)
 
     def get_units_list(self) -> list[UnitSyncData]:
         result = []
