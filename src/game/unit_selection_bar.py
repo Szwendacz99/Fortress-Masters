@@ -1,7 +1,7 @@
 import pygame
 
 from game.unit_selection_button import UnitSelectionButton
-from game.unit_type import UnitType
+from game.units.unit_type import UnitType
 
 
 class UnitSelectionBar:
@@ -28,7 +28,28 @@ class UnitSelectionBar:
         :return:
         """
         self.__selection_buttons.append(UnitSelectionButton(
-            self.x, self.y, pygame.image.load('resources/img/spaceship-selection.png'), 1, self.game.get_font(14), UnitType.SPACESHIP))
+            self.x, self.y, pygame.image.load('resources/img/spaceship-selection.png'), 1, self.game.get_font(14),
+            UnitType.SPACESHIP))
+        self.__selection_buttons.append(UnitSelectionButton(
+            self.x, self.y + 64, pygame.image.load('resources/img/Spaceship_pack_pack_01_BLUE-selection.png'), 1, self.game.get_font(14), UnitType.SPACESHIP_1, price=20))
+        self.__selection_buttons.append(UnitSelectionButton(
+            self.x, self.y + 64 * 2, pygame.image.load('resources/img/Spaceship_pack_pack_02_BLUE-selection.png'), 1, self.game.get_font(14),
+            UnitType.SPACESHIP_2, price=25))
+        self.__selection_buttons.append(UnitSelectionButton(
+            self.x, self.y + 64 * 3, pygame.image.load('resources/img/Spaceship_pack_pack_03_BLUE-selection.png'), 1, self.game.get_font(14),
+            UnitType.SPACESHIP_3, price=30))
+        self.__selection_buttons.append(UnitSelectionButton(
+            self.x, self.y + 64 * 4, pygame.image.load('resources/img/Spaceship_pack_pack_04_BLUE-selection.png'), 1, self.game.get_font(14),
+            UnitType.SPACESHIP_4, price=35))
+        self.__selection_buttons.append(UnitSelectionButton(
+            self.x, self.y + 64 * 5, pygame.image.load('resources/img/Spaceship_pack_pack_05_BLUE-selection.png'), 1, self.game.get_font(14),
+            UnitType.SPACESHIP_5, price=50))
+        self.__selection_buttons.append(UnitSelectionButton(
+            self.x, self.y + 64 * 6, pygame.image.load('resources/img/Spaceship_pack_pack_06_BLUE-selection.png'), 1, self.game.get_font(14),
+            UnitType.SPACESHIP_6, price=100))
+
+
+
 
     def update(self):
         self.mouse_pos = pygame.mouse.get_pos()
