@@ -42,21 +42,24 @@ class Bullet:
     def move(self, bullets: dict):
         self.calc_vector(self.__target)
         self.__pos += self.__vector
-        if self.calc_dist(self.__target) <= self.__target.get_size()/2:
+        if self.calc_dist(self.__target) <= self.__target.get_size() / 2:
             bullets.pop(self.uuid)
             self.__target.lose_hp(self.__damage)
 
     def draw(self, player_team):
         if player_team == self.__team:
-            temp = self.scaled_img(self.__img_blue, self.__angle)
-            self.__game.get_display().blit(temp,
-                                           (self.w(self.get_x()) - temp.get_width() // 2,
-                                            self.h(self.get_y()) - temp.get_height() // 2))
+            if player_team == Team.RED:
+                temp = self.scaled_img(self.__img_red, self.__angle)
+            else:
+                temp = self.scaled_img(self.__img_blue, self.__angle)
         else:
-            temp = self.scaled_img(self.__img_red, self.__angle)
-            self.__game.get_display().blit(temp,
-                                           (self.w(self.get_x()) - temp.get_width() // 2,
-                                            self.h(self.get_y()) - temp.get_height() // 2))
+            if player_team == Team.RED:
+                temp = self.scaled_img(self.__img_blue, self.__angle)
+            else:
+                temp = self.scaled_img(self.__img_red, self.__angle)
+        self.__game.get_display().blit(temp,
+                                       (self.w(self.get_x()) - temp.get_width() // 2,
+                                        self.h(self.get_y()) - temp.get_height() // 2))
 
     def action(self, bullets, player_team):
         self.move(bullets)
