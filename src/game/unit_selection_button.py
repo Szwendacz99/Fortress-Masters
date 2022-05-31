@@ -4,11 +4,17 @@ from game.units.unit_type import UnitType
 
 
 class UnitSelectionButton:
+    default_width: int = 1536
+    default_height: int = 864
+
     def __init__(self, x, y, image, scale, font, unit_type, price=10, is_visible=True, clicked=False):
-        width: int = image.get_width()
-        height: int = image.get_height()
-        self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
+        self.width: int = image.get_width()
+        self.height: int = image.get_height()
+        self.image = pygame.transform.scale(image, (int(self.width * scale), int(self.height * scale)))
+        self.scaled_image = self.image
         self.rect: pygame.Surface = self.image.get_rect()
+        self.x = x
+        self.y = y
         self.rect.topleft: tuple = (x, y)
         self.font: pygame.font.Font = font
         self.price: int = price
@@ -22,12 +28,12 @@ class UnitSelectionButton:
 
     def update(self, screen: pygame.Surface):
         if self.clicked:
-            self.image.set_alpha(255)
+            self.scaled_image.set_alpha(255)
         else:
-            self.image.set_alpha(125)
+            self.scaled_image.set_alpha(125)
         if self.is_visible:
             self.text = self.font.render(str(self.price), True, "Black")
-            screen.blit(self.image, self.rect)
+            screen.blit(self.scaled_image, self.rect)
             screen.blit(self.text, self.rect)
 
     def cursor_hovers(self, mouse_position: tuple) -> bool:
@@ -44,3 +50,19 @@ class UnitSelectionButton:
 
     def get_unit_type(self) -> UnitType:
         return self.unit_type
+
+    def resize(self, screen):
+        self.scaled_image = pygame.transform.scale(self.image,
+                                                   (self.w(self.width, screen),
+                                                    self.h(self.height, screen)))
+        self.rect = self.scaled_image.get_rect()
+        x_scaled = self.w(self.x, screen)
+        y_scaled = self.h(self.y, screen)
+        self.rect.topleft = (x_scaled, y_scaled)
+
+    def h(self, h: int, screen):
+        return int(h / self.default_height * screen.get_height())
+
+    def w(self, w: int, screen):
+        return int(w / self.default_width * screen.get_width())
+

@@ -37,6 +37,8 @@ class GamePlaying(Menu):
             (self.w(564), self.h(864))).convert()
         for unit in Client.units.values():
             unit.calc_vector()
+        self.__unit_selection_bar.resize()
+
 
     def display_menu(self):
         clock = pygame.time.Clock()
