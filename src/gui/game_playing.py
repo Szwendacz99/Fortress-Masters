@@ -111,7 +111,7 @@ class GamePlaying(Menu):
                         if self.mouse_pos[0] in range(
                                 self.w(self.default_width//2 - 564//2), self.w(self.default_width//2 + 564//2)) and\
                             self.mouse_pos[1] in range(
-                                self.h(self.default_height//2 + 40), self.h(self.default_height)):
+                                self.h(self.default_height//2 + 30), self.h(self.default_height)):
                             team = self.game.client.get_identity().get_team()
                             self.game.client.send_message(NewUnitMessage(uuid4(),
                                                                          unit_type=self.__selected_unit,
