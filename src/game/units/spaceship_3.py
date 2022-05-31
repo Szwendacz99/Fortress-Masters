@@ -6,14 +6,14 @@ from game.rocket import Rocket
 
 
 class Spaceship_3(Unit):
-    path_blue = 'resources/img/Spaceship_pack_pack_03_BLUE.png'
-    path_red = 'resources/img/Spaceship_pack_pack_03_RED.png'
+    path_blue = 'resources/img/ship_blue3.png'
+    path_red = 'resources/img/ship_red3.png'
     path_blue_dead = 'resources/img/Spaceship_pack_pack_03_BLUE-dead.png'
     path_red_dead = 'resources/img/Spaceship_pack_pack_03_RED-dead.png'
 
     # Name of the class of the bullets that this unit will attack with
     bullet_type = Rocket
-    unit_size = 45
+    unit_size = 55
 
     def __init__(self, uuid: UUID, game, start_pos,
                  hp: int = 150, atk_damage: int = 22, atk_speed: int = 300, atk_range: int = 95, speed: float = 0.30,

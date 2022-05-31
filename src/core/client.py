@@ -134,12 +134,12 @@ class Client(Thread, MessageReceiver):
             if building.get_team() == msg.team and\
                     building.get_big() is msg.big and\
                     building.get_left() is msg.left:
-                print(f"{building.get_x()} {building.get_y()} hm")
+                # print(f"{building.get_x()} {building.get_y()} hm")
                 building.lose_hp(msg.damage, server_told=True)
             elif building.get_team() == (not msg.team) and\
                     building.get_big() is msg.big and\
                     building.get_left() is not msg.left:
-                print(f"{building.get_x()} {building.get_y()}")
+                # print(f"{building.get_x()} {building.get_y()}")
                 building.lose_hp(msg.damage, server_told=True)
 
     def update_units(self, msg: UnitsUpdateMessage):

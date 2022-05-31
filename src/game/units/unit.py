@@ -111,7 +111,8 @@ class Unit:
 
             self.__target = current_closest_target
             self.__target_in_atk_range = current_target_in_atk_range
-            self.calc_vector(current_closest_target)
+            if current_closest_target is not None:
+                self.calc_vector(current_closest_target)
 
     def attack(self, bullets: dict[UUID, Bullet]):
         self.__cooldown = 0

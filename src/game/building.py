@@ -146,7 +146,11 @@ class Building:
 
     def attack(self, bullets: dict[UUID, Bullet]):
         self.__cooldown = 0
-        bullet_pos = pygame.Vector2(self.__x, self.__y) + 56 * self.__vector
+        if self.__big:
+            distance_of_bullet = 55
+        else:
+            distance_of_bullet = 46
+        bullet_pos = pygame.Vector2(self.__x, self.__y) + distance_of_bullet * self.__vector
         laser = Laser(self.__game, bullet_pos, self.__target, self.__atk_damage, team=self.__team)
         bullets[laser.uuid] = laser
 
