@@ -8,8 +8,8 @@ from game.rocket import Rocket
 class Spaceship_5(Unit):
     path_blue = 'resources/img/ship_blue5.png'
     path_red = 'resources/img/ship_red5.png'
-    path_blue_dead = 'resources/img/Spaceship_pack_pack_05_BLUE-dead.png'
-    path_red_dead = 'resources/img/Spaceship_pack_pack_05_RED-dead.png'
+    path_blue_dead = 'resources/img/ship_blue_dead5.png'
+    path_red_dead = 'resources/img/ship_red_dead5.png'
 
     # Name of the class of the bullets that this unit will attack with
     bullet_type = Rocket
