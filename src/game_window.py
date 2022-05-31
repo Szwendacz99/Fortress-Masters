@@ -11,6 +11,7 @@ from gui.play_menu import PlayMenu
 from gui.main_menu import MainMenu
 from gui.menu import Menu
 from gui.game_playing import GamePlaying
+from gui.game_end_menu import GameEndMenu
 from utils.font_manager import FontManager
 
 
@@ -24,6 +25,8 @@ class GameWindow:
 
         self.client: Client = None
         self.server: Server = None
+
+        self.team_won = None
 
         self.__window_width: int = pygame.display.Info().current_w
         self.__window_height: int = pygame.display.Info().current_h
@@ -48,6 +51,8 @@ class GameWindow:
         self.menus.append(self.play_menu)
         self.game_playing: GamePlaying = GamePlaying(self)
         self.menus.append(self.game_playing)
+        self.game_end: GameEndMenu = GameEndMenu(self)
+        self.menus.append(self.game_end)
 
         self.curr_menu: Menu = self.main_menu
 
@@ -99,3 +104,6 @@ class GameWindow:
 
     def set_playing(self, __playing):
         self.__playing = __playing
+
+    def get_team_won(self):
+        return self.team_won
