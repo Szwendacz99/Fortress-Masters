@@ -29,7 +29,7 @@ class GamePlaying(Menu):
         self.__unit_selection_bar = UnitSelectionBar(game, self.game.get_window_width() / 2 + 564 / 2,
                                                      self.game.get_window_height() / 10)
 
-        self.__selected_unit = UnitType.SPACESHIP
+        self.__selected_unit = None
 
     def resize(self):
         self.__background_img: Surface = pygame.transform.scale(pygame.image.load(
@@ -107,17 +107,18 @@ class GamePlaying(Menu):
                         self.__selected_unit = button.get_unit_type()
                         bar_clicked = True
                 if not bar_clicked:
-                    # TODO send message to server that unit is being placed
-                    if event.button == 1 or event.button == 5:
-                        team = self.game.client.get_identity().get_team()
-                    else:
-                        team = not self.game.client.get_identity().get_team()
-                    self.game.client.send_message(NewUnitMessage(uuid4(),
-                                                                 unit_type=self.__selected_unit,
-                                                                 pos=(self.w_revert(self.mouse_pos[0]),
-                                                                      self.h_revert(self.mouse_pos[1])),
-                                                                 team=team
-                                                                 ))
+                    if event.button == 1 or event.button == 5 and self.__selected_unit is not None:
+                        if self.mouse_pos[0] in range(
+                                self.w(self.default_width//2 - 564//2), self.w(self.default_width//2 + 564//2)) and\
+                            self.mouse_pos[1] in range(
+                                self.h(self.default_height//2 + 40), self.h(self.default_height)):
+                            team = self.game.client.get_identity().get_team()
+                            self.game.client.send_message(NewUnitMessage(uuid4(),
+                                                                         unit_type=self.__selected_unit,
+                                                                         pos=(self.w_revert(self.mouse_pos[0]),
+                                                                              self.h_revert(self.mouse_pos[1])),
+                                                                         team=team
+                                                                         ))
 
     def create_buildings(self):
         Client.add_building(Building(self.game, True, Team.RED))
