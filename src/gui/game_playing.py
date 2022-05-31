@@ -58,10 +58,28 @@ class GamePlaying(Menu):
         self.game.get_display().blit(self.__background_img,
                                      (self.game.get_window_width() / 2 - self.__background_img.get_width() // 2, 0))
 
+        blue_building_count = 0
+        red_building_count = 0
         # iterating this way to prevent
         # RuntimeError: dictionary changed size during iteration
         for building in [f for f in Client.buildings.values()]:
             building.action(Client.units, Client.bullets, self.game.client.get_identity().get_team())
+
+            if building.is_alive():
+                if building.get_team() == Team.BLU:
+                    blue_building_count += 1
+                else:
+                    red_building_count += 1
+        if red_building_count == 0:
+            self.game.team_won = Team.BLU
+            self.run_display = False
+            self.game.curr_menu = self.game.game_end
+            self.game.curr_menu.display_menu()
+        elif blue_building_count == 0:
+            self.game.team_won = Team.RED
+            self.run_display = False
+            self.game.curr_menu = self.game.game_end
+            self.game.curr_menu.display_menu()
         for bullet in [f for f in Client.bullets.values()]:
             bullet.action(Client.bullets, self.game.client.get_identity().get_team())
         for unit in [f for f in Client.units.values()]:
