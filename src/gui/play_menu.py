@@ -137,7 +137,7 @@ class PlayMenu(Menu):
                                             (0, 0, 255))
                         blu_players += 1
 
-            if len(self.__lobby_display_players) == 4:
+            if len(self.__lobby_display_players) == 4 and self.game.server is not None:
                 self.buttons[3].set_visible(True)
 
             for button in self.buttons:
