@@ -205,6 +205,7 @@ class PlayMenu(Menu):
                                                                  port=int(self.text_input_array[1].input_text))
                     if not success:
                         self.game.client = None
+                        return
 
                     self.connection_status = "joined lobby"
                     self.connection_color = (0, 255, 0)

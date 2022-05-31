@@ -76,11 +76,13 @@ class GamePlaying(Menu):
             self.game.team_won = Team.BLU
             self.run_display = False
             self.game.curr_menu = self.game.game_end
+            self.game.play_menu.set_game_ready(False)
             self.game.curr_menu.display_menu()
         elif blue_building_count == 0:
             self.game.team_won = Team.RED
             self.run_display = False
             self.game.curr_menu = self.game.game_end
+            self.game.play_menu.set_game_ready(False)
             self.game.curr_menu.display_menu()
         for bullet in [f for f in Client.bullets.values()]:
             bullet.action(Client.bullets, self.game.client.get_identity().get_team())
