@@ -1,5 +1,6 @@
 import sys
 from logging import info
+from time import time
 
 import pygame
 from pygame.surface import Surface
@@ -27,6 +28,8 @@ class GameWindow:
         self.server: Server = None
 
         self.team_won = None
+
+        self.__last_resize_time = 0
 
         self.__window_width: int = pygame.display.Info().current_w
         self.__window_height: int = pygame.display.Info().current_h
@@ -58,11 +61,14 @@ class GameWindow:
 
     def check_events(self):
 
-        if self.__window_width != pygame.display.Info().current_w or self.__window_height != pygame.display.Info().current_h:
+        if time() - self.__last_resize_time > 0.5 and \
+                (self.__window_width != pygame.display.Info().current_w or
+                 self.__window_height != pygame.display.Info().current_h):
+
             self.__window_width = pygame.display.Info().current_w
             self.__window_height = pygame.display.Info().current_h
             self.__display = pygame.display.set_mode((self.__window_width, self.__window_height), pygame.RESIZABLE)
-
+            self.__last_resize_time = time()
             for menu in self.menus:
                 menu.resize()
 
