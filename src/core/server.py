@@ -71,8 +71,6 @@ class Server(Thread, MessageReceiver):
         :return:
         """
         if message.get_type() in [MessageType.NEW_UNIT,
-                                  MessageType.BUILDING_HIT,
-                                  MessageType.UNIT_HIT,
                                   MessageType.NEW_BULLET]:
             self.__server_game_thread.broadcast(message)
             # debug(f"Server broadcasting message with type: {message.get_type()}")

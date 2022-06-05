@@ -21,7 +21,6 @@ from game.units.unit import Unit
 from game.units.unit_type import UnitType
 from network.connection import Connection
 from network.messages.basic_message import BasicMessage
-from network.messages.building_hit_message import BuildingHitMessage
 from network.messages.join_message import JoinMessage
 from network.messages.lobby_state_message import LobbyStateMessage
 from network.messages.message_type import MessageType
@@ -48,7 +47,7 @@ class Client(Thread, MessageReceiver):
         self.__game = game
         self.__lock = Lock()
 
-    def join_server(self, address: str, port: int) -> bool:
+    def join_server(self, address: str, port: int) -> (bool, str):
         try:
             conn: Connection = Connection(address=address,
                                           port=port,
@@ -57,8 +56,8 @@ class Client(Thread, MessageReceiver):
             self.__connection = conn
             self.start()
             return True
-        except:
-            return False
+        except Exception as e:
+            return False, str(e)
 
     def receive(self, message) -> bool:
 
@@ -79,11 +78,6 @@ class Client(Thread, MessageReceiver):
             self.add_new_unit(message)
         elif message.get_type() == MessageType.UNITS_UPDATE:
             self.update_units(message)
-        elif message.get_type() == MessageType.UNIT_HIT:
-            if self.units.get(message.uuid) is not None:
-                self.units.get(message.uuid).lose_hp(message.damage, server_told=True)
-        elif message.get_type() == MessageType.BUILDING_HIT:
-            self.building_receive_hit(message)
         elif message.get_type() == MessageType.NEW_BULLET:
             self.add_new_bullet(message)
 
@@ -148,19 +142,6 @@ class Client(Thread, MessageReceiver):
                                                  team=msg.team,
                                                  client_team=self.__game.client.get_identity().get_team())
 
-    def building_receive_hit(self, msg: BuildingHitMessage):
-        for building in self.buildings:
-            if building.get_team() == msg.team and \
-                    building.get_big() is msg.big and \
-                    building.get_left() is msg.left:
-                # print(f"{building.get_x()} {building.get_y()} hm")
-                building.lose_hp(msg.damage, server_told=True)
-            elif building.get_team() == (not msg.team) and \
-                    building.get_big() is msg.big and \
-                    building.get_left() is not msg.left:
-                # print(f"{building.get_x()} {building.get_y()}")
-                building.lose_hp(msg.damage, server_told=True)
-
     def update_units(self, msg: UnitsUpdateMessage):
         for unit in msg.units:
             curr_unit = Client.units.get(unit.uuid)
@@ -186,7 +167,7 @@ class Client(Thread, MessageReceiver):
         while self.__connection.is_alive():
             try:
                 self.receive(self.__connection.receive_data())
-            except PermissionError as e:
+            except Exception as e:
                 error(f"Lost connection with server with error {e.__class__}: {str(e)}")
                 self.__connection.disconnect()
             self.__last_msg_receive_time = time()

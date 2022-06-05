@@ -13,7 +13,6 @@ from game.bullet import Bullet
 from pygame.math import Vector2
 
 from network.messages.new_bullet_message import NewBulletMessage
-from network.messages.unit_hit_message import UnitHitMessage
 
 
 def img_load(path, size):
@@ -196,12 +195,8 @@ class Unit:
         else:
             self.draw(player_team, units)
 
-    def lose_hp(self, damage, server_told: bool = False):
-        if self.__game.client.get_is_server() and not server_told:
-            self.__game.client.send_message(UnitHitMessage(self.uuid, damage))
-            return
-        elif server_told:
-            self.__hp -= damage
+    def lose_hp(self, damage):
+        self.__hp -= damage
         if self.__hp <= 0:
             self.die()
 

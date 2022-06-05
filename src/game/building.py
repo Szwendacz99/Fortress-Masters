@@ -11,7 +11,6 @@ from pygame.surface import Surface
 from core.team import Team
 from game.laser import Laser
 from game.units.unit import Unit
-from network.messages.building_hit_message import BuildingHitMessage
 from network.messages.new_bullet_message import NewBulletMessage
 
 
@@ -207,15 +206,8 @@ class Building:
                 else:
                     self.__x = self.x0 + small_x
 
-    def lose_hp(self, damage, server_told: bool = False):
-        if self.__game.client.get_is_server() and not server_told:
-            self.__game.client.send_message(BuildingHitMessage(team=self.__team,
-                                                               left=self.__left,
-                                                               big=self.__big,
-                                                               damage=damage))
-            return
-        elif server_told:
-            self.__hp -= damage
+    def lose_hp(self, damage):
+        self.__hp -= damage
         if self.__hp <= 0:
             self.die()
 
