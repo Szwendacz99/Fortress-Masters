@@ -64,7 +64,16 @@ class Server(Thread, MessageReceiver):
         info(f"Player {player.get_name()} has successfully joined the lobby!")
 
     def receive(self, message: BasicMessage) -> bool:
-        if message.get_type() in [MessageType.NEW_UNIT, MessageType.BUILDING_HIT, MessageType.UNIT_HIT]:
+        """
+        Broadcast messages that need to be received by all players
+        other types like Heartbeat, will be skipped
+        :param message:
+        :return:
+        """
+        if message.get_type() in [MessageType.NEW_UNIT,
+                                  MessageType.BUILDING_HIT,
+                                  MessageType.UNIT_HIT,
+                                  MessageType.NEW_BULLET]:
             self.__server_game_thread.broadcast(message)
             # debug(f"Server broadcasting message with type: {message.get_type()}")
         return True

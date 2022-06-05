@@ -225,6 +225,9 @@ class PlayMenu(Menu):
                         text_input.set_clicked(False)
 
     def start_game(self):
+        Client.buildings.clear()
+        Client.units.clear()
+        Client.bullets.clear()
         self.run_display = False
         self.game.curr_menu = self.game.game_playing
         self.game.curr_menu.display_menu()

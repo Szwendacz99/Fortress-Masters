@@ -8,7 +8,6 @@ from pygame.surface import Surface
 
 from core.client import Client
 from core.team import Team
-from game.units.unit_type import UnitType
 from gui.menu import Menu
 from game.building import Building
 from game.unit_selection_bar import UnitSelectionBar
@@ -39,7 +38,6 @@ class GamePlaying(Menu):
             unit.calc_vector()
         self.__unit_selection_bar.resize()
 
-
     def display_menu(self):
         clock = pygame.time.Clock()
         self.run_display = True
@@ -64,8 +62,8 @@ class GamePlaying(Menu):
         red_building_count = 0
         # iterating this way to prevent
         # RuntimeError: dictionary changed size during iteration
-        for building in [f for f in Client.buildings.values()]:
-            building.action(Client.units, Client.bullets, self.game.client.get_identity().get_team())
+        for building in [f for f in Client.buildings]:
+            building.action(Client.units, self.game.client.get_identity().get_team())
 
             if building.is_alive():
                 if building.get_team() == Team.BLU:
@@ -87,7 +85,7 @@ class GamePlaying(Menu):
         for bullet in [f for f in Client.bullets.values()]:
             bullet.action(Client.bullets, self.game.client.get_identity().get_team())
         for unit in [f for f in Client.units.values()]:
-            unit.action(Client.buildings, Client.units, Client.bullets, self.game.client.get_identity().get_team())
+            unit.action(Client.buildings, Client.units, self.game.client.get_identity().get_team())
 
     def check_input(self):
         for event in pygame.event.get():
@@ -109,11 +107,11 @@ class GamePlaying(Menu):
                 if not bar_clicked:
                     if event.button == 1 or event.button == 5 and self.__selected_unit is not None:
                         if self.mouse_pos[0] in range(
-                                self.w(self.default_width//2 - 564//2), self.w(self.default_width//2 + 564//2)) and\
-                            self.mouse_pos[1] in range(
+                                self.w(self.default_width // 2 - 564 // 2),
+                                self.w(self.default_width // 2 + 564 // 2)) and \
+                                self.mouse_pos[1] in range(
 
-                                self.h(self.default_height//2 + 30), self.h(self.default_height)):
-
+                            self.h(self.default_height // 2 + 30), self.h(self.default_height)):
                             team = self.game.client.get_identity().get_team()
                             self.game.client.send_message(NewUnitMessage(uuid4(),
                                                                          unit_type=self.__selected_unit,
@@ -132,7 +130,7 @@ class GamePlaying(Menu):
         Client.add_building(Building(self.game, False, Team.BLU))
         Client.add_building(Building(self.game, False, Team.BLU, False))
         # if self.game.client is not None:
-        for building in Client.buildings.values():
+        for building in Client.buildings:
             building.set_coordinates(self.game.client.get_identity().get_team())
 
     def h(self, h: int):

@@ -13,3 +13,4 @@ class MessageType(Enum):
     UNITS_UPDATE = 8
     UNIT_HIT = 9
     BUILDING_HIT = 10
+    NEW_BULLET = 11

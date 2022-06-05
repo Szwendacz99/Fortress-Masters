@@ -10,9 +10,9 @@ from pygame.surface import Surface
 
 from core.team import Team
 from game.laser import Laser
-from game.bullet import Bullet
 from game.units.unit import Unit
 from network.messages.building_hit_message import BuildingHitMessage
+from network.messages.new_bullet_message import NewBulletMessage
 
 
 def img_load(path, size, angle: float = 0):
@@ -66,7 +66,7 @@ class Building:
         self.__blue_img_dead: Surface = img_load('resources/img/blue_turret_dead.png', self.__building_size, -45)
         self.__red_img_dead: Surface = img_load('resources/img/red_turret_dead.png', self.__building_size, -45)
 
-    def find_target(self, units: dict[UUID, Unit], bullets: dict[UUID, Bullet]):
+    def find_target(self, units: dict[UUID, Unit]):
 
         # attacking
         if self.__cooldown < self.__atk_speed:
@@ -75,7 +75,7 @@ class Building:
         if self.__target is not None and self.__target.is_alive() and \
                 self.calc_dist(self.__target) - self.get_size() / 2 <= self.__atk_range:
             if self.__cooldown == self.__atk_speed:
-                self.attack(bullets)
+                self.attack()
 
         # looking for closest target
         else:
@@ -139,20 +139,34 @@ class Building:
                                            (self.w(self.__x) - temp.get_width() // 2,
                                             self.h(self.__y) - temp.get_height() // 2))
 
-    def action(self, units, bullets, player_team: Team = 0):
+    def action(self, units, player_team: Team = 0):
         if self.__alive:
-            self.find_target(units, bullets)
+            self.find_target(units)
         self.draw(player_team)
 
-    def attack(self, bullets: dict[UUID, Bullet]):
+    def attack(self):
         self.__cooldown = 0
+        if not self.__game.client.get_is_server():
+            return
+
+        msg = NewBulletMessage(
+            self.uuid,
+            self.__class__,
+            team=self.__team,
+            target_type=self.__target.__class__,
+            target_uuid=self.__target.uuid
+        )
+        msg.set_building_source_id(self.__game.client.buildings.index(self))
+        self.__game.client.send_message(msg)
+
+    def shoot_target(self, target):
         if self.__big:
             distance_of_bullet = 55
         else:
             distance_of_bullet = 46
         bullet_pos = pygame.Vector2(self.__x, self.__y) + distance_of_bullet * self.__vector
-        laser = Laser(self.__game, bullet_pos, self.__target, self.__atk_damage, team=self.__team)
-        bullets[laser.uuid] = laser
+        laser = Laser(self.__game, bullet_pos, target, self.__atk_damage, team=self.__team)
+        self.__game.client.bullets[laser.uuid] = laser
 
     def set_coordinates(self, player_team: Team):
 
