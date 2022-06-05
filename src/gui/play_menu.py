@@ -189,22 +189,29 @@ class PlayMenu(Menu):
                         error(f"Cannot start server: {str(e)}")
                         # TODO gui inform that cannot start server because port is taken
                         self.game.server = None
+                        self.connection_status = f"Cannot start server: {str(e)}"
+                        self.connection_color = (255, 50, 0)
                         return
                     self.game.server.start()
-                    success: bool = self.game.client.join_server(address=self.text_input_array[0].input_text,
-                                                                 port=int(self.text_input_array[1].input_text))
+                    success, status = self.game.client.join_server(address=self.text_input_array[0].input_text,
+                                                                   port=int(self.text_input_array[1].input_text))
                     if not success:
                         self.game.client = None
+                        self.connection_status = status
+                        self.connection_color = (255, 50, 0)
+                        return
                     self.connection_status = "created lobby"
                     self.connection_color = (0, 255, 0)
                 elif self.buttons[2].cursor_hovers(self.mouse_pos):
                     # TODO: Join Lobby
                     self.game.client = Client(self.game,
                                               username=self.text_input_array[2].input_text)
-                    success: bool = self.game.client.join_server(address=self.text_input_array[0].input_text,
-                                                                 port=int(self.text_input_array[1].input_text))
+                    success, status = self.game.client.join_server(address=self.text_input_array[0].input_text,
+                                                                   port=int(self.text_input_array[1].input_text))
                     if not success:
                         self.game.client = None
+                        self.connection_status = status
+                        self.connection_color = (255, 50, 0)
                         return
 
                     self.connection_status = "joined lobby"

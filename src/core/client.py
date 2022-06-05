@@ -55,7 +55,7 @@ class Client(Thread, MessageReceiver):
             conn.send_data(JoinMessage(self.get_identity()))
             self.__connection = conn
             self.start()
-            return True
+            return True, "Success"
         except Exception as e:
             return False, str(e)
 
