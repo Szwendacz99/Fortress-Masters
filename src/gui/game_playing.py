@@ -11,6 +11,7 @@ from core.team import Team
 from gui.menu import Menu
 from game.building import Building
 from game.unit_selection_bar import UnitSelectionBar
+from game.player_status_bar import PlayerStatusBar
 from network.messages.new_unit_message import NewUnitMessage
 
 
@@ -28,6 +29,9 @@ class GamePlaying(Menu):
         self.__unit_selection_bar = UnitSelectionBar(game, self.game.get_window_width() / 2 + 564 / 2,
                                                      self.game.get_window_height() / 10)
 
+        self.__player_status_bar = PlayerStatusBar(game, self.game.get_window_width() / 2 - 1064 / 2,
+                                                   self.game.get_window_height() / 10)
+
         self.__selected_unit = None
 
     def resize(self):
@@ -37,6 +41,7 @@ class GamePlaying(Menu):
         for unit in Client.units.values():
             unit.calc_vector()
         self.__unit_selection_bar.resize()
+        self.__player_status_bar.resize()
 
     def display_menu(self):
         clock = pygame.time.Clock()
@@ -48,6 +53,7 @@ class GamePlaying(Menu):
             self.draw()
 
             self.__unit_selection_bar.update()
+            self.__player_status_bar.update("100", "100", "100")
 
             self.check_input()
             self.game.check_events()
