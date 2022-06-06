@@ -12,7 +12,7 @@ import game.building as libBuilding
 from game.bullet import Bullet
 from pygame.math import Vector2
 
-from network.messages.unit_hit_message import UnitHitMessage
+from network.messages.new_bullet_message import NewBulletMessage
 
 
 def img_load(path, size):
@@ -74,7 +74,7 @@ class Unit:
             self.img_blue_dead = img_load(path_blue_dead, self.__unit_size)
             self.img_red_dead = img_load(path_red_dead, self.__unit_size)
 
-    def find_target(self, buildings: dict, units: dict[UUID, 'Unit'], bullets: dict[UUID, Bullet]):
+    def find_target(self, buildings: list, units: dict[UUID, 'Unit']):
 
         # attacking
         if self.__cooldown < self.__atk_speed:
@@ -83,14 +83,14 @@ class Unit:
             if self.calc_dist(self.__target) > self.__atk_range:
                 self.__target_in_atk_range = False
             elif self.__cooldown == self.__atk_speed:
-                self.attack(bullets)
+                self.attack()
 
         # looking for closest target
         else:
             current_closest_target_dist = 9999999
             current_closest_target = None
             current_target_in_atk_range: bool = False
-            for building in buildings.values():
+            for building in buildings:
                 if building.get_team() != self.__team and building.is_alive():
                     dist_to_building = self.calc_dist(building)
                     # print(f"{building.get_team()} {building.get_x()} {building.get_y()}")
@@ -114,11 +114,26 @@ class Unit:
             if current_closest_target is not None:
                 self.calc_vector(current_closest_target)
 
-    def attack(self, bullets: dict[UUID, Bullet]):
+    def attack(self):
         self.__cooldown = 0
+        if not self.__game.client.get_is_server():
+            return
+
+        msg = NewBulletMessage(
+            self.uuid,
+            self.__class__,
+            team=self.__team,
+            target_type=self.__target.__class__,
+            target_uuid=self.__target.uuid
+        )
+        if self.__target.__class__ == libBuilding.Building:
+            msg.set_building_target_id(self.__game.client.buildings.index(self.__target))
+        self.__game.client.send_message(msg)
+
+    def shoot_target(self, target):
         bullet_pos = self.__pos + 80 * self.__vector
-        bullet = self.__bullet_type(self.__game, bullet_pos, self.__target, self.__atk_damage, team=self.__team)
-        bullets[bullet.uuid] = bullet
+        bullet = self.__bullet_type(self.__game, bullet_pos, target, self.__atk_damage, team=self.__team)
+        self.__game.client.bullets[bullet.uuid] = bullet
 
     def move(self):
         if not self.__target_in_atk_range:
@@ -172,20 +187,16 @@ class Unit:
                                            (self.w(self.get_x()) - temp.get_width() // 2,
                                             self.h(self.get_y()) - temp.get_height() // 2))
 
-    def action(self, buildings, units, bullets, player_team):
+    def action(self, buildings, units, player_team):
         if self.__alive:
-            self.find_target(buildings, units, bullets)
+            self.find_target(buildings, units)
             self.move()
             self.draw(player_team, units)
         else:
             self.draw(player_team, units)
 
-    def lose_hp(self, damage, server_told: bool = False):
-        if self.__game.client.get_is_server() and not server_told:
-            self.__game.client.send_message(UnitHitMessage(self.uuid, damage))
-            return
-        elif server_told:
-            self.__hp -= damage
+    def lose_hp(self, damage):
+        self.__hp -= damage
         if self.__hp <= 0:
             self.die()
 
@@ -256,4 +267,3 @@ class Unit:
 
     def get_pos(self) -> Vector2:
         return self.__pos
-

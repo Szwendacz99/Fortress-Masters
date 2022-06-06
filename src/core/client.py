@@ -8,6 +8,8 @@ from core.identity import Identity
 from core.message_receiver import MessageReceiver
 from game.building import Building
 from game.bullet import Bullet
+from game.laser import Laser
+from game.rocket import Rocket
 from game.units.spaceship import Spaceship
 from game.units.spaceship_1 import Spaceship_1
 from game.units.spaceship_2 import Spaceship_2
@@ -19,16 +21,16 @@ from game.units.unit import Unit
 from game.units.unit_type import UnitType
 from network.connection import Connection
 from network.messages.basic_message import BasicMessage
-from network.messages.building_hit_message import BuildingHitMessage
 from network.messages.join_message import JoinMessage
 from network.messages.lobby_state_message import LobbyStateMessage
 from network.messages.message_type import MessageType
+from network.messages.new_bullet_message import NewBulletMessage
 from network.messages.new_unit_message import NewUnitMessage
 from network.messages.units_update_message import UnitsUpdateMessage
 
 
 class Client(Thread, MessageReceiver):
-    buildings: dict[UUID, Building] = {}
+    buildings: list[Building] = []
     units: dict[UUID, Unit] = {}
     bullets: dict[UUID, Bullet] = {}
 
@@ -45,7 +47,7 @@ class Client(Thread, MessageReceiver):
         self.__game = game
         self.__lock = Lock()
 
-    def join_server(self, address: str, port: int) -> bool:
+    def join_server(self, address: str, port: int) -> (bool, str):
         try:
             conn: Connection = Connection(address=address,
                                           port=port,
@@ -53,9 +55,9 @@ class Client(Thread, MessageReceiver):
             conn.send_data(JoinMessage(self.get_identity()))
             self.__connection = conn
             self.start()
-            return True
-        except:
-            return False
+            return True, "Success"
+        except Exception as e:
+            return False, str(e)
 
     def receive(self, message) -> bool:
 
@@ -76,17 +78,28 @@ class Client(Thread, MessageReceiver):
             self.add_new_unit(message)
         elif message.get_type() == MessageType.UNITS_UPDATE:
             self.update_units(message)
-        elif message.get_type() == MessageType.UNIT_HIT:
-            if self.units.get(message.uuid) is not None:
-                self.units.get(message.uuid).lose_hp(message.damage, server_told=True)
-        elif message.get_type() == MessageType.BUILDING_HIT:
-            self.building_receive_hit(message)
+        elif message.get_type() == MessageType.NEW_BULLET:
+            self.add_new_bullet(message)
 
         return True
 
+    def add_new_bullet(self, msg: NewBulletMessage):
+
+        if msg.target_type == Building:
+            target = self.buildings[msg.building_target_id]
+        else:
+            target = self.units[msg.target_uuid]
+
+        if msg.source_type == Building:
+            source = self.buildings[msg.building_source_id]
+        else:
+            source = self.units[msg.source_uuid]
+
+        source.shoot_target(target)
+
+
     def add_new_unit(self, msg: NewUnitMessage):
         if msg.unit_type == UnitType.SPACESHIP:
-            # tomorrow print(self.__game.client.get_identity().get_team())
             Client.units[msg.uuid] = Spaceship(uuid=msg.uuid,
                                                game=self.__game,
                                                start_pos=msg.pos,
@@ -94,53 +107,40 @@ class Client(Thread, MessageReceiver):
                                                client_team=self.__game.client.get_identity().get_team())
         elif msg.unit_type == UnitType.SPACESHIP_1:
             Client.units[msg.uuid] = Spaceship_1(uuid=msg.uuid,
-                                               game=self.__game,
-                                               start_pos=msg.pos,
-                                               team=msg.team,
-                                               client_team=self.__game.client.get_identity().get_team())
+                                                 game=self.__game,
+                                                 start_pos=msg.pos,
+                                                 team=msg.team,
+                                                 client_team=self.__game.client.get_identity().get_team())
         elif msg.unit_type == UnitType.SPACESHIP_2:
             Client.units[msg.uuid] = Spaceship_2(uuid=msg.uuid,
-                                               game=self.__game,
-                                               start_pos=msg.pos,
-                                               team=msg.team,
-                                               client_team=self.__game.client.get_identity().get_team())
+                                                 game=self.__game,
+                                                 start_pos=msg.pos,
+                                                 team=msg.team,
+                                                 client_team=self.__game.client.get_identity().get_team())
         elif msg.unit_type == UnitType.SPACESHIP_3:
             Client.units[msg.uuid] = Spaceship_3(uuid=msg.uuid,
-                                               game=self.__game,
-                                               start_pos=msg.pos,
-                                               team=msg.team,
-                                               client_team=self.__game.client.get_identity().get_team())
+                                                 game=self.__game,
+                                                 start_pos=msg.pos,
+                                                 team=msg.team,
+                                                 client_team=self.__game.client.get_identity().get_team())
         elif msg.unit_type == UnitType.SPACESHIP_4:
             Client.units[msg.uuid] = Spaceship_4(uuid=msg.uuid,
-                                               game=self.__game,
-                                               start_pos=msg.pos,
-                                               team=msg.team,
-                                               client_team=self.__game.client.get_identity().get_team())
+                                                 game=self.__game,
+                                                 start_pos=msg.pos,
+                                                 team=msg.team,
+                                                 client_team=self.__game.client.get_identity().get_team())
         elif msg.unit_type == UnitType.SPACESHIP_5:
             Client.units[msg.uuid] = Spaceship_5(uuid=msg.uuid,
-                                               game=self.__game,
-                                               start_pos=msg.pos,
-                                               team=msg.team,
-                                               client_team=self.__game.client.get_identity().get_team())
+                                                 game=self.__game,
+                                                 start_pos=msg.pos,
+                                                 team=msg.team,
+                                                 client_team=self.__game.client.get_identity().get_team())
         elif msg.unit_type == UnitType.SPACESHIP_6:
             Client.units[msg.uuid] = Spaceship_6(uuid=msg.uuid,
-                                               game=self.__game,
-                                               start_pos=msg.pos,
-                                               team=msg.team,
-                                               client_team=self.__game.client.get_identity().get_team())
-
-    def building_receive_hit(self, msg: BuildingHitMessage):
-        for building in self.buildings.values():
-            if building.get_team() == msg.team and\
-                    building.get_big() is msg.big and\
-                    building.get_left() is msg.left:
-                # print(f"{building.get_x()} {building.get_y()} hm")
-                building.lose_hp(msg.damage, server_told=True)
-            elif building.get_team() == (not msg.team) and\
-                    building.get_big() is msg.big and\
-                    building.get_left() is not msg.left:
-                # print(f"{building.get_x()} {building.get_y()}")
-                building.lose_hp(msg.damage, server_told=True)
+                                                 game=self.__game,
+                                                 start_pos=msg.pos,
+                                                 team=msg.team,
+                                                 client_team=self.__game.client.get_identity().get_team())
 
     def update_units(self, msg: UnitsUpdateMessage):
         for unit in msg.units:
@@ -168,7 +168,7 @@ class Client(Thread, MessageReceiver):
             try:
                 self.receive(self.__connection.receive_data())
             except Exception as e:
-                error(f"Lost connection with server: {str(e)}")
+                error(f"Lost connection with server with error {e.__class__}: {str(e)}")
                 self.__connection.disconnect()
             self.__last_msg_receive_time = time()
 
@@ -177,7 +177,7 @@ class Client(Thread, MessageReceiver):
 
     @staticmethod
     def add_building(building: Building):
-        Client.buildings[building.uuid] = building
+        Client.buildings.append(building)
 
     def get_is_server(self) -> bool:
         return self.__is_server
