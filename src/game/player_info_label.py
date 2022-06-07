@@ -15,9 +15,10 @@ class PlayerInfoLabel:
         self.text: pygame.Surface = self.font.render(str(self.label_text), True, "White")
         self.rect: pygame.Rect = self.text.get_rect(topleft=(x, y))
 
-    def update(self, screen: pygame.Surface, currency_amount = None, big_hp = None, little_hp = None):
-        if currency_amount is not None:
-
+    def update(self, screen: pygame.Surface, currency_amount = None, big_hp = None, little_hp = None, username=None):
+        if username is not None:
+            self.text = self.font.render(f"{username}", True, "White")
+        elif currency_amount is not None:
             self.text = self.font.render(f"{self.label_text} {currency_amount}", True, "White")
         elif big_hp is not None:
             self.text = self.font.render(f"{self.label_text} {big_hp}", True, "White")

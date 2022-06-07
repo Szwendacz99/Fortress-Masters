@@ -43,12 +43,14 @@ class Building:
             self.__full_hp: int = 3500
             self.__atk_damage: int = 100
             self.__atk_speed: int = 48
+
             self.__currency: int = 150
-            self.__currency_income: int = 5
+            self.__currency_income: int = 10
         else:
             self.__full_hp: int = 2000
             self.__atk_damage: int = 55
             self.__atk_speed: int = 54
+
         self.__hp: int = self.__full_hp
         self.__atk_range: int = 160
         self.__cooldown: int = self.__atk_speed
@@ -241,6 +243,12 @@ class Building:
 
     def subtract_currency(self, amount: int):
         self.__currency -= amount
+
+    def add_currency(self, amount: int = 0):
+        if amount:
+            self.__currency += amount
+        else:
+            self.__currency += self.__currency_income
 
     def is_alive(self):
         return self.__alive

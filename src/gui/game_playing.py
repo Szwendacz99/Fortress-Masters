@@ -59,7 +59,8 @@ class GamePlaying(Menu):
             self.__unit_selection_bar.update()
             self.__player_status_bar.update(self.__currency,
                                             "{:.1f}".format(self.__big_hp),
-                                            "{:.1f}".format(self.__small_hp))
+                                            "{:.1f}".format(self.__small_hp),
+                                            self.game.client.get_identity().get_username())
 
             self.check_input()
             self.game.check_events()

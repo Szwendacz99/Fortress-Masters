@@ -72,7 +72,7 @@ class Client(Thread, MessageReceiver):
         elif message.get_type() == MessageType.NEW_BULLET:
             self.add_new_bullet(message)
         elif message.get_type() == MessageType.PASSIVE_INCOME:
-            print("Received passive income")
+            self.passive_income()
 
         return True
 
@@ -102,6 +102,13 @@ class Client(Thread, MessageReceiver):
             curr_unit = Client.units.get(unit.uuid)
             if curr_unit is not None:
                 curr_unit.set_pos(unit.pos)
+
+    def passive_income(self):
+        for building in [f for f in Client.buildings]:
+            if building.get_team() == self.get_identity().get_team() and \
+                    building.get_left() == self.get_identity().get_left() and \
+                    building.get_big():
+                building.add_currency()
 
     def get_identity(self) -> Identity:
         return self.__identity
