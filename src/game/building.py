@@ -142,6 +142,9 @@ class Building:
                                            (self.w(self.__x) - temp.get_width() // 2,
                                             self.h(self.__y) - temp.get_height() // 2))
 
+        if self.is_alive():
+            self.render_hp_bar()
+
     def action(self, units, player_team: Team = 0):
         if self.__alive:
             self.find_target(units)
@@ -250,6 +253,22 @@ class Building:
                 self.__currency += amount
             else:
                 self.__currency += self.__currency_income
+
+    def render_hp_bar(self):
+
+        if self.__hp != self.__full_hp:
+            hp_bar_length: int = 48
+            hp_bar_height: int = 6
+            current_hp_percentage: float = float(self.__hp) / float(self.__full_hp)
+            pygame.draw.rect(self.__game.get_display(), (255, 0, 0),
+                             (self.w(self.get_x() - hp_bar_length / 2),
+                              self.h(self.get_y() - 30 - hp_bar_height),
+                              self.w(hp_bar_length), self.h(hp_bar_height)))
+            pygame.draw.rect(self.__game.get_display(), (0, 0, 0),
+                             (self.w(self.get_x() - hp_bar_length / 2 + hp_bar_length * current_hp_percentage),
+                              self.h(self.get_y() - 30 - hp_bar_height),
+                              self.w(hp_bar_length - hp_bar_length * current_hp_percentage),
+                              self.h(hp_bar_height)))
 
     def is_alive(self):
         return self.__alive
