@@ -219,8 +219,8 @@ class PlayMenu(Menu):
 
                 elif self.buttons[3].cursor_hovers(self.mouse_pos):
                     # TODO: Send message to other clients, that game has started. Temporarily it will start the game.
-                    self.game.server.start_game()
                     if len(self.__lobby_display_players) == 4:
+                        self.game.server.start_game()
                         self.set_game_ready()
                 elif self.buttons[4].cursor_hovers(self.mouse_pos):
                     # Demo start button

@@ -81,5 +81,4 @@ class Server(Thread, MessageReceiver):
 
     def start_game(self):
         self.__listener.stop()
-        msg: BasicMessage = BasicMessage(MessageType.GAME_START)
-        self.__server_game_thread.broadcast(msg)
+        self.__server_game_thread.start_game()

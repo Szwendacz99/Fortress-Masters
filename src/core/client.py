@@ -8,17 +8,7 @@ from core.identity import Identity
 from core.message_receiver import MessageReceiver
 from game.building import Building
 from game.bullet import Bullet
-from game.laser import Laser
-from game.rocket import Rocket
-from game.units.spaceship import Spaceship
-from game.units.spaceship_1 import Spaceship_1
-from game.units.spaceship_2 import Spaceship_2
-from game.units.spaceship_3 import Spaceship_3
-from game.units.spaceship_4 import Spaceship_4
-from game.units.spaceship_5 import Spaceship_5
-from game.units.spaceship_6 import Spaceship_6
 from game.units.unit import Unit
-from game.units.unit_type import UnitType
 from network.connection import Connection
 from network.messages.basic_message import BasicMessage
 from network.messages.join_message import JoinMessage
@@ -37,7 +27,7 @@ class Client(Thread, MessageReceiver):
     def __init__(self, game, username: str, is_server: bool = False):
         Thread.__init__(self)
         self.lobby_list: list[Identity] = []
-        self.__game_started: bool = False
+
         self.__is_server: bool = is_server
 
         self.__identity: Identity = Identity(username)
@@ -81,6 +71,8 @@ class Client(Thread, MessageReceiver):
             self.update_units(message)
         elif message.get_type() == MessageType.NEW_BULLET:
             self.add_new_bullet(message)
+        elif message.get_type() == MessageType.PASSIVE_INCOME:
+            print("Received passive income")
 
         return True
 

@@ -9,7 +9,6 @@ from core.team import Team
 from network.messages.basic_message import BasicMessage
 from network.messages.lobby_state_message import LobbyStateMessage
 from network.messages.message_type import MessageType
-from network.messages.new_unit_message import NewUnitMessage
 from network.messages.team_set_message import TeamSetMessage
 from network.messages.unit_sync_data import UnitSyncData
 from network.messages.units_update_message import UnitsUpdateMessage
@@ -21,9 +20,17 @@ class ServerGameThread(Thread):
         self.__team_blu: list[ConnectedPlayer] = []
         self.__team_red: list[ConnectedPlayer] = []
         self.__active = True
-        self.__last_heartbeat_send_time = time()
+        self.__game_playing = False
+
+        self.__last_heartbeat_send_time: float = time()
+        self.__last_passive_income_broadcast: float = time()
         self.__lock = Lock()
         self.daemon = True
+
+    def start_game(self):
+        self.__game_playing = True
+        msg: BasicMessage = BasicMessage(MessageType.GAME_START)
+        self.broadcast(msg)
 
     def add_player(self, player: ConnectedPlayer) -> bool:
         """
@@ -93,11 +100,15 @@ class ServerGameThread(Thread):
         hb: BasicMessage = BasicMessage(MessageType.HEARTBEAT)
         while self.__active:
             self.__check_for_disconnects()
-            if (time() - self.__last_heartbeat_send_time) > 1:
+            if (time() - self.__last_heartbeat_send_time) > 1.0:
                 self.broadcast(hb)
                 self.__last_heartbeat_send_time = time()
             self.broadcast(UnitsUpdateMessage(self.get_units_list()))
-            sleep(0.05)
+
+            if (time() - self.__last_passive_income_broadcast) > 1.0 and self.__game_playing:
+                self.broadcast(BasicMessage(MessageType.PASSIVE_INCOME))
+                self.__last_passive_income_broadcast = time()
+            sleep(0.2)
 
     def get_units_list(self) -> list[UnitSyncData]:
         result = []

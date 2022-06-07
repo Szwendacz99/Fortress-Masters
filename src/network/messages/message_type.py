@@ -12,3 +12,4 @@ class MessageType(Enum):
     NEW_UNIT = 7
     UNITS_UPDATE = 8
     NEW_BULLET = 9
+    PASSIVE_INCOME = 10
