@@ -206,8 +206,8 @@ class PlayMenu(Menu):
                     # TODO: Join Lobby
                     self.game.client = Client(self.game,
                                               username=self.text_input_array[2].input_text)
-                    success, status = self.game.client.join_server(address=self.text_input_array[0].input_text,
-                                                                   port=int(self.text_input_array[1].input_text))
+                    success, status = self.game.client.join_server(address=self.text_input_array[0].input_text.strip(),
+                                                                   port=int(self.text_input_array[1].input_text.strip()))
                     if not success:
                         self.game.client = None
                         self.connection_status = status
