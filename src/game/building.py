@@ -245,10 +245,11 @@ class Building:
         self.__currency -= amount
 
     def add_currency(self, amount: int = 0):
-        if amount:
-            self.__currency += amount
-        else:
-            self.__currency += self.__currency_income
+        if self.is_alive():
+            if amount:
+                self.__currency += amount
+            else:
+                self.__currency += self.__currency_income
 
     def is_alive(self):
         return self.__alive
