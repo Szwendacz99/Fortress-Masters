@@ -1,6 +1,6 @@
 import pickle
 from logging import debug
-from socket import socket, AF_INET, SOCK_STREAM
+from socket import socket, AF_INET, SOCK_STREAM, MSG_WAITALL
 from threading import Lock
 
 from exceptions.network_exception import NetworkException
@@ -69,7 +69,7 @@ class Connection:
     def receive_data(self) -> [BasicMessage, JoinMessage, LobbyStateMessage]:
         try:
             data_to_receive = int.from_bytes(self.__socket.recv(MSG_SIZE_FIELD_LENGTH), BYTEORDER)
-            data = self.__socket.recv(data_to_receive)
+            data = self.__socket.recv(data_to_receive, MSG_WAITALL)
         except Exception as e:
             raise NetworkException(str(e), self.__socket)
 
