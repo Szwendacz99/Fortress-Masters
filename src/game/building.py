@@ -43,12 +43,14 @@ class Building:
             self.__full_hp: int = 3500
             self.__atk_damage: int = 100
             self.__atk_speed: int = 48
+            self.__currency: int = 150
+            self.__currency_income: int = 5
         else:
             self.__full_hp: int = 2000
             self.__atk_damage: int = 55
             self.__atk_speed: int = 54
         self.__hp: int = self.__full_hp
-        self.__atk_range: int = 140
+        self.__atk_range: int = 160
         self.__cooldown: int = self.__atk_speed
         self.__target = None
 
@@ -209,6 +211,7 @@ class Building:
     def lose_hp(self, damage):
         self.__hp -= damage
         if self.__hp <= 0:
+            self.__hp = 0
             self.die()
 
     def die(self):
@@ -236,6 +239,9 @@ class Building:
         return pygame.transform.rotate(pygame.transform.scale(
             img, (self.w(self.__building_size), self.h(self.__building_size))), angle)
 
+    def subtract_currency(self, amount: int):
+        self.__currency -= amount
+
     def is_alive(self):
         return self.__alive
 
@@ -256,3 +262,12 @@ class Building:
 
     def get_left(self) -> bool:
         return self.__left
+
+    def get_currency(self):
+        return self.__currency
+
+    def get_hp(self):
+        return self.__hp
+
+    def get_full_hp(self):
+        return  self.__full_hp

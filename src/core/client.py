@@ -73,6 +73,7 @@ class Client(Thread, MessageReceiver):
             self.__game.play_menu.set_game_ready()
         elif message.get_type() == MessageType.TEAM_SET:
             self.__identity.set_team(message.get_team())
+            self.__identity.set_left(message.get_left())
             info(f"Assigned to team {message.get_team()}")
         elif message.get_type() == MessageType.NEW_UNIT:
             self.add_new_unit(message)
@@ -97,50 +98,12 @@ class Client(Thread, MessageReceiver):
 
         source.shoot_target(target)
 
-
     def add_new_unit(self, msg: NewUnitMessage):
-        if msg.unit_type == UnitType.SPACESHIP:
-            Client.units[msg.uuid] = Spaceship(uuid=msg.uuid,
+        Client.units[msg.uuid] = msg.unit_type_class(uuid=msg.uuid,
                                                game=self.__game,
                                                start_pos=msg.pos,
                                                team=msg.team,
                                                client_team=self.__game.client.get_identity().get_team())
-        elif msg.unit_type == UnitType.SPACESHIP_1:
-            Client.units[msg.uuid] = Spaceship_1(uuid=msg.uuid,
-                                                 game=self.__game,
-                                                 start_pos=msg.pos,
-                                                 team=msg.team,
-                                                 client_team=self.__game.client.get_identity().get_team())
-        elif msg.unit_type == UnitType.SPACESHIP_2:
-            Client.units[msg.uuid] = Spaceship_2(uuid=msg.uuid,
-                                                 game=self.__game,
-                                                 start_pos=msg.pos,
-                                                 team=msg.team,
-                                                 client_team=self.__game.client.get_identity().get_team())
-        elif msg.unit_type == UnitType.SPACESHIP_3:
-            Client.units[msg.uuid] = Spaceship_3(uuid=msg.uuid,
-                                                 game=self.__game,
-                                                 start_pos=msg.pos,
-                                                 team=msg.team,
-                                                 client_team=self.__game.client.get_identity().get_team())
-        elif msg.unit_type == UnitType.SPACESHIP_4:
-            Client.units[msg.uuid] = Spaceship_4(uuid=msg.uuid,
-                                                 game=self.__game,
-                                                 start_pos=msg.pos,
-                                                 team=msg.team,
-                                                 client_team=self.__game.client.get_identity().get_team())
-        elif msg.unit_type == UnitType.SPACESHIP_5:
-            Client.units[msg.uuid] = Spaceship_5(uuid=msg.uuid,
-                                                 game=self.__game,
-                                                 start_pos=msg.pos,
-                                                 team=msg.team,
-                                                 client_team=self.__game.client.get_identity().get_team())
-        elif msg.unit_type == UnitType.SPACESHIP_6:
-            Client.units[msg.uuid] = Spaceship_6(uuid=msg.uuid,
-                                                 game=self.__game,
-                                                 start_pos=msg.pos,
-                                                 team=msg.team,
-                                                 client_team=self.__game.client.get_identity().get_team())
 
     def update_units(self, msg: UnitsUpdateMessage):
         for unit in msg.units:

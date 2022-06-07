@@ -21,7 +21,6 @@ class GamePlaying(Menu):
 
     def __init__(self, game):
         Menu.__init__(self, game)
-        # TODO establishing on which team is a player
         self.__fps: int = 60
         self.__background_img: Surface = pygame.transform.scale(pygame.image.load(
             os.path.normpath('resources/img/map_bg.png')), (self.w(564), self.h(864))).convert()
@@ -31,8 +30,13 @@ class GamePlaying(Menu):
 
         self.__player_status_bar = PlayerStatusBar(game, self.game.get_window_width() / 2 - 1064 / 2,
                                                    self.game.get_window_height() / 10)
+        self.__currency: int = 150
+        self.__big_hp: float = 100.0
+        self.__small_hp: float = 100.0
 
-        self.__selected_unit = None
+
+        self.__selected_unit_class = None
+
 
     def resize(self):
         self.__background_img: Surface = pygame.transform.scale(pygame.image.load(
@@ -53,7 +57,9 @@ class GamePlaying(Menu):
             self.draw()
 
             self.__unit_selection_bar.update()
-            self.__player_status_bar.update("100", "100", "100")
+            self.__player_status_bar.update(self.__currency,
+                                            "{:.1f}".format(self.__big_hp),
+                                            "{:.1f}".format(self.__small_hp))
 
             self.check_input()
             self.game.check_events()
@@ -70,12 +76,21 @@ class GamePlaying(Menu):
         # RuntimeError: dictionary changed size during iteration
         for building in [f for f in Client.buildings]:
             building.action(Client.units, self.game.client.get_identity().get_team())
+            if building.get_team() == self.game.client.get_identity().get_team() and \
+                    building.get_left() == self.game.client.get_identity().get_left() and \
+                    building.get_big():
+                self.__currency = building.get_currency()
+                self.__big_hp = float(building.get_hp())/float(building.get_full_hp()) * 100.
+            elif building.get_team() == self.game.client.get_identity().get_team() and \
+                    building.get_left() == self.game.client.get_identity().get_left():
+                self.__small_hp = float(building.get_hp())/float(building.get_full_hp()) * 100.
 
             if building.is_alive():
                 if building.get_team() == Team.BLU:
                     blue_building_count += 1
                 else:
                     red_building_count += 1
+
         if red_building_count == 0:
             self.game.team_won = Team.BLU
             self.run_display = False
@@ -108,24 +123,30 @@ class GamePlaying(Menu):
                         for button_1 in selection_buttons:
                             button_1.set_clicked(False)
                         button.set_clicked(True)
-                        self.__selected_unit = button.get_unit_type()
+                        self.__selected_unit_class = button.get_unit_type_class()
                         bar_clicked = True
                 if not bar_clicked:
-                    if event.button == 1 or event.button == 5 and self.__selected_unit is not None:
+                    if event.button == 1 and self.__selected_unit_class is not None:
                         if self.mouse_pos[0] in range(
                                 self.w(self.default_width // 2 - 564 // 2),
                                 self.w(self.default_width // 2 + 564 // 2)) and \
                                 self.mouse_pos[1] in range(
+                                self.h(self.default_height // 2 + 30),
+                                self.h(self.default_height)):
+                            if self.__currency >= self.__selected_unit_class.cost:
 
-                            self.h(self.default_height // 2 + 30), self.h(self.default_height)):
-                            team = self.game.client.get_identity().get_team()
-                            self.game.client.send_message(NewUnitMessage(uuid4(),
-                                                                         unit_type=self.__selected_unit,
-                                                                         pos=(self.w_revert(self.mouse_pos[0]),
-                                                                              self.h_revert(self.mouse_pos[1])),
-                                                                         team=team
-                                                                         ))
-
+                                team = self.game.client.get_identity().get_team()
+                                self.game.client.send_message(NewUnitMessage(uuid4(),
+                                                                             unit_type_class=self.__selected_unit_class,
+                                                                             pos=(self.w_revert(self.mouse_pos[0]),
+                                                                                  self.h_revert(self.mouse_pos[1])),
+                                                                             team=team
+                                                                             ))
+                                for building in [f for f in Client.buildings]:
+                                    if building.get_team() == self.game.client.get_identity().get_team() and \
+                                            building.get_left() == self.game.client.get_identity().get_left() and \
+                                            building.get_big():
+                                        building.subtract_currency(self.__selected_unit_class.cost)
     def create_buildings(self):
         Client.add_building(Building(self.game, True, Team.RED))
         Client.add_building(Building(self.game, True, Team.RED, False))
