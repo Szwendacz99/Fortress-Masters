@@ -173,7 +173,6 @@ class Unit:
                 self.__game.get_display().blit(temp,
                                                (self.w(self.get_x()) - temp.get_width() // 2,
                                                 self.h(self.get_y()) - temp.get_height() // 2))
-
         # Displaying units of the player's team
         elif player_team == self.__team:
             if self.__team == Team.RED:
@@ -183,6 +182,7 @@ class Unit:
             self.__game.get_display().blit(temp,
                                            (self.w(self.get_x()) - temp.get_width() // 2,
                                             self.h(self.get_y()) - temp.get_height() // 2))
+
         # Displaying units of the enemies' team
         else:
             if self.__team == Team.RED:
@@ -192,6 +192,9 @@ class Unit:
             self.__game.get_display().blit(temp,
                                            (self.w(self.get_x()) - temp.get_width() // 2,
                                             self.h(self.get_y()) - temp.get_height() // 2))
+
+        if self.is_alive():
+            self.render_hp_bar()
 
     def action(self, buildings, units, player_team):
         if self.__alive:
@@ -233,16 +236,20 @@ class Unit:
             self.__angle = temp_vector.angle_to(pygame.math.Vector2(0, -1))
 
     def render_hp_bar(self):
-        if 1:
-            if self.__hp != self.__hp_full:
-                hp_bar_length: int = 46
-                hp_bar_height: int = 4
-                current_hp_percentage = self.__hp * 100. / self.__hp_full
-                pygame.draw.rect(self.__game.get_display(), (255, 0, 0),
-                                 (self.w(self.get_x()-hp_bar_length//2),
-                                  self.h(self.get_y()-30-hp_bar_height),
-                                 hp_bar_length, hp_bar_height))
-        pass
+
+        if self.__hp != self.__hp_full:
+            hp_bar_length: int = 32
+            hp_bar_height: int = 4
+            current_hp_percentage: float = float(self.__hp) / float(self.__hp_full)
+            pygame.draw.rect(self.__game.get_display(), (255, 0, 0),
+                             (self.w(self.get_x() - hp_bar_length / 2),
+                              self.h(self.get_y() - 30 - hp_bar_height),
+                              self.w(hp_bar_length), self.h(hp_bar_height)))
+            pygame.draw.rect(self.__game.get_display(), (0, 0, 0),
+                             (self.w(self.get_x() - hp_bar_length / 2 + hp_bar_length * current_hp_percentage),
+                              self.h(self.get_y() - 30 - hp_bar_height),
+                              self.w(hp_bar_length - hp_bar_length * current_hp_percentage),
+                              self.h(hp_bar_height)))
 
     def set_pos(self, pos, new_enemy_unit: bool = False, new_my_unit: bool = False):
         if new_enemy_unit or (self.__enemy_of_server and not new_my_unit):
