@@ -9,3 +9,4 @@ class UnitType(Enum):
     SPACESHIP_4 = 5
     SPACESHIP_5 = 6
     SPACESHIP_6 = 7
+    BUNKER = 8

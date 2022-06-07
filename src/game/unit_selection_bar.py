@@ -9,6 +9,7 @@ from game.units.spaceship_3 import Spaceship_3
 from game.units.spaceship_4 import Spaceship_4
 from game.units.spaceship_5 import Spaceship_5
 from game.units.spaceship_6 import Spaceship_6
+from game.units.bunker import Bunker
 
 
 class UnitSelectionBar:
@@ -55,6 +56,10 @@ class UnitSelectionBar:
         self.__selection_buttons.append(UnitSelectionButton(
             self.x+5, self.y + 64 * 6, pygame.image.load('resources/img/Spaceship_pack_pack_06_BLUE-selection.png'), 1, self.game.get_font(14),
             UnitType.SPACESHIP_6, Spaceship_6.cost))
+        self.__selection_buttons.append(UnitSelectionButton(
+            self.x+5, self.y + 64 * 7, pygame.image.load('resources/img/bunker_blue_selection.png'), 1, self.game.get_font(14),
+            UnitType.BUNKER, Bunker.cost))
+
 
     def update(self):
         self.mouse_pos = pygame.mouse.get_pos()
