@@ -46,8 +46,10 @@ class Unit:
         self.__cooldown: int = atk_speed
         self.__atk_range: int = atk_range
         self.__speed: float = speed
-        self.__seeing_range: int = 200
-
+        if speed == 0.0:
+            self.__seeing_range: int = self.__atk_range
+        else:
+            self.__seeing_range: int = 200
         self.__target = None
         self.__target_in_atk_range: bool = False
 
@@ -90,15 +92,17 @@ class Unit:
             current_closest_target_dist = 9999999
             current_closest_target = None
             current_target_in_atk_range: bool = False
-            for building in buildings:
-                if building.get_team() != self.__team and building.is_alive():
-                    dist_to_building = self.calc_dist(building)
-                    # print(f"{building.get_team()} {building.get_x()} {building.get_y()}")
-                    if dist_to_building <= current_closest_target_dist:
-                        current_closest_target = building
-                        current_closest_target_dist = dist_to_building
-                        if dist_to_building <= self.__atk_range:
-                            current_target_in_atk_range = True
+
+            if self.__speed > 0.0:
+                for building in buildings:
+                    if building.get_team() != self.__team and building.is_alive():
+                        dist_to_building = self.calc_dist(building)
+                        # print(f"{building.get_team()} {building.get_x()} {building.get_y()}")
+                        if dist_to_building <= current_closest_target_dist:
+                            current_closest_target = building
+                            current_closest_target_dist = dist_to_building
+                            if dist_to_building <= self.__atk_range:
+                                current_target_in_atk_range = True
 
             for unit in units.values():
                 if unit.get_team() != self.__team and unit.is_alive():
@@ -213,17 +217,18 @@ class Unit:
     def calc_vector(self, target=None):
         if target is None:
             target = self.__target
-        self.__vector = pygame.math.Vector2(
-            target.get_x() - self.get_x(),
-            target.get_y() - self.get_y())
-        temp_vector = pygame.math.Vector2(
-            self.w(target.get_x() - self.get_x()),
-            self.h(target.get_y() - self.get_y()))
-        if self.__vector:
-            pygame.math.Vector2.scale_to_length(self.__vector, self.__speed)
+        if target is not None:
+            self.__vector = pygame.math.Vector2(
+                target.get_x() - self.get_x(),
+                target.get_y() - self.get_y())
+            temp_vector = pygame.math.Vector2(
+                self.w(target.get_x() - self.get_x()),
+                self.h(target.get_y() - self.get_y()))
+            if self.__vector:
+                pygame.math.Vector2.scale_to_length(self.__vector, self.__speed)
 
-        # get angle between vector of going straight up and our vector
-        self.__angle = temp_vector.angle_to(pygame.math.Vector2(0, -1))
+            # get angle between vector of going straight up and our vector
+            self.__angle = temp_vector.angle_to(pygame.math.Vector2(0, -1))
 
     def set_pos(self, pos, new_enemy_unit: bool = False, new_my_unit: bool = False):
         if new_enemy_unit or (self.__enemy_of_server and not new_my_unit):

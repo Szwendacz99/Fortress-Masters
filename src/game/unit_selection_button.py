@@ -9,6 +9,7 @@ from game.units.spaceship_3 import Spaceship_3
 from game.units.spaceship_4 import Spaceship_4
 from game.units.spaceship_5 import Spaceship_5
 from game.units.spaceship_6 import Spaceship_6
+from game.units.bunker import Bunker
 
 
 class UnitSelectionButton:
@@ -89,3 +90,5 @@ class UnitSelectionButton:
             return Spaceship_5
         elif self.unit_type == UnitType.SPACESHIP_6:
             return Spaceship_6
+        elif self.unit_type == UnitType.BUNKER:
+            return Bunker
