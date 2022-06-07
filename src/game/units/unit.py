@@ -34,7 +34,6 @@ class Unit:
         self.__team: Team = team
         self.__left: bool = left
 
-        # TODO get info from server, which team is server on
         self.__server_team: Team = Team.RED
 
         self.__enemy_of_server: bool = (client_team != self.__server_team)
@@ -62,7 +61,10 @@ class Unit:
         new_enemy_unit: bool = (team != client_team)
         self.set_pos(start_pos, new_enemy_unit=new_enemy_unit, new_my_unit=not new_enemy_unit)
         self.__vector: pygame.Vector2 = pygame.Vector2(0, 0)
-        self.__angle: float = 0
+        if self.__speed == 0.0 and client_team != team:
+            self.__angle: float = 180
+        else:
+            self.__angle: float = 0
 
         # print(f"{client_team}  {self.__server_team}  {self.__enemy_of_server}")
         # print(f"{client_team}  {team}  {new_enemy_unit}")
@@ -229,6 +231,18 @@ class Unit:
 
             # get angle between vector of going straight up and our vector
             self.__angle = temp_vector.angle_to(pygame.math.Vector2(0, -1))
+
+    def render_hp_bar(self):
+        if 1:
+            if self.__hp != self.__hp_full:
+                hp_bar_length: int = 46
+                hp_bar_height: int = 4
+                current_hp_percentage = self.__hp * 100. / self.__hp_full
+                pygame.draw.rect(self.__game.get_display(), (255, 0, 0),
+                                 (self.w(self.get_x()-hp_bar_length//2),
+                                  self.h(self.get_y()-30-hp_bar_height),
+                                 hp_bar_length, hp_bar_height))
+        pass
 
     def set_pos(self, pos, new_enemy_unit: bool = False, new_my_unit: bool = False):
         if new_enemy_unit or (self.__enemy_of_server and not new_my_unit):
