@@ -1,6 +1,14 @@
 import pygame
 
 from game.units.unit_type import UnitType
+from game.units.unit import Unit
+from game.units.spaceship import Spaceship
+from game.units.spaceship_1 import Spaceship_1
+from game.units.spaceship_2 import Spaceship_2
+from game.units.spaceship_3 import Spaceship_3
+from game.units.spaceship_4 import Spaceship_4
+from game.units.spaceship_5 import Spaceship_5
+from game.units.spaceship_6 import Spaceship_6
 
 
 class UnitSelectionButton:
@@ -66,3 +74,18 @@ class UnitSelectionButton:
     def w(self, w: int, screen):
         return int(w / self.default_width * screen.get_width())
 
+    def get_unit_type_class(self):
+        if self.unit_type == UnitType.SPACESHIP:
+            return Spaceship
+        elif self.unit_type == UnitType.SPACESHIP_1:
+            return Spaceship_1
+        elif self.unit_type == UnitType.SPACESHIP_2:
+            return Spaceship_2
+        elif self.unit_type == UnitType.SPACESHIP_3:
+            return Spaceship_3
+        elif self.unit_type == UnitType.SPACESHIP_4:
+            return Spaceship_4
+        elif self.unit_type == UnitType.SPACESHIP_5:
+            return Spaceship_5
+        elif self.unit_type == UnitType.SPACESHIP_6:
+            return Spaceship_6

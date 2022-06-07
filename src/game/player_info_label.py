@@ -17,11 +17,12 @@ class PlayerInfoLabel:
 
     def update(self, screen: pygame.Surface, currency_amount = None, big_hp = None, little_hp = None):
         if currency_amount is not None:
-            self.text = self.font.render(self.label_text + currency_amount, True, "White")
+
+            self.text = self.font.render(f"{self.label_text} {currency_amount}", True, "White")
         elif big_hp is not None:
-            self.text = self.font.render(self.label_text + big_hp, True, "White")
+            self.text = self.font.render(f"{self.label_text} {big_hp}", True, "White")
         elif little_hp is not None:
-            self.text = self.font.render(self.label_text + little_hp, True, "White")
+            self.text = self.font.render(f"{self.label_text} {little_hp}", True, "White")
         screen.blit(self.text, self.rect)
         pass
 

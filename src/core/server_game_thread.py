@@ -38,14 +38,20 @@ class ServerGameThread(Thread):
             self.__team_red.append(player)
             player.get_identity().set_team(Team.RED)
             self.__lock.acquire()
-            player.send_message(TeamSetMessage(Team.RED))
+            if len(self.__team_red) == 1:
+                player.send_message(TeamSetMessage(Team.RED, left=True))
+            else:
+                player.send_message(TeamSetMessage(Team.RED, left=False))
             self.__lock.release()
             return True
         elif len(self.__team_blu) < 2:
             self.__team_blu.append(player)
             player.get_identity().set_team(Team.BLU)
             self.__lock.acquire()
-            player.send_message(TeamSetMessage(Team.BLU))
+            if len(self.__team_blu) == 1:
+                player.send_message(TeamSetMessage(Team.BLU, left=True))
+            else:
+                player.send_message(TeamSetMessage(Team.BLU, left=False))
             self.__lock.release()
             return True
         return False

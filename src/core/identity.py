@@ -8,6 +8,7 @@ class Identity:
         self.__uuid: UUID = uuid4()
         self.__username = username
         self.__team: Team = None
+        self.__left: bool = False
 
     def get_uuid(self) -> UUID:
         return self.__uuid
@@ -23,3 +24,9 @@ class Identity:
 
     def get_team(self) -> Team:
         return self.__team
+
+    def set_left(self, left: bool):
+        self.__left = left
+
+    def get_left(self) -> bool:
+        return self.__left

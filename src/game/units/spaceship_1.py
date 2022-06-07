@@ -14,6 +14,7 @@ class Spaceship_1(Unit):
     # Name of the class of the bullets that this unit will attack with
     bullet_type = Rocket
     unit_size = 55
+    cost: int = 20
 
     def __init__(self, uuid: UUID, game, start_pos,
                  hp: int = 300, atk_damage: int = 30, atk_speed: int = 200, atk_range: int = 100, speed: float = 0.25,
