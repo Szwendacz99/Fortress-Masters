@@ -105,7 +105,7 @@ class ServerGameThread(Thread):
                 self.__last_heartbeat_send_time = time()
             self.broadcast(UnitsUpdateMessage(self.get_units_list()))
 
-            if (time() - self.__last_passive_income_broadcast) > 1.0 and self.__game_playing:
+            if (time() - self.__last_passive_income_broadcast) > 1.55 and self.__game_playing:
                 self.broadcast(BasicMessage(MessageType.PASSIVE_INCOME))
                 self.__last_passive_income_broadcast = time()
             sleep(0.2)
