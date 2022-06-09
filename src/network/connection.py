@@ -73,6 +73,7 @@ class Connection:
             count = 120
             while len(data) < data_to_receive and count > 0:
                 data += self.__socket.recv(data_to_receive - len(data))
+                count -= 1
         except Exception as e:
             raise NetworkException(str(e), self.__socket)
 
