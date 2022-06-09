@@ -52,32 +52,33 @@ class Connection:
         packed_msg = pickle.dumps(obj=data)
         msg_size = len(packed_msg)
 
-        # debug(f"Sending data with size: {msg_size} bytes")
-
         bts = int.to_bytes(msg_size, MSG_SIZE_FIELD_LENGTH, BYTEORDER)
+        self.__sending_lock.acquire()
         sent_bytes = self.__socket.send(bts)
         if sent_bytes != MSG_SIZE_FIELD_LENGTH:
             raise NetworkException(message=f"Failed sending message size information, sent {sent_bytes}"
                                            f" out of {MSG_SIZE_FIELD_LENGTH}", socket_reference=self.__socket)
-        sent_bytes = self.__socket.send(packed_msg)
-        if sent_bytes != msg_size:
-            raise NetworkException(message=f"Failed sending message size information, sent {sent_bytes}"
-                                           f" out of {msg_size}", socket_reference=self.__socket)
-
-        # debug(f"Sent: {sent_bytes + MSG_SIZE_FIELD_LENGTH} bytes")
+        try:
+            self.__socket.sendall(packed_msg)
+        except Exception as e:
+            raise NetworkException(message=f"Failed sending message with error {str(e)}",
+                                   socket_reference=self.__socket)
+        self.__sending_lock.release()
 
     def receive_data(self) -> [BasicMessage, JoinMessage, LobbyStateMessage]:
         try:
             data_to_receive = int.from_bytes(self.__socket.recv(MSG_SIZE_FIELD_LENGTH), BYTEORDER)
+
             data = self.__socket.recv(data_to_receive)
+            count = 120
+            while len(data) < data_to_receive and count > 0:
+                data += self.__socket.recv(data_to_receive - len(data))
         except Exception as e:
             raise NetworkException(str(e), self.__socket)
 
         if len(data) != data_to_receive:
             raise NetworkException(message=f"Error on receiving, received only {len(data)}"
                                            f" out of {data_to_receive} bytes", socket_reference=self.__socket)
-
-        # debug(f"Received {len(data)} bytes.")
 
         return pickle.loads(data)
 
