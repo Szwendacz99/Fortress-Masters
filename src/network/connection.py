@@ -70,10 +70,10 @@ class Connection:
             data_to_receive = int.from_bytes(self.__socket.recv(MSG_SIZE_FIELD_LENGTH), BYTEORDER)
 
             data = self.__socket.recv(data_to_receive)
-            count = 120
-            while len(data) < data_to_receive and count > 0:
+            old_data_size = 0
+            while data_to_receive > len(data) != old_data_size:
+                old_data_size = len(data)
                 data += self.__socket.recv(data_to_receive - len(data))
-                count -= 1
         except Exception as e:
             raise NetworkException(str(e), self.__socket)
 
@@ -85,6 +85,10 @@ class Connection:
 
     def get_timeout(self) -> float:
         return self.__timeout
+
+    def set_timeout(self, timeout: float):
+        self.__timeout = timeout
+        self.__socket.settimeout(timeout)
 
     def get_peer(self) -> str:
         return self.__socket.getpeername()

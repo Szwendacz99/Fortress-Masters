@@ -1,6 +1,6 @@
 from builtins import staticmethod
 from logging import debug, info, error
-from threading import Thread, Lock
+from threading import Thread
 from time import time
 from uuid import UUID
 
@@ -35,13 +35,12 @@ class Client(Thread, MessageReceiver):
         self.__last_msg_receive_time: float = time()
         self.daemon = True
         self.__game = game
-        self.__lock = Lock()
 
     def join_server(self, address: str, port: int) -> (bool, str):
         try:
             conn: Connection = Connection(address=address,
                                           port=port,
-                                          timeout=3)
+                                          timeout=10)
             conn.send_data(JoinMessage(self.get_identity()))
             self.__connection = conn
             self.start()
@@ -118,9 +117,7 @@ class Client(Thread, MessageReceiver):
 
     def send_message(self, msg: [BasicMessage, LobbyStateMessage]):
         # debug(f"Client sending message with type: {msg.get_type()}")
-        self.__lock.acquire()
         self.__connection.send_data(msg)
-        self.__lock.release()
 
     def get_last_msg_receive_time(self) -> float:
         return self.__last_msg_receive_time

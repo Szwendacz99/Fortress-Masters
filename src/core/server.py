@@ -18,7 +18,7 @@ class Server(Thread, MessageReceiver):
 
     def __init__(self, port: int, identity: Identity):
         super().__init__()
-        self.__listener: ServerListener = ServerListener(port, 15)
+        self.__listener: ServerListener = ServerListener(port, timeout=10)
         self.__server_game_thread: ServerGameThread = ServerGameThread()
         self.__server_game_thread.start()
         self.__identity = identity
@@ -41,6 +41,7 @@ class Server(Thread, MessageReceiver):
         :return:
         """
         new_conn: Connection = self.__listener.receive_connection()
+        new_conn.set_timeout(10)
         msg: [BasicMessage, JoinMessage] = new_conn.receive_data()
         if msg.get_type() == MessageType.JOIN:
             msg: JoinMessage = msg

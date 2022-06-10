@@ -1,5 +1,5 @@
-from logging import info, debug
-from threading import Thread, Lock
+from logging import info, warning
+from threading import Thread
 from time import sleep, time
 
 from core.client import Client
@@ -24,7 +24,6 @@ class ServerGameThread(Thread):
 
         self.__last_heartbeat_send_time: float = time()
         self.__last_passive_income_broadcast: float = time()
-        self.__lock = Lock()
         self.daemon = True
 
     def start_game(self):
@@ -44,36 +43,29 @@ class ServerGameThread(Thread):
         if len(self.__team_red) < 2:
             self.__team_red.append(player)
             player.get_identity().set_team(Team.RED)
-            self.__lock.acquire()
             if len(self.__team_red) == 1:
                 player.send_message(TeamSetMessage(Team.RED, left=True))
             else:
                 player.send_message(TeamSetMessage(Team.RED, left=False))
-            self.__lock.release()
             return True
         elif len(self.__team_blu) < 2:
             self.__team_blu.append(player)
             player.get_identity().set_team(Team.BLU)
-            self.__lock.acquire()
             if len(self.__team_blu) == 1:
                 player.send_message(TeamSetMessage(Team.BLU, left=True))
             else:
                 player.send_message(TeamSetMessage(Team.BLU, left=False))
-            self.__lock.release()
             return True
         return False
 
     def broadcast(self, msg):
-        self.__lock.acquire()
         for p in self.__team_blu + self.__team_red:
             try:
                 p.send_message(msg)
                 # debug(f"Server sending broadcast with {msg.get_type()} message")
-            except:
-                self.__lock.release()
+            except Exception as e:
+                warning(f"Error on broadcasting to client: {str(e)}")
                 self.__disconnect(p)
-                self.__lock.acquire()
-        self.__lock.release()
 
     def get_identities(self) -> list[Identity]:
         return [p.get_identity() for p in self.__team_blu + self.__team_red]
@@ -85,14 +77,12 @@ class ServerGameThread(Thread):
                 continue
 
     def __disconnect(self, player: ConnectedPlayer):
-        self.__lock.acquire()
         info(f"Disconnecting user \"{player.get_name()}\"")
         player.disconnect()
         if player in self.__team_blu:
             self.__team_blu.remove(player)
         elif player in self.__team_red:
             self.__team_red.remove(player)
-        self.__lock.release()
         self.broadcast(LobbyStateMessage(self.get_identities()))
 
     def run(self) -> None:
