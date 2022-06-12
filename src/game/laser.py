@@ -20,7 +20,7 @@ class Laser(Bullet):
     path_blue = 'resources/img/laser_blue.png'
     path_red = 'resources/img/laser_red.png'
 
-    def __init__(self, game, start_pos, target, damage, speed: float = 1.66, team: Team = None):
+    def __init__(self, game, start_pos, target, damage, speed: float = 2.11, team: Team = None):
         Bullet.__init__(self, game, start_pos, target, damage, self.path_blue,
                         self.path_red, speed, team, img_size_x=7, img_size_y=14)
 
