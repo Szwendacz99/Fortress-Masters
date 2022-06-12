@@ -36,28 +36,28 @@ class UnitSelectionBar:
         :return:
         """
         self.__selection_buttons.append(UnitSelectionButton(
-            self.x+5, self.y, pygame.image.load('resources/img/spaceship-selection.png'), 1, self.game.get_font(14),
+            self.x, self.y, pygame.image.load('resources/img/spaceship-selection.png'), 1, self.game.get_font(14),
             UnitType.SPACESHIP, Spaceship.cost))
         self.__selection_buttons.append(UnitSelectionButton(
-            self.x+5, self.y + 64, pygame.image.load('resources/img/Spaceship_pack_pack_01_BLUE-selection.png'), 1, self.game.get_font(14),
+            self.x, self.y + 64, pygame.image.load('resources/img/Spaceship_pack_pack_01_BLUE-selection.png'), 1, self.game.get_font(14),
             UnitType.SPACESHIP_1, Spaceship_1.cost))
         self.__selection_buttons.append(UnitSelectionButton(
-            self.x+5, self.y + 64 * 2, pygame.image.load('resources/img/Spaceship_pack_pack_02_BLUE-selection.png'), 1, self.game.get_font(14),
+            self.x, self.y + 64 * 2, pygame.image.load('resources/img/Spaceship_pack_pack_02_BLUE-selection.png'), 1, self.game.get_font(14),
             UnitType.SPACESHIP_2, Spaceship_2.cost))
         self.__selection_buttons.append(UnitSelectionButton(
-            self.x+5, self.y + 64 * 3, pygame.image.load('resources/img/Spaceship_pack_pack_03_BLUE-selection.png'), 1, self.game.get_font(14),
+            self.x, self.y + 64 * 3, pygame.image.load('resources/img/Spaceship_pack_pack_03_BLUE-selection.png'), 1, self.game.get_font(14),
             UnitType.SPACESHIP_3, Spaceship_3.cost))
         self.__selection_buttons.append(UnitSelectionButton(
-            self.x+5, self.y + 64 * 4, pygame.image.load('resources/img/Spaceship_pack_pack_04_BLUE-selection.png'), 1, self.game.get_font(14),
+            self.x, self.y + 64 * 4, pygame.image.load('resources/img/Spaceship_pack_pack_04_BLUE-selection.png'), 1, self.game.get_font(14),
             UnitType.SPACESHIP_4, Spaceship_4.cost))
         self.__selection_buttons.append(UnitSelectionButton(
-            self.x+5, self.y + 64 * 5, pygame.image.load('resources/img/Spaceship_pack_pack_05_BLUE-selection.png'), 1, self.game.get_font(14),
+            self.x, self.y + 64 * 5, pygame.image.load('resources/img/Spaceship_pack_pack_05_BLUE-selection.png'), 1, self.game.get_font(14),
             UnitType.SPACESHIP_5, Spaceship_5.cost))
         self.__selection_buttons.append(UnitSelectionButton(
-            self.x+5, self.y + 64 * 6, pygame.image.load('resources/img/Spaceship_pack_pack_06_BLUE-selection.png'), 1, self.game.get_font(14),
+            self.x, self.y + 64 * 6, pygame.image.load('resources/img/Spaceship_pack_pack_06_BLUE-selection.png'), 1, self.game.get_font(14),
             UnitType.SPACESHIP_6, Spaceship_6.cost))
         self.__selection_buttons.append(UnitSelectionButton(
-            self.x+5, self.y + 64 * 7, pygame.image.load('resources/img/bunker_blue_selection.png'), 1, self.game.get_font(14),
+            self.x, self.y + 64 * 7, pygame.image.load('resources/img/bunker_blue_selection.png'), 1, self.game.get_font(14),
             UnitType.BUNKER, Bunker.cost))
 
 
