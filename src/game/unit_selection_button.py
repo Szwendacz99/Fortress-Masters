@@ -60,20 +60,20 @@ class UnitSelectionButton:
     def get_unit_type(self) -> UnitType:
         return self.unit_type
 
-    def resize(self, screen):
+    def resize(self, game):
         self.scaled_image = pygame.transform.scale(self.image,
-                                                   (self.w(self.width, screen),
-                                                    self.h(self.height, screen)))
+                                                   (self.w(self.width, game),
+                                                    self.h(self.height, game)))
         self.rect = self.scaled_image.get_rect()
-        x_scaled = self.w(self.x, screen)
-        y_scaled = self.h(self.y, screen)
+        x_scaled = self.w(self.x, game)
+        y_scaled = self.h(self.y, game)
         self.rect.topleft = (x_scaled, y_scaled)
 
-    def h(self, h: int, screen):
-        return int(h / self.default_height * screen.get_height())
+    def h(self, h: int, game):
+        return int(h / self.default_height * game.get_window_height())
 
-    def w(self, w: int, screen):
-        return int(w / self.default_width * screen.get_width())
+    def w(self, w: int, game):
+        return int(w / self.default_width * game.get_window_width())
 
     def get_unit_type_class(self):
         if self.unit_type == UnitType.SPACESHIP:

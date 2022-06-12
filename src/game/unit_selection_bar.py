@@ -60,7 +60,6 @@ class UnitSelectionBar:
             self.x, self.y + 64 * 7, pygame.image.load('resources/img/bunker_blue_selection.png'), 1, self.game.get_font(14),
             UnitType.BUNKER, Bunker.cost))
 
-
     def update(self):
         self.mouse_pos = pygame.mouse.get_pos()
         for button in self.__selection_buttons:
@@ -76,4 +75,4 @@ class UnitSelectionBar:
 
     def resize(self):
         for button in self.__selection_buttons:
-            button.resize(self.game.get_display())
+            button.resize(self.game)

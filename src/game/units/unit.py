@@ -45,10 +45,15 @@ class Unit:
         self.__cooldown: int = atk_speed
         self.__atk_range: int = atk_range
         self.__speed: float = speed
+
         if speed == 0.0:
+            # Making tower-like units target only enemies in attack range
             self.__seeing_range: int = self.__atk_range
+            # Also adding cooldown for slowly_get_destroyed
+            self.__slowly_get_destroyed_cooldown = 0
         else:
             self.__seeing_range: int = 200
+
         self.__target = None
         self.__target_in_atk_range: bool = False
 
@@ -61,6 +66,7 @@ class Unit:
         new_enemy_unit: bool = (team != client_team)
         self.set_pos(start_pos, new_enemy_unit=new_enemy_unit, new_my_unit=not new_enemy_unit)
         self.__vector: pygame.Vector2 = pygame.Vector2(0, 0)
+
         if self.__speed == 0.0 and client_team != team:
             self.__angle: float = 180
         else:
@@ -199,7 +205,10 @@ class Unit:
     def action(self, buildings, units, player_team):
         if self.__alive:
             self.find_target(buildings, units)
-            self.move()
+            if self.__speed > 0.0:
+                self.move()
+            else:
+                self.slowly_get_destroyed(self.__hp_full//100)
             self.draw(player_team, units)
         else:
             self.draw(player_team, units)
@@ -246,10 +255,17 @@ class Unit:
                               self.h(self.get_y() - 30 - hp_bar_height),
                               self.w(hp_bar_length), self.h(hp_bar_height)))
             pygame.draw.rect(self.__game.get_display(), (0, 0, 0),
-                             (self.w(self.get_x() - hp_bar_length / 2 + hp_bar_length * current_hp_percentage),
+                             (self.w(math.ceil(self.get_x() - hp_bar_length / 2 + hp_bar_length * current_hp_percentage)),
                               self.h(self.get_y() - 30 - hp_bar_height),
-                              self.w(hp_bar_length - hp_bar_length * current_hp_percentage),
+                              self.w(hp_bar_length - math.floor(hp_bar_length * current_hp_percentage)),
                               self.h(hp_bar_height)))
+
+    def slowly_get_destroyed(self, damage):
+        if self.__slowly_get_destroyed_cooldown == 30:
+            self.lose_hp(damage)
+            self.__slowly_get_destroyed_cooldown = 0
+        else:
+            self.__slowly_get_destroyed_cooldown += 1
 
     def set_pos(self, pos, new_enemy_unit: bool = False, new_my_unit: bool = False):
         if new_enemy_unit or (self.__enemy_of_server and not new_my_unit):
