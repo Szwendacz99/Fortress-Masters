@@ -30,10 +30,9 @@ class GameWindow:
         self.team_won = None
 
         self.__last_resize_time = 0
-        print(pygame.display.Info().current_w, pygame.display.Info().current_h)
+
         self.__window_width: int = pygame.display.Info().current_w // 1.6
         self.__window_height: int = pygame.display.Info().current_h // 1.6
-        print(self.__window_width, self.__window_height)
         self.__display: Surface = pygame.display.set_mode((self.__window_width, self.__window_height), pygame.RESIZABLE)
         # self.__font_name: str = '../resources/fonts/8-BIT WONDER.TTF'
 
@@ -64,7 +63,6 @@ class GameWindow:
         if time() - self.__last_resize_time > 0.5 and \
                 (self.__window_width != pygame.display.Info().current_w or
                  self.__window_height != pygame.display.Info().current_h):
-            print(pygame.display.Info().current_w, pygame.display.Info().current_h)
             self.__window_width = pygame.display.Info().current_w
             self.__window_height = pygame.display.Info().current_h
             self.__display = pygame.display.set_mode((self.__window_width, self.__window_height), pygame.RESIZABLE)
