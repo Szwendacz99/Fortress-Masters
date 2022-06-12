@@ -34,9 +34,7 @@ class GamePlaying(Menu):
         self.__big_hp: float = 100.0
         self.__small_hp: float = 100.0
 
-
         self.__selected_unit_class = None
-
 
     def resize(self):
         self.__background_img: Surface = pygame.transform.scale(pygame.image.load(
@@ -81,10 +79,10 @@ class GamePlaying(Menu):
                     building.get_left() == self.game.client.get_identity().get_left() and \
                     building.get_big():
                 self.__currency = building.get_currency()
-                self.__big_hp = float(building.get_hp())/float(building.get_full_hp()) * 100.
+                self.__big_hp = float(building.get_hp()) / float(building.get_full_hp()) * 100.
             elif building.get_team() == self.game.client.get_identity().get_team() and \
                     building.get_left() == self.game.client.get_identity().get_left():
-                self.__small_hp = float(building.get_hp())/float(building.get_full_hp()) * 100.
+                self.__small_hp = float(building.get_hp()) / float(building.get_full_hp()) * 100.
 
             if building.is_alive():
                 if building.get_team() == Team.BLU:
@@ -132,8 +130,8 @@ class GamePlaying(Menu):
                                 self.w(self.default_width // 2 - 564 // 2),
                                 self.w(self.default_width // 2 + 564 // 2)) and \
                                 self.mouse_pos[1] in range(
-                                self.h(self.default_height // 2 + 30),
-                                self.h(self.default_height)):
+                            self.h(self.default_height // 2 + 30),
+                            self.h(self.default_height)):
                             if self.__currency >= self.__selected_unit_class.cost:
 
                                 team = self.game.client.get_identity().get_team()
@@ -148,6 +146,7 @@ class GamePlaying(Menu):
                                             building.get_left() == self.game.client.get_identity().get_left() and \
                                             building.get_big():
                                         building.subtract_currency(self.__selected_unit_class.cost)
+
     def create_buildings(self):
         Client.add_building(Building(self.game, True, Team.RED))
         Client.add_building(Building(self.game, True, Team.RED, False))
