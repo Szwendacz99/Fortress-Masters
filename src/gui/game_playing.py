@@ -25,16 +25,18 @@ class GamePlaying(Menu):
         self.__background_img: Surface = pygame.transform.scale(pygame.image.load(
             os.path.normpath('resources/img/map_bg.png')), (self.w(564), self.h(864))).convert()
 
-        self.__unit_selection_bar = UnitSelectionBar(game, self.w(self.game.get_window_width() / 2 + 580 / 2),
+        self.__unit_selection_bar = UnitSelectionBar(game, self.default_width / 2 + 580 / 2,
                                                      self.game.get_window_height() / 10)
 
-        self.__player_status_bar = PlayerStatusBar(game, self.w(self.game.get_window_width() / 2 - 1100 / 2),
+        self.__player_status_bar = PlayerStatusBar(game, self.default_width / 2 - 1100 / 2,
                                                    self.game.get_window_height() / 10)
+
         self.__currency: int = 150
         self.__big_hp: float = 100.0
         self.__small_hp: float = 100.0
 
         self.__selected_unit_class = None
+        self.resize()
 
     def resize(self):
         self.__background_img: Surface = pygame.transform.scale(pygame.image.load(
