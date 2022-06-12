@@ -6,7 +6,7 @@ import pygame.mouse
 from gui.menu import Menu
 from gui.widgets.button import Button
 
-from core.team import Team
+from game.team import Team
 
 
 class GameEndMenu(Menu):

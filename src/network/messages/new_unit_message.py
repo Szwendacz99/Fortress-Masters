@@ -2,16 +2,8 @@ from uuid import UUID
 
 from pygame.math import Vector2
 
-from core.team import Team
-from game.units.unit_type import UnitType
+from game.team import Team
 from game.units.unit import Unit
-from game.units.spaceship import Spaceship
-from game.units.spaceship_1 import Spaceship_1
-from game.units.spaceship_2 import Spaceship_2
-from game.units.spaceship_3 import Spaceship_3
-from game.units.spaceship_4 import Spaceship_4
-from game.units.spaceship_5 import Spaceship_5
-from game.units.spaceship_6 import Spaceship_6
 
 from network.messages.basic_message import BasicMessage
 from network.messages.message_type import MessageType

@@ -1,6 +1,6 @@
 import pygame
 
-import game_window as libGame
+from gui import game_window as libGame
 from utils.font_manager import FontManager
 
 

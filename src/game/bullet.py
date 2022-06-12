@@ -7,7 +7,7 @@ import math
 
 from pygame.surface import Surface
 from pygame.math import Vector2
-from core.team import Team
+from game.team import Team
 
 
 def img_load(path, size_x, size_y):

@@ -1,6 +1,6 @@
 import logging
 
-from game_window import GameWindow
+from gui.game_window import GameWindow
 
 logging.basicConfig(format='%(levelname)s :: %(message)s', level=logging.DEBUG)
 

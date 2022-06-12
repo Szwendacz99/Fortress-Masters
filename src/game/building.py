@@ -8,7 +8,7 @@ import math
 
 from pygame.surface import Surface
 
-from core.team import Team
+from game.team import Team
 from game.laser import Laser
 from game.units.unit import Unit
 from network.messages.new_bullet_message import NewBulletMessage

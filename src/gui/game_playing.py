@@ -6,8 +6,8 @@ import os
 
 from pygame.surface import Surface
 
-from core.client import Client
-from core.team import Team
+from network.client import Client
+from game.team import Team
 from gui.menu import Menu
 from game.building import Building
 from game.unit_selection_bar import UnitSelectionBar

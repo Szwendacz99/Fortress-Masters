@@ -2,10 +2,10 @@ from logging import info, warning
 from threading import Thread
 from time import sleep, time
 
-from core.client import Client
-from core.identity import Identity
-from core.connected_player import ConnectedPlayer
-from core.team import Team
+from network.client import Client
+from game.identity import Identity
+from network.connected_player import ConnectedPlayer
+from game.team import Team
 from network.messages.basic_message import BasicMessage
 from network.messages.lobby_state_message import LobbyStateMessage
 from network.messages.message_type import MessageType

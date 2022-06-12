@@ -1,4 +1,4 @@
-from core.identity import Identity
+from game.identity import Identity
 from network.messages.basic_message import BasicMessage
 from network.messages.message_type import MessageType
 

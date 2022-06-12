@@ -1,14 +1,14 @@
-from logging import debug, error
+from logging import error
 
 import pygame.mouse
 
-from core.team import Team
+from game.team import Team
 from gui.menu import Menu
 from gui.widgets.button import Button
 from gui.widgets.text_input import TextInput
-from core.client import Client
-from core.identity import Identity
-from core.server import Server
+from network.client import Client
+from game.identity import Identity
+from network.server import Server
 
 
 class PlayMenu(Menu):
