@@ -262,12 +262,12 @@ class Building:
             current_hp_percentage: float = float(self.__hp) / float(self.__full_hp)
             pygame.draw.rect(self.__game.get_display(), (255, 0, 0),
                              (self.w(self.get_x() - hp_bar_length / 2),
-                              self.h(self.get_y() - 30 - hp_bar_height),
+                              self.h(self.get_y() - 40 - hp_bar_height),
                               self.w(hp_bar_length), self.h(hp_bar_height)))
             pygame.draw.rect(self.__game.get_display(), (0, 0, 0),
-                             (self.w(self.get_x() - hp_bar_length / 2 + hp_bar_length * current_hp_percentage),
-                              self.h(self.get_y() - 30 - hp_bar_height),
-                              self.w(hp_bar_length - hp_bar_length * current_hp_percentage),
+                             (self.w(math.ceil(self.get_x() - hp_bar_length / 2 + hp_bar_length * current_hp_percentage)),
+                              self.h(self.get_y() - 40 - hp_bar_height),
+                              self.w(hp_bar_length - math.floor(hp_bar_length * current_hp_percentage)),
                               self.h(hp_bar_height)))
 
     def is_alive(self):
