@@ -27,7 +27,8 @@ class PlayerInfoLabel:
         screen.blit(self.text, self.rect)
         pass
 
-    def resize(self, screen):
+    def resize(self, screen, game):
+        self.font = game.get_font(self.h(20, screen))
         self.text = self.font.render(str(self.label_text), True, "White")
         self.rect: pygame.Rect = self.text.get_rect()
         x_scaled = self.w(self.x, screen)
