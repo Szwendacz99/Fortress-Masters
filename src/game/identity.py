@@ -1,6 +1,6 @@
 from uuid import uuid4, UUID
 
-from core.team import Team
+from game.team import Team
 
 
 class Identity:

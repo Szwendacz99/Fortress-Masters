@@ -1,4 +1,4 @@
-from core.team import Team
+from game.team import Team
 from game.bullet import Bullet
 
 

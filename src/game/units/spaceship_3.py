@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from core.team import Team
+from game.team import Team
 from game.units.unit import Unit
 from game.rocket import Rocket
 

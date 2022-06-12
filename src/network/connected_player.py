@@ -2,8 +2,8 @@ from logging import error
 from threading import Thread
 from time import time
 
-from core.identity import Identity
-from core.message_receiver import MessageReceiver
+from game.identity import Identity
+from network.message_receiver import MessageReceiver
 from network.connection import Connection
 from network.messages.basic_message import BasicMessage
 from network.messages.lobby_state_message import LobbyStateMessage

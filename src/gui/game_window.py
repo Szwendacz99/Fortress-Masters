@@ -5,8 +5,8 @@ from time import time
 import pygame
 from pygame.surface import Surface
 
-from core.client import Client
-from core.server import Server
+from network.client import Client
+from network.server import Server
 from gui.credits_menu import CreditsMenu
 from gui.play_menu import PlayMenu
 from gui.main_menu import MainMenu

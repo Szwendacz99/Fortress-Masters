@@ -1,6 +1,4 @@
-from abc import ABC
-
-from core.team import Team
+from game.team import Team
 from network.messages.basic_message import BasicMessage
 from network.messages.message_type import MessageType
 

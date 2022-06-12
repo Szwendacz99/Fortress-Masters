@@ -4,8 +4,8 @@ from threading import Thread
 from time import time
 from uuid import UUID
 
-from core.identity import Identity
-from core.message_receiver import MessageReceiver
+from game.identity import Identity
+from network.message_receiver import MessageReceiver
 from game.building import Building
 from game.bullet import Bullet
 from game.units.unit import Unit

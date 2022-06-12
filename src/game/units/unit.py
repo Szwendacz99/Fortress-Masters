@@ -7,7 +7,7 @@ import math
 
 from pygame.surface import Surface
 
-from core.team import Team
+from game.team import Team
 import game.building as libBuilding
 from game.bullet import Bullet
 from pygame.math import Vector2

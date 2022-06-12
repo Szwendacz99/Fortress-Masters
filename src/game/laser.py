@@ -1,14 +1,9 @@
 import pygame
 import pygame.mouse
 import os
-import math
 
-from pygame.rect import Rect
-from pygame.surface import Surface
-
-from core.team import Team
+from game.team import Team
 from game.bullet import Bullet
-from pygame.math import Vector2
 
 
 def img_load(path, size):

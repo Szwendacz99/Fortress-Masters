@@ -1,10 +1,10 @@
-from logging import info, warning, debug
+from logging import info, warning
 from threading import Thread
 
-from core.server_game_thread import ServerGameThread
-from core.identity import Identity
-from core.message_receiver import MessageReceiver
-from core.connected_player import ConnectedPlayer
+from network.server_game_thread import ServerGameThread
+from game.identity import Identity
+from network.message_receiver import MessageReceiver
+from network.connected_player import ConnectedPlayer
 from exceptions.network_exception import NetworkException
 from network.connection import Connection
 from network.messages.basic_message import BasicMessage

@@ -1,7 +1,7 @@
 from typing import Type
 from uuid import UUID
 
-from core.team import Team
+from game.team import Team
 from network.messages.basic_message import BasicMessage
 from network.messages.message_type import MessageType
 
