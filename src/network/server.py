@@ -3,7 +3,6 @@ from threading import Thread
 
 from network.server_game_thread import ServerGameThread
 from game.identity import Identity
-from network.message_receiver import MessageReceiver
 from network.connected_player import ConnectedPlayer
 from exceptions.network_exception import NetworkException
 from network.connection import Connection
@@ -14,7 +13,7 @@ from network.messages.message_type import MessageType
 from network.server_listener import ServerListener
 
 
-class Server(Thread, MessageReceiver):
+class Server(Thread):
 
     def __init__(self, port: int, identity: Identity):
         super().__init__()
@@ -54,7 +53,7 @@ class Server(Thread, MessageReceiver):
         :param identity: identity received from this plater
         :return:
         """
-        player = ConnectedPlayer(identity, self)
+        player = ConnectedPlayer(identity, self.__server_game_thread)
         player.set_connection(conn)
         if not self.__server_game_thread.add_player(player):
             msg = BasicMessage(MessageType.LOBBY_FULL)
@@ -63,19 +62,6 @@ class Server(Thread, MessageReceiver):
             return
         self.__server_game_thread.broadcast(LobbyStateMessage(self.__server_game_thread.get_identities()))
         info(f"Player {player.get_name()} has successfully joined the lobby!")
-
-    def receive(self, message: BasicMessage) -> bool:
-        """
-        Broadcast messages that need to be received by all players
-        other types like Heartbeat, will be skipped
-        :param message:
-        :return:
-        """
-        if message.get_type() in [MessageType.NEW_UNIT,
-                                  MessageType.NEW_BULLET]:
-            self.__server_game_thread.broadcast(message)
-            # debug(f"Server broadcasting message with type: {message.get_type()}")
-        return True
 
     def get_lobby_list(self) -> list[Identity]:
         return self.__server_game_thread.get_identities()

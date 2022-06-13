@@ -6,6 +6,7 @@ from network.client import Client
 from game.identity import Identity
 from network.connected_player import ConnectedPlayer
 from game.team import Team
+from network.message_receiver import MessageReceiver
 from network.messages.basic_message import BasicMessage
 from network.messages.lobby_state_message import LobbyStateMessage
 from network.messages.message_type import MessageType
@@ -14,7 +15,7 @@ from network.messages.unit_sync_data import UnitSyncData
 from network.messages.units_update_message import UnitsUpdateMessage
 
 
-class ServerGameThread(Thread):
+class ServerGameThread(Thread, MessageReceiver):
     def __init__(self):
         Thread.__init__(self)
         self.__team_blu: list[ConnectedPlayer] = []
@@ -84,6 +85,18 @@ class ServerGameThread(Thread):
         elif player in self.__team_red:
             self.__team_red.remove(player)
         self.broadcast(LobbyStateMessage(self.get_identities()))
+
+    def receive(self, message: BasicMessage) -> bool:
+        """
+        Broadcast messages that need to be received by all players
+        other types like Heartbeat, will be skipped
+        :param message:
+        :return:
+        """
+        if message.get_type() in [MessageType.NEW_UNIT,
+                                  MessageType.NEW_BULLET]:
+            self.broadcast(message)
+        return True
 
     def run(self) -> None:
         info("Starting lobby thread")
