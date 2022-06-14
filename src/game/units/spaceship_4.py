@@ -13,11 +13,11 @@ class Spaceship_4(Unit):
 
     # Name of the class of the bullets that this unit will attack with
     bullet_type = Rocket
-    unit_size = 55
-    cost: int = 35
+    unit_size = 52
+    cost: int = 50
 
     def __init__(self, uuid: UUID, game, start_pos,
-                 hp: int = 350, atk_damage: int = 40, atk_speed: int = 100, atk_range: int = 120, speed: float = 0.20,
+                 hp: int = 800, atk_damage: int = 21, atk_speed: int = 111, atk_range: int = 105, speed: float = 0.16,
                  team: Team = Team.RED, left: bool = True, client_team: Team = Team.RED):
         Unit.__init__(self, uuid, game, start_pos, hp, atk_damage, atk_speed, atk_range, speed, team, client_team, left,
                       self.path_blue, self.path_red, self.path_blue_dead, self.path_red_dead,
