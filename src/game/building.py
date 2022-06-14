@@ -40,19 +40,19 @@ class Building:
         self.uuid = uuid.uuid4()
 
         if big:
-            self.__full_hp: int = 3500
-            self.__atk_damage: int = 100
+            self.__full_hp: int = 2150
+            self.__atk_damage: int = 60
             self.__atk_speed: int = 48
 
             self.__currency: int = 150
             self.__currency_income: int = 10
         else:
-            self.__full_hp: int = 2000
-            self.__atk_damage: int = 55
+            self.__full_hp: int = 1250
+            self.__atk_damage: int = 45
             self.__atk_speed: int = 54
 
         self.__hp: int = self.__full_hp
-        self.__atk_range: int = 160
+        self.__atk_range: int = 155
         self.__cooldown: int = self.__atk_speed
         self.__target = None
 

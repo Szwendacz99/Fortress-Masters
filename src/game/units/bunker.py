@@ -13,11 +13,11 @@ class Bunker(Unit):
 
     # Name of the class of the bullets that this unit will attack with
     bullet_type = Laser
-    unit_size = 75
-    cost = 85
+    unit_size = 82
+    cost = 80
 
     def __init__(self, uuid: UUID, game, start_pos,
-                 hp: int = 666, atk_damage: int = 26, atk_speed: int = 125, atk_range: int = 150, speed: float = 0.0,
+                 hp: int = 1111, atk_damage: int = 26, atk_speed: int = 66, atk_range: int = 150, speed: float = 0.0,
                  team: Team = Team.RED, left: bool = True, client_team: Team = Team.RED):
         Unit.__init__(self, uuid, game, start_pos, hp, atk_damage, atk_speed, atk_range, speed, team, client_team, left,
                       self.path_blue, self.path_red, self.path_blue_dead, self.path_red_dead,

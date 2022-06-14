@@ -132,8 +132,8 @@ class GamePlaying(Menu):
                                 self.w(self.default_width // 2 - 564 // 2),
                                 self.w(self.default_width // 2 + 564 // 2)) and \
                                 self.mouse_pos[1] in range(
-                            self.h(self.default_height // 2 + 30),
-                            self.h(self.default_height)):
+                                    self.h(self.default_height // 2 + 25),
+                                    self.h(self.default_height)):
                             if self.__currency >= self.__selected_unit_class.cost:
 
                                 team = self.game.client.get_identity().get_team()
