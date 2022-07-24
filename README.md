@@ -8,6 +8,7 @@ destroy the enemies' towers while defending theirs.
 | ![Screen 1](resources/img/screenshots/screen1.png) | ![Screen 2](resources/img/screenshots/screen2.png) |
 |----------------------------------------------------|----------------------------------------------------|
 | ![Screen 3](resources/img/screenshots/screen3.png) | ![Screen 4](resources/img/screenshots/screen4.png) |
+
 Players compete in 2v2 format. 
 
 Players spend the currency to pick units from the Unit Selection Bar (on the right side) and place them on their half of the map. 
