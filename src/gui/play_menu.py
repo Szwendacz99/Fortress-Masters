@@ -57,11 +57,6 @@ class PlayMenu(Menu):
                                              label_text="Start game",
                                              font=self.game.get_font(self.font_manager.get_regular_font_size()),
                                              color="WHITE", hovering_color="Yellow", is_visible=False),
-                                      Button(pos=(3 * self.game.get_window_width() / 4,
-                                                  self.font_manager.title_font_size * 8),
-                                             label_text="Demo",
-                                             font=self.game.get_font(self.font_manager.get_regular_font_size() // 2),
-                                             color="WHITE", hovering_color="Yellow", is_visible=True),
                                       ]
 
         self.text_input_array: list[TextInput] = [TextInput(pos=(self.mid_w, self.font_manager.title_font_size * 4),
@@ -222,9 +217,6 @@ class PlayMenu(Menu):
                     if len(self.__lobby_display_players) == 4:
                         self.game.server.start_game()
                         self.set_game_ready()
-                elif self.buttons[4].cursor_hovers(self.mouse_pos):
-                    # Demo start button
-                    self.set_game_ready()
                 for text_input in self.text_input_array:
                     if text_input.cursor_hovers(self.mouse_pos):
                         text_input.set_clicked(True)
